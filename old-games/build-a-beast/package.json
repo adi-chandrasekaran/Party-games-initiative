@@ -1,0 +1,13 @@
+{
+  "name": "build-a-beast",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multiplayer educational creature-building survival game.",
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\"",
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server"
+  },
+  "devDependencies": {"concurrently": "^9.1.2"}
+}

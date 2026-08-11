@@ -1,0 +1,11 @@
+{
+  "name": "imposter-game",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "../../node_modules/.bin/vite --host 127.0.0.1 --port 5181 --strictPort"
+  },
+  "devDependencies": {
+    "vite": "latest"
+  }
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imposter Who</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+  .party-back-button {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 999999999;
+    background: rgba(16, 2, 37, 0.74);
+    color: #fff7bf;
+    text-decoration: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 900;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    padding: 13px 20px;
+    border-radius: 999px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(12px);
+  }
+
+  .party-back-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  }
+  </style>
+</head>
+
+<body>
+  <a class="party-back-button" href="http://localhost:5176/?workspace=arcade">X Back to The Forge</a>
+
+<div class="bg"></div>
+
+<div id="app">
+
+  <!-- 🔥 TOP BUTTONS -->
+  <div class="topButtons">
+    <button class="restartBtn" onclick="restartGame()">RESTART</button>
+    <button class="exitBtn" onclick="location.reload()">EXIT</button>
+  </div>
+
+  <!-- ================= SETUP ================= -->
+  <div id="setup" class="screen active center">
+    <div class="imposterShell">
+      <div class="imposterHero">
+        <p class="badge">AISC Forge</p>
+        <h1>Imposter Who</h1>
+        <p class="heroCopy">Choose a manual word, a random topic, a difficulty preset, or upload your own vocabulary list.</p>
+      </div>
+
+      <div class="imposterSetupCard">
+        <label>
+          <span>Language</span>
+          <select id="language" onchange="updateCategories()">
+            <option>English</option>
+            <option>Spanish</option>
+            <option>French</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Word source</span>
+          <select id="modeSelect" onchange="updateWordMode()">
+            <option value="manual">Type a word</option>
+            <option value="topic">Random from topic</option>
+            <option value="difficulty">Use difficulty set</option>
+            <option value="custom">Upload custom vocabulary</option>
+          </select>
+        </label>
+
+        <label id="difficultyWrap">
+          <span>Difficulty</span>
+          <select id="difficultySelect" onchange="updateWordMode()">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </label>
+
+        <label id="wordWrap">
+          <span>Secret word</span>
+          <input id="word" placeholder="Enter secret word">
+        </label>
+
+        <label id="topicWrap" style="display:none">
+          <span>Topic</span>
+          <select id="topicSelect" onchange="useTopicMode()"></select>
+        </label>
+
+        <label id="customWrap" style="display:none">
+          <span>Shared deck vocabulary</span>
+          <textarea id="customVocab" placeholder="One word per line or comma-separated"></textarea>
+        </label>
+
+        <label id="deckWrap" style="display:none">
+          <span>Choose deck</span>
+          <select id="sharedDeckSelect" onchange="selectSharedDeck(this.value); useDeckMode();"></select>
+          <small id="sharedDeckStatus" style="color: rgba(255,255,255,0.72); font-weight: 700;">Pick a deck already uploaded in the hub sidebar.</small>
+        </label>
+
+        <label>
+          <span>Imposters</span>
+          <input id="imposters" type="number" value="1" min="1">
+        </label>
+
+        <button onclick="goToPlayers()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PLAYERS ================= -->
+  <div id="playersScreen" class="screen center">
+    <h2>Enter Players</h2>
+
+    <div id="playersList"></div>
+
+    <input id="playerName" placeholder="Player name">
+    <button onclick="addPlayer()">Add Player</button>
+
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <!-- ================= PASS PHONE ================= -->
+  <div id="passScreen" class="screen center">
+    <h2 id="currentPlayer"></h2>
+
+    <button
+      id="holdBtn"
+      onmousedown="revealWord()"
+      onmouseup="hideWord()"
+      ontouchstart="revealWord()"
+      ontouchend="hideWord()"
+    >
+      HOLD TO SEE
+    </button>
+
+    <h1 id="wordDisplay"></h1>
+
+    <button onclick="nextPlayer()">Next Player</button>
+  </div>
+
+  <!-- ================= START ROUND ================= -->
+  <div id="startScreen" class="screen center">
+    <h1 id="starter"></h1>
+    <p>Start describing!</p>
+
+    <button onclick="goToVoting()">Go to Voting</button>
+  </div>
+
+  <!-- ================= VOTING ================= -->
+  <div id="voteScreen" class="screen center">
+    <h2 id="votingPlayer"></h2>
+    <div id="voteGrid"></div>
+  </div>
+
+  <!-- ================= RESULT ================= -->
+  <div id="resultScreen" class="screen center">
+
+    <!-- 🔥 IMPORTANT: container for animated result -->
+    <div id="resultText" class="resultBox"></div>
+
+    <!-- 🔥 Continue only shows when JS allows -->
+    <button id="continueBtn" onclick="continueRound()">
+      CONTINUE ROUND
+    </button>
+
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

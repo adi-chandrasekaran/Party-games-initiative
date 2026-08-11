@@ -1,0 +1,142 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+  background: #1a1a1a;
+  color: white;
+}
+
+/* BACKGROUND BLOBS */
+.bg {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 30%, #3EC1B6, transparent 40%),
+              radial-gradient(circle at 80% 70%, #F25F5C, transparent 40%),
+              radial-gradient(circle at 50% 90%, #F4A259, transparent 40%);
+  filter: blur(80px);
+  z-index: -1;
+  animation: float 10s infinite alternate ease-in-out;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-40px); }
+}
+
+/* CENTER EVERYTHING */
+.center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* SCREEN TRANSITION */
+.screen {
+  display: none;
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.screen.active {
+  display: flex;
+  opacity: 1;
+}
+
+/* INPUTS */
+input, select {
+  width: 280px;
+  padding: 14px;
+  margin: 10px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+}
+
+/* BUTTONS */
+button {
+  width: 280px;
+  padding: 14px;
+  margin: 10px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  background: linear-gradient(135deg, #3EC1B6, #355F5C);
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* HOLD BUTTON */
+#holdBtn {
+  height: 120px;
+  font-size: 22px;
+  background: linear-gradient(135deg, #F4A259, #F25F5C);
+}
+
+/* WORD DISPLAY */
+#wordDisplay {
+  font-size: 48px;
+  margin: 20px;
+}
+
+/* PLAYER TAGS */
+.playerTag {
+  background: rgba(255,255,255,0.1);
+  padding: 8px 16px;
+  margin: 6px;
+  border-radius: 10px;
+}
+
+/* TOP BUTTONS */
+.topButtons {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.exitBtn {
+  background: #D7263D;
+  padding: 10px 20px;
+}
+
+.restartBtn {
+  background: #3EC1B6;
+  padding: 10px 20px;
+}
+
+.voteBox {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  margin: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+#voteGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.resultBox {
+  animation: fadeIn 0.5s ease;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

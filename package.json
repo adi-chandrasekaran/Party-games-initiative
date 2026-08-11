@@ -1,0 +1,24 @@
+{
+  "name": "party-games",
+  "private": true,
+  "version": "0.1.0",
+  "description": "One launcher app for multiple party games.",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix apps/hub && npm install --prefix apps/imposter && npm install --prefix apps/quiz-shooter && npm install --prefix apps/build-a-beast && npm install --prefix apps/planner-habit && npm install --prefix apps/planner-todo && npm install --prefix apps/planner-timer && npm install --prefix apps/planner-assignments",
+    "dev": "node scripts/dev-all.mjs",
+    "dev:all": "node scripts/dev-all.mjs",
+    "dev:hub": "npm run dev --prefix apps/hub",
+    "dev:imposter": "npm run dev --prefix apps/imposter",
+    "dev:quiz": "npm run dev --prefix apps/quiz-shooter",
+    "dev:beast": "npm run dev --prefix apps/build-a-beast",
+    "dev:planner-habit": "npm run dev --prefix apps/planner-habit",
+    "dev:planner-todo": "npm run dev --prefix apps/planner-todo",
+    "dev:planner-timer": "npm run dev --prefix apps/planner-timer",
+    "dev:planner-assignments": "npm run dev --prefix apps/planner-assignments"
+  },
+  "devDependencies": {
+    "concurrently": "latest",
+    "tsx": "latest",
+    "vite": "latest"
+  }
+}

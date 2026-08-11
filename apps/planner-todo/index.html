@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AISC Planner To-Do Board</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <a class="backButton" href="http://localhost:5176/?workspace=planner">← Back to Planner</a>
+    <main class="appShell">
+      <header class="heroCard">
+        <p class="eyebrow">AISC Planner</p>
+        <h1>To-Do Board</h1>
+        <p>Trello-style task lanes with separate boards for school, work, or any priority you create.</p>
+      </header>
+
+      <section class="card">
+        <div class="topRow">
+          <div class="tabs" id="boardTabs"></div>
+          <div class="boardCreator">
+            <input id="newBoardName" type="text" placeholder="New board name" />
+            <button id="addBoard" class="secondaryButton" type="button">+ Board</button>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div class="field grow">
+            <label for="taskTitle">Task</label>
+            <input id="taskTitle" type="text" placeholder="Finish science homework" />
+          </div>
+          <div class="field">
+            <label for="taskDue">Due date</label>
+            <input id="taskDue" type="date" />
+          </div>
+          <div class="field grow">
+            <label for="taskNotes">Notes</label>
+            <input id="taskNotes" type="text" placeholder="Hover to preview notes" />
+          </div>
+          <button id="addTask" class="primaryButton" type="button">Add task</button>
+        </div>
+
+        <div id="boardMeta" class="boardMeta"></div>
+        <div id="boardGrid" class="boardGrid"></div>
+      </section>
+    </main>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>

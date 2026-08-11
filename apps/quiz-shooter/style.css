@@ -1,0 +1,52 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  background:
+    radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--accent) 60%, white), transparent 28%),
+    linear-gradient(135deg, #1b1230, #4b008f);
+}
+.placeholder {
+  width: min(680px, calc(100vw - 40px));
+  padding: 36px;
+  border-radius: 28px;
+  border: 2px solid rgba(255,255,255,0.22);
+  background: rgba(0,0,0,0.28);
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+h1 {
+  margin: 0 0 14px;
+  font-size: clamp(36px, 7vw, 72px);
+  text-shadow: 0 5px 0 rgba(0,0,0,0.35);
+}
+p {
+  font-size: 20px;
+  font-weight: 800;
+}
+.small {
+  font-size: 14px;
+  opacity: 0.75;
+}
+.partyBackBtn {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 99999;
+  background: white;
+  color: #111;
+  border: 0;
+  border-radius: 14px;
+  padding: 12px 18px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.35);
+}
+.partyBackBtn:hover {
+  transform: scale(1.05);
+}

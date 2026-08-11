@@ -1,0 +1,69 @@
+{
+  "users": [
+    {
+      "id": "aditi",
+      "name": "Aditi",
+      "emailOrUsername": "aditi@aischennai.org",
+      "role": "owner",
+      "hostGameIds": [
+        "imposter",
+        "quiz-shooter",
+        "build-a-beast"
+      ],
+      "createdAt": "2026-07-07T00:00:00.000Z"
+    },
+    {
+      "id": "caditi28",
+      "name": "Caditi",
+      "emailOrUsername": "caditi28@aischennai.org",
+      "role": "owner",
+      "hostGameIds": [
+        "imposter",
+        "quiz-shooter",
+        "build-a-beast"
+      ],
+      "createdAt": "2026-07-09T00:00:00.000Z"
+    }
+  ],
+  "gameConfigs": [
+    {
+      "id": "imposter",
+      "title": "IMPOSTER",
+      "route": "http://localhost:5181",
+      "description": "Find the secret player",
+      "isPublic": true,
+      "status": "active",
+      "hostUserIds": [
+        "aditi"
+      ],
+      "color": "#ff2fa3",
+      "icon": "imposter"
+    },
+    {
+      "id": "quiz-shooter",
+      "title": "QUIZ SHOOTER",
+      "route": "http://localhost:5173",
+      "description": "Answer fast, shoot faster",
+      "isPublic": true,
+      "status": "active",
+      "hostUserIds": [
+        "aditi"
+      ],
+      "color": "#18d8ff",
+      "icon": "quiz"
+    },
+    {
+      "id": "build-a-beast",
+      "title": "BUILD A BEAST",
+      "route": "http://localhost:5174",
+      "description": "Create your monster",
+      "isPublic": true,
+      "status": "active",
+      "hostUserIds": [
+        "aditi"
+      ],
+      "color": "#7cff2f",
+      "icon": "beast"
+    }
+  ]
+}

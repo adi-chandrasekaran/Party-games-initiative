@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AISC Planner Habit Tracker</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <a class="backButton" href="http://localhost:5176/?workspace=planner">← Back to Planner</a>
+    <main class="appShell">
+      <header class="heroCard">
+        <p class="eyebrow">AISC Planner</p>
+        <h1>Habit Tracker</h1>
+        <p>Track habits month by month with one checkbox row per habit and the current month’s day count.</p>
+      </header>
+
+      <section class="card">
+        <div class="monthTabs" id="monthTabs"></div>
+
+        <div class="toolbar">
+          <div class="field grow">
+            <label for="habitName">Habit name</label>
+            <input id="habitName" type="text" placeholder="Read, practice piano, revise vocab..." />
+          </div>
+          <button id="addHabit" class="primaryButton" type="button">Add habit</button>
+        </div>
+
+        <div class="summaryRow" id="monthSummary"></div>
+
+        <div class="tableWrap">
+          <div class="habitTable" id="habitTable"></div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>

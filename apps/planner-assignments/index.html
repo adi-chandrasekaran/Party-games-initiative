@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AISC Planner Assignments</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <a class="backButton" href="http://localhost:5176/?workspace=planner">← Back to Planner</a>
+    <main class="appShell">
+      <header class="heroCard">
+        <p class="eyebrow">AISC Planner</p>
+        <h1>Assignments</h1>
+        <p>Spreadsheet-style tracker with multiple tabs, calendar due dates, and rows ordered by the nearest deadline.</p>
+      </header>
+
+      <section class="card">
+        <div class="sheetBar">
+          <div class="tabs" id="sheetTabs"></div>
+          <div class="sheetCreator">
+            <input id="newSheetName" type="text" placeholder="New tab name" />
+            <button id="addSheet" class="secondaryButton" type="button">+ Tab</button>
+          </div>
+        </div>
+
+        <div class="composer">
+          <div class="field">
+            <label for="subject">Subject</label>
+            <input id="subject" type="text" placeholder="Math" />
+          </div>
+          <div class="field grow">
+            <label for="assignment">Assignment</label>
+            <input id="assignment" type="text" placeholder="Chapter 5 worksheet" />
+          </div>
+          <div class="field">
+            <label for="dueDate">Due date</label>
+            <input id="dueDate" type="date" />
+          </div>
+          <div class="field grow">
+            <label for="notes">Notes</label>
+            <input id="notes" type="text" placeholder="Hover row for more context" />
+          </div>
+          <div class="field grow">
+            <label for="teacher">Teacher in charge</label>
+            <input id="teacher" type="text" placeholder="Ms. Rao" />
+          </div>
+          <button id="addRow" class="primaryButton" type="button">Add row</button>
+        </div>
+
+        <div id="sheetMeta" class="sheetMeta"></div>
+        <div class="tableWrap">
+          <table class="assignmentTable">
+            <thead>
+              <tr>
+                <th>Done</th>
+                <th>Subject</th>
+                <th>Assignment</th>
+                <th>Due date</th>
+                <th>Notes</th>
+                <th>Teacher in charge</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="sheetGrid"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>

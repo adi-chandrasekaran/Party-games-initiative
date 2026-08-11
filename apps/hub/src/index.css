@@ -1,0 +1,7221 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 82%, rgba(75, 166, 255, 0.9), transparent 24%),
+    radial-gradient(circle at 92% 22%, rgba(255, 48, 161, 0.85), transparent 26%),
+    linear-gradient(135deg, #9347ff 0%, #7d00e8 42%, #5200b7 100%);
+  color: white;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 32px 24px 48px;
+  position: relative;
+}
+
+.hubLayout {
+  width: min(1600px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(280px, 330px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.hubSidebar {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 18px;
+  padding: 18px;
+  border-radius: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(18, 4, 44, 0.34);
+  box-shadow: 0 18px 40px rgba(25, 0, 58, 0.28);
+  backdrop-filter: blur(16px);
+}
+
+.sidebarSection {
+  display: grid;
+  gap: 12px;
+}
+
+.ownerCreateRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ownerPlus {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 0;
+  background: rgba(255, 229, 100, 0.22);
+  color: #fff7bf;
+  font-size: 26px;
+  font-weight: 1000;
+  cursor: pointer;
+}
+
+.ownerCreateLabels {
+  display: flex;
+  gap: 16px;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.roleToggle {
+  display: flex;
+  gap: 10px;
+}
+
+.authHelper {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.googleButtonMount {
+  display: flex;
+  justify-content: center;
+  min-height: 52px;
+}
+
+.localAuthFallback {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.authDivider {
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.66);
+  text-align: center;
+}
+
+.sidebarLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.sidebarHeadingRow {
+  display: grid;
+  gap: 6px;
+}
+
+.selectedDeckLabel {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.sidebarNav {
+  display: grid;
+  gap: 10px;
+}
+
+.sidebarNavButton {
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.84);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.sidebarNavButton.isActive {
+  background: rgba(255, 229, 100, 0.18);
+  color: #fff7bf;
+}
+
+.deckUploadCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.deckNameInput,
+.deckFileInput input {
+  width: 100%;
+}
+
+.deckFileInput {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 900;
+}
+
+.sidebarUploadButton {
+  width: 100%;
+  margin-top: 0;
+}
+
+.deckList {
+  display: grid;
+  gap: 10px;
+  max-height: 44vh;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.deckBubble {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  cursor: pointer;
+  text-align: left;
+}
+
+.deckBubble.active {
+  background: rgba(255, 229, 100, 0.18);
+  color: #fff7bf;
+}
+
+.deckBubbleMark {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 18px;
+  font-weight: 1000;
+}
+
+.deckBubbleText {
+  display: grid;
+  gap: 2px;
+}
+
+.deckBubbleText strong {
+  font-size: 15px;
+}
+
+.deckBubbleText small {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.hubMain {
+  max-width: none;
+  margin: 0;
+  text-align: center;
+}
+
+.hero {
+  max-width: 1280px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.selectedDeckBanner {
+  width: min(720px, 100%);
+  margin: 0 auto 24px;
+  padding: 16px 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(18, 4, 44, 0.3);
+  box-shadow: 0 14px 30px rgba(25, 0, 58, 0.18);
+  display: grid;
+  gap: 4px;
+}
+
+.selectedDeckBanner span {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 900;
+}
+
+.selectedDeckBanner strong {
+  font-size: 18px;
+  font-weight: 1000;
+}
+
+.selectedDeckBanner small {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.forgeBrand {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.forgeTagline {
+  max-width: 1060px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.badge {
+  display: inline-block;
+  padding: 10px 22px;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #fff36a;
+  margin-bottom: 20px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(64px, 9vw, 142px);
+  line-height: 0.9;
+  font-weight: 1000;
+  letter-spacing: 4px;
+  text-align: center;
+  text-shadow: 0 10px 0 rgba(22, 0, 49, 0.65);
+}
+
+h2 {
+  margin: 22px 0 70px;
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.gameGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 70px;
+  align-items: start;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.gameButton {
+  appearance: none;
+  background: transparent !important;
+  border: 0 !important;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.18s ease;
+}
+
+.gameButton:hover {
+  transform: scale(1.06) rotate(-1deg);
+}
+
+.gameButton:active {
+  transform: scale(0.97);
+}
+
+.cardShadow {
+  order: 1;
+  width: 100%;
+  height: 150px;
+  transform: rotate(-2deg);
+  filter: drop-shadow(13px 18px 0 rgba(37, 0, 79, 0.6));
+}
+
+.gameCard {
+  height: 150px;
+  width: 100%;
+  border: 10px solid #25004f;
+  border-radius: 8px;
+  transform: skewX(-4deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.svgIcon,
+.emojiIcon {
+  width: 105px;
+  height: 105px;
+  font-size: 76px;
+  line-height: 105px;
+  transform: skewX(4deg);
+  filter: drop-shadow(0 7px 0 rgba(0, 0, 0, 0.25));
+}
+
+.gameTitle {
+  order: 2;
+  margin-top: 24px;
+  font-size: 34px;
+  font-weight: 1000;
+  letter-spacing: 2px;
+  color: white;
+  background: transparent !important;
+  text-shadow: 0 6px 0 rgba(22, 0, 49, 0.75);
+}
+
+.gameSubtitle {
+  order: 3;
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 900;
+  color: white;
+}
+
+.footerNote {
+  margin: 82px auto 0;
+  max-width: 760px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 22px 28px;
+  font-size: 20px;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 1;
+}
+
+.panelWrap {
+  margin-top: 28px;
+  display: flex;
+  justify-content: center;
+}
+
+.panelCard {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+  padding: 28px;
+  border-radius: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  background: rgba(20, 5, 48, 0.26);
+  box-shadow: 0 18px 40px rgba(25, 0, 58, 0.28);
+  backdrop-filter: blur(12px);
+  text-align: left;
+}
+
+.panelCard h3 {
+  margin: 0 0 18px;
+  font-size: clamp(28px, 3vw, 42px);
+  letter-spacing: 1px;
+}
+
+.profileLayout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.profileFields {
+  display: grid;
+  gap: 14px;
+}
+
+.profileFields div,
+.statTile,
+.inviteRow,
+.chatRow,
+.threadRow,
+.emptyMini,
+.emptyState,
+.groupComposer,
+.chatMessageCard,
+.ratingCard {
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.profileFields div {
+  padding: 16px 18px;
+}
+
+.profileFields span,
+.statTile span,
+.inviteRow span,
+.chatRow span,
+.threadRow span,
+.emptyMini,
+.emptyState span,
+.ratingCard span,
+.groupComposer h4,
+.chatMessageCard p,
+.chatSectionLabel {
+  display: block;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.profileFields strong,
+.statTile strong,
+.inviteRow strong,
+.chatRow strong,
+.threadRow strong,
+.emptyState strong,
+.chatMessageCard h4 {
+  display: block;
+  margin-top: 4px;
+  font-size: 20px;
+  font-weight: 1000;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.statsGrid.threeUp {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.statTile {
+  padding: 18px;
+}
+
+.ratingCard {
+  margin-top: 18px;
+  padding: 18px;
+}
+
+.ratingPicker {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.starRating {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.starButton {
+  appearance: none;
+  border: 0;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.starButton.isFilled {
+  color: #ffe564;
+  background: rgba(255, 229, 100, 0.16);
+}
+
+.panelButton,
+.authSubmit,
+.authSwitch,
+.iconButton {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.panelButton,
+.authSubmit {
+  width: fit-content;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  background: #ffe564;
+  color: #2a045c;
+  font-size: 16px;
+  font-weight: 1000;
+  box-shadow: 0 8px 0 rgba(42, 4, 92, 0.35);
+}
+
+.panelButton.ghost {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  box-shadow: none;
+}
+
+.inviteList {
+  display: grid;
+  gap: 12px;
+}
+
+.inviteRow {
+  padding: 16px 18px;
+}
+
+.profileTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.profileTopRow p {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 800;
+}
+
+.profileActions,
+.editActions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.iconButton.small {
+  width: 40px;
+  height: 40px;
+}
+
+.privateAppsPanel h3 {
+  margin-bottom: 22px;
+}
+
+.privateAppDetailPage {
+  display: grid;
+  gap: 18px;
+}
+
+.privateAppDetailHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.privateAppDetailHeader p {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 800;
+}
+
+.privateAppsColumns {
+  display: grid;
+  grid-template-columns: minmax(220px, 250px) minmax(220px, 250px) 1fr;
+  gap: 16px;
+}
+
+.privateColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.privateColumn h4 {
+  margin: 0 0 4px;
+  text-transform: uppercase;
+}
+
+.privateGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.privateCard {
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.privateCard.isActive {
+  border-color: rgba(255, 229, 100, 0.4);
+  background: rgba(255, 229, 100, 0.16);
+}
+
+.privateDetail {
+  margin-top: 14px;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.privateDetail h5 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.privateDetail div {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.emptyState.compact,
+.emptyMini {
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 16px;
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.chatActions {
+  display: flex;
+  gap: 10px;
+}
+
+.iconButton {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.iconButton.active {
+  background: rgba(255, 229, 100, 0.18);
+  color: #fff7bf;
+}
+
+.chatSearch,
+.authForm input,
+.groupComposer input,
+.chatComposer input,
+.ratingPicker select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(10, 0, 25, 0.2);
+  color: white;
+  font: inherit;
+}
+
+.chatSearch {
+  margin: 18px 0;
+}
+
+.chatSearch::placeholder,
+.authForm input::placeholder,
+.groupComposer input::placeholder,
+.chatComposer input::placeholder {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.chatLayout {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) 1fr;
+  gap: 18px;
+}
+
+.chatSidebar {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.chatSectionLabel {
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+
+.chatList {
+  display: grid;
+  gap: 10px;
+}
+
+.chatRow,
+.threadRow {
+  width: 100%;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.chatRow strong,
+.threadRow strong {
+  font-size: 17px;
+}
+
+.threadRow.isActive {
+  background: rgba(255, 229, 100, 0.16);
+  border-color: rgba(255, 229, 100, 0.34);
+}
+
+.emptyMini,
+.emptyState {
+  padding: 18px;
+}
+
+.chatThread {
+  min-height: 380px;
+}
+
+.chatMessageCard,
+.groupComposer {
+  min-height: 380px;
+  padding: 20px;
+}
+
+.chatMessages {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.messageBubble {
+  max-width: 72%;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.chatComposer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.groupPeople {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.groupPerson {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.groupPerson input {
+  width: 18px;
+  height: 18px;
+}
+
+.authShell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.authCard {
+  width: min(520px, 100%);
+  padding: 28px;
+  border-radius: 34px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(18, 4, 44, 0.36);
+  box-shadow: 0 22px 60px rgba(18, 0, 44, 0.32);
+  backdrop-filter: blur(16px);
+}
+
+.authPill {
+  display: inline-flex;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 229, 100, 0.16);
+  color: #ffe564;
+  font-size: 12px;
+  font-weight: 1000;
+  letter-spacing: 1.2px;
+}
+
+.authCard h3 {
+  margin: 16px 0 8px;
+  font-size: 40px;
+  line-height: 0.95;
+}
+
+.authCard p {
+  margin: 0 0 20px;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 700;
+}
+
+.authForm {
+  display: grid;
+  gap: 14px;
+}
+
+.authForm label {
+  display: grid;
+  gap: 8px;
+}
+
+.authForm span {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.authError {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 70, 88, 0.18);
+  color: #ffd6dc;
+  font-weight: 800;
+}
+
+.authSwitch {
+  margin-top: 16px;
+  background: transparent;
+  color: #ffe564;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.authSwitch.secondary {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+.adminPage {
+  min-height: 100vh;
+  padding: 34px 24px 120px;
+}
+
+.adminHero {
+  max-width: 1280px;
+}
+
+.adminShell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: 40px;
+  text-align: center;
+}
+
+.adminLead {
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 800;
+  font-size: 17px;
+}
+
+.adminLoginCard {
+  width: min(520px, 100%);
+  margin: 26px auto 0;
+  padding: 24px;
+  border-radius: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  background: rgba(18, 4, 44, 0.36);
+  box-shadow: 0 22px 60px rgba(18, 0, 44, 0.32);
+  backdrop-filter: blur(16px);
+  display: grid;
+  gap: 14px;
+}
+
+.adminLoginCard input,
+.adminFormGrid input,
+.adminFormGrid select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(10, 0, 25, 0.2);
+  color: white;
+  font: inherit;
+}
+
+.adminLoginCard input::placeholder,
+.adminFormGrid input::placeholder {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.adminPanel {
+  margin-top: 22px;
+  text-align: left;
+}
+
+.adminGameGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.adminGameCard {
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.adminGameHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.adminGameHeader strong {
+  display: block;
+  font-size: 18px;
+  letter-spacing: 0.6px;
+}
+
+.adminGameHeader span {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+}
+
+.adminBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.adminBadge.good {
+  background: rgba(102, 255, 182, 0.18);
+  color: #9affc9;
+}
+
+.adminBadge.warn {
+  background: rgba(255, 229, 100, 0.18);
+  color: #fff3a2;
+}
+
+.adminToggleRow,
+.adminUserActions,
+.editActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.miniToggle {
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+  color: white;
+  font-weight: 900;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.miniToggle.on {
+  background: rgba(255, 229, 100, 0.18);
+  color: #fff7bf;
+}
+
+.adminHosts,
+.adminHostPicker {
+  display: grid;
+  gap: 10px;
+}
+
+.adminHosts > span,
+.adminHostPicker > span {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 900;
+}
+
+.adminHostList,
+.adminHostCheckboxes,
+.adminGameCheckboxes,
+.adminFormGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.adminHostList span,
+.adminUserRow small {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.adminCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.adminCheckbox input {
+  width: 18px;
+  height: 18px;
+}
+
+.adminUserList {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.adminUserRow {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+}
+
+.adminUserRow.isSelected {
+  border-color: rgba(255, 229, 100, 0.3);
+  background: rgba(255, 229, 100, 0.08);
+}
+
+.adminUserRow strong {
+  display: block;
+  font-size: 16px;
+}
+
+.adminUserRow span {
+  display: block;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+}
+
+.adminMessage {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 800;
+}
+
+.adminFormGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 14px;
+}
+
+.bottomDock {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  padding: 12px;
+  border-radius: 999px;
+  background: rgba(16, 2, 37, 0.54);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 18px 40px rgba(16, 0, 40, 0.35);
+  backdrop-filter: blur(16px);
+  z-index: 20;
+}
+
+.dockButton {
+  min-width: 132px;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.82);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.dockButton.isActive {
+  background: rgba(255, 229, 100, 0.18);
+  color: #fff7bf;
+}
+
+.dockIconWrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.navIcon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tinyIcon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.avatarFallback,
+.avatarImage {
+  border-radius: 50%;
+  flex: none;
+}
+
+.avatarFallback {
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 30% 30%, #fff48e 0, #f49bff 45%, #5de1ff 100%);
+  color: #230044;
+  box-shadow: inset 0 0 0 4px rgba(35, 0, 68, 0.18);
+}
+
+.avatarImage {
+  object-fit: cover;
+  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.14);
+}
+
+.avatarFallback svg {
+  width: 54%;
+  height: 54%;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.editPanel {
+  margin-top: 18px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.editPanel label {
+  display: grid;
+  gap: 8px;
+}
+
+.editPanel span {
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.inlineMessage {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 800;
+}
+
+.workspaceTabs {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 auto 22px;
+}
+
+.workspaceTab {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 20px;
+  background: rgba(16, 2, 37, 0.32);
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.workspaceTab.isActive {
+  background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+  color: white;
+}
+
+.ownerQuickCreate {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  margin: 0 0 12px;
+}
+
+.ownerQuickButton {
+  display: grid;
+  gap: 3px;
+  place-items: center;
+  min-width: 72px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 18px;
+  background: rgba(16, 2, 37, 0.48);
+  color: white;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+.ownerQuickButton span {
+  font-size: 22px;
+  line-height: 1;
+  font-weight: 1000;
+}
+
+.ownerQuickButton small {
+  text-transform: lowercase;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.plannerWorkspace {
+  display: grid;
+  gap: 18px;
+}
+
+.plannerWorkspaceIntro {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 10px 0 6px;
+  text-align: center;
+}
+
+.plannerWorkspaceIntro h3 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 54px);
+  line-height: 0.95;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-shadow: 0 8px 0 rgba(22, 0, 49, 0.7);
+}
+
+.plannerWorkspaceIntro p:last-child {
+  max-width: 900px;
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+.plannerWorkspaceTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.plannerWorkspaceTab {
+  border: 0;
+  border-radius: 999px;
+  padding: 11px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 900;
+}
+
+.plannerWorkspaceTab.isActive {
+  background: #fff;
+  color: #26005f;
+}
+
+.plannerLauncherGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+  gap: 34px 34px;
+  align-items: start;
+  justify-items: center;
+  max-width: 1120px;
+  margin: 16px auto 0;
+}
+
+.plannerLaunchButton {
+  width: 100%;
+  max-width: 280px;
+  justify-self: center;
+}
+
+.plannerLaunchCard {
+  width: 100%;
+  height: 170px;
+}
+
+.plannerLaunchCard .svgIcon {
+  width: 112px;
+  height: 112px;
+}
+
+.plannerSection {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+  border-radius: 28px;
+  background: rgba(20, 5, 48, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 18px 40px rgba(25, 0, 58, 0.24);
+}
+
+.plannerSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.plannerEyebrow {
+  margin: 0 0 6px;
+  color: #fff7b6;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.plannerSection h3 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 36px);
+}
+
+.plannerTwoColumn {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 16px;
+}
+
+.plannerField {
+  display: grid;
+  gap: 8px;
+}
+
+.plannerField span {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.plannerStudyCard,
+.plannerNotesCard,
+.plannerAssignmentsCard {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.plannerStudyQuestion span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.plannerStudyQuestion strong {
+  display: block;
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.plannerStudyAnswer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+
+.plannerInlineFeedback {
+  color: #fff7b6;
+  font-weight: 800;
+}
+
+.plannerQuestionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.plannerQuestionChip,
+.plannerFolderChip,
+.plannerSheetChip {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-weight: 800;
+}
+
+.plannerQuestionChip.isActive,
+.plannerFolderChip.isActive,
+.plannerSheetChip.isActive {
+  background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+}
+
+.plannerBoard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.plannerColumn {
+  display: grid;
+  gap: 12px;
+}
+
+.plannerColumn h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.plannerStack {
+  display: grid;
+  gap: 10px;
+}
+
+.plannerTaskCard {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.plannerTaskActions,
+.plannerTimerControls,
+.plannerTimerPresets,
+.plannerSheetBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.plannerMiniAction {
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
+  font-weight: 800;
+}
+
+.plannerTimerDial {
+  display: grid;
+  gap: 6px;
+  place-items: center;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.plannerTimerDial strong {
+  color: #fff7b6;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.plannerTimerDial span {
+  font-size: clamp(44px, 7vw, 84px);
+  font-weight: 1000;
+}
+
+.plannerFolderRail {
+  display: grid;
+  gap: 12px;
+}
+
+.plannerFolderList {
+  display: grid;
+  gap: 8px;
+}
+
+.plannerSavedNotes,
+.plannerTableWrap {
+  overflow: auto;
+}
+
+.plannerNoteCard {
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.plannerNoteCard p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.plannerAssignmentForm {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.plannerTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.plannerTable th,
+.plannerTable td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.plannerTable th {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.plannerTableEmpty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+@media (max-width: 900px) {
+  .gameGrid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .plannerLauncherGrid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin: 16px auto 0;
+  }
+
+  h2 {
+    margin-bottom: 46px;
+  }
+
+  .privateAppsColumns,
+  .statsGrid,
+  .ratingPicker,
+  .chatLayout,
+  .profileLayout,
+  .chatComposer,
+  .adminGameGrid,
+  .adminFormGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statsGrid.threeUp,
+  .privateGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .groupPeople {
+    grid-template-columns: 1fr;
+  }
+
+  .bottomDock {
+    width: calc(100% - 24px);
+    justify-content: space-between;
+    overflow-x: auto;
+  }
+
+  .dockButton {
+    min-width: 116px;
+  }
+
+  .plannerTwoColumn,
+  .plannerBoard,
+  .plannerAssignmentForm {
+    grid-template-columns: 1fr;
+  }
+
+  .plannerSectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.svgIcon {
+  width: 105px;
+  height: 105px;
+  transform: skewX(4deg);
+  filter: drop-shadow(0 7px 0 rgba(0, 0, 0, 0.25));
+}
+
+/* Forge shell refresh */
+:root {
+  --bg: #090b13;
+  --surface: rgba(17, 20, 31, 0.94);
+  --surface-2: rgba(25, 29, 43, 0.94);
+  --surface-3: rgba(34, 40, 57, 0.94);
+  --border: rgba(255, 255, 255, 0.14);
+  --text: #f6f7fb;
+  --text-muted: rgba(246, 247, 251, 0.68);
+  --text-subtle: rgba(246, 247, 251, 0.34);
+  --violet: #7c3aed;
+  --violet-hover: #6d28d9;
+  --violet-light: #b999ff;
+  --violet-dim: rgba(124, 58, 237, 0.18);
+  --cyan: #48d8ff;
+  --cyan-dim: rgba(72, 216, 255, 0.16);
+  --emerald: #48e0a4;
+  --emerald-dim: rgba(72, 224, 164, 0.16);
+  --amber: #ffd34d;
+  --amber-dim: rgba(255, 211, 77, 0.16);
+  --rose: #ff5f7a;
+  --rose-dim: rgba(255, 95, 122, 0.16);
+}
+
+:root[data-forge-theme='light'] {
+  --bg: #f5f7ff;
+  --surface: rgba(255, 255, 255, 0.95);
+  --surface-2: rgba(242, 245, 255, 0.96);
+  --surface-3: rgba(226, 232, 255, 0.96);
+  --border: rgba(25, 29, 43, 0.1);
+  --text: #141827;
+  --text-muted: rgba(20, 24, 39, 0.66);
+  --text-subtle: rgba(20, 24, 39, 0.36);
+  --violet: #6d28d9;
+  --violet-hover: #5b21b6;
+  --violet-light: #7c3aed;
+  --violet-dim: rgba(109, 40, 217, 0.12);
+  --cyan: #109fc5;
+  --cyan-dim: rgba(16, 159, 197, 0.12);
+  --emerald: #0f9a61;
+  --emerald-dim: rgba(15, 154, 97, 0.12);
+  --amber: #d38d00;
+  --amber-dim: rgba(211, 141, 0, 0.12);
+  --rose: #d93b5d;
+  --rose-dim: rgba(217, 59, 93, 0.12);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 14% 82%, rgba(91, 148, 255, 0.24), transparent 22%),
+    radial-gradient(circle at 88% 20%, rgba(255, 59, 186, 0.18), transparent 22%),
+    linear-gradient(135deg, #0a0d17 0%, #090b13 48%, #0f1320 100%);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+:root[data-forge-theme='light'] body {
+  background:
+    radial-gradient(circle at 16% 82%, rgba(109, 40, 217, 0.08), transparent 24%),
+    radial-gradient(circle at 86% 18%, rgba(16, 159, 197, 0.08), transparent 24%),
+    linear-gradient(135deg, #f5f7ff 0%, #eef2ff 50%, #ffffff 100%);
+}
+
+#root {
+  overflow: hidden;
+}
+
+.forgeShell {
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--text);
+}
+
+.forgeSidebar {
+  width: 84px;
+  flex: none;
+  padding: 14px 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(14, 17, 27, 0.72);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+:root[data-forge-theme='light'] .forgeSidebar {
+  background: rgba(255, 255, 255, 0.78);
+  border-right-color: rgba(20, 24, 39, 0.08);
+}
+
+.forgeBrandMark {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--violet), var(--cyan));
+  color: white;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  box-shadow: 0 10px 28px rgba(124, 58, 237, 0.34);
+}
+
+.forgeOwnerQuick {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.ownerQuickButton {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  border: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(124, 58, 237, 0.16);
+  color: #fff1a0;
+  cursor: pointer;
+}
+
+.forgeSidebarDivider {
+  width: 36px;
+  height: 1px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.forgeRailGroup {
+  display: grid;
+  gap: 10px;
+}
+
+.forgeRailButton {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+}
+
+.forgeRailButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.forgeRailButton.active {
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.forgeSidebarSpacer {
+  flex: 1;
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton {
+  border: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.forgeAvatarButton .forgeAvatar {
+  width: 38px;
+  height: 38px;
+}
+
+.forgeMain {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 18px;
+}
+
+.pagePanel {
+  height: 100%;
+  overflow: auto;
+  display: flex;
+}
+
+.workspaceShell {
+  height: 100%;
+  display: flex;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.workspaceSidebar {
+  width: 230px;
+  flex: none;
+  padding: 18px 14px;
+  border-radius: 28px;
+  background: rgba(16, 19, 30, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  overflow: hidden;
+}
+
+:root[data-forge-theme='light'] .workspaceSidebar {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+.workspaceSidebarLabel {
+  margin: 0 0 2px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.56);
+}
+
+:root[data-forge-theme='light'] .workspaceSidebarLabel {
+  color: rgba(20, 24, 39, 0.52);
+}
+
+.workspaceStage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  overflow-y: auto;
+  padding: 8px 6px 8px 2px;
+}
+
+.workspaceBackButton {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  margin-bottom: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 800;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel {
+  min-height: 100%;
+  border-radius: 30px;
+  padding: 18px 18px 20px;
+  background: rgba(14, 16, 24, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel {
+  background: rgba(255, 255, 255, 0.74);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+.workspaceHero {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 6px 12px 10px;
+  text-align: center;
+}
+
+.workspaceHero.compact {
+  padding-top: 12px;
+}
+
+.workspaceEyebrow {
+  margin: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+:root[data-forge-theme='light'] .workspaceEyebrow {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(20, 24, 39, 0.08);
+  color: #6d28d9;
+}
+
+.workspaceHero h1 {
+  margin: 0;
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 0.96;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-shadow: none;
+}
+
+:root[data-forge-theme='light'] .workspaceHero h1 {
+  text-shadow: none;
+}
+
+.workspaceHero h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+:root[data-forge-theme='light'] .workspaceHero h2 {
+  color: rgba(20, 24, 39, 0.68);
+}
+
+.workspaceLauncherGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  justify-items: stretch;
+  max-width: 1280px;
+  margin: 18px auto 0;
+}
+
+.workspaceLaunchButton {
+  width: 100%;
+  min-height: 268px;
+  justify-content: flex-start;
+  align-items: stretch;
+  text-align: left;
+}
+
+.workspaceLaunchCard {
+  height: 156px;
+  border-radius: 14px;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.22);
+}
+
+.workspaceLaunchButton .gameTitle {
+  margin-top: 16px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.workspaceLaunchButton .gameSubtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.arcadeGameView {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 6px 6px;
+}
+
+.arcadeGameTopBar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.arcadeGameTopBar h3 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.arcadeGameTopBar p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.deckPickerStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.deckPickerChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.deckPickerChip.isActive {
+  border-color: var(--violet);
+  background: var(--violet-dim);
+  color: var(--violet-light);
+}
+
+.deckColorDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--violet), var(--cyan));
+}
+
+.arcadeFlipWrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arcadeFlipCard {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  width: min(520px, 100%);
+  height: 290px;
+  position: relative;
+  cursor: pointer;
+  perspective: 1400px;
+}
+
+.arcadeFlipFace {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  padding: 30px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.22);
+  transform-style: preserve-3d;
+  transition: transform 0.45s ease;
+  text-align: center;
+}
+
+.arcadeFlipFace span {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 800;
+}
+
+.arcadeFlipFace strong {
+  font-size: clamp(22px, 3vw, 36px);
+  line-height: 1.2;
+}
+
+.arcadeFlipFace small {
+  color: var(--text-subtle);
+  font-weight: 700;
+}
+
+.arcadeFlipFace.back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, var(--violet-dim), rgba(6, 182, 212, 0.1));
+}
+
+.arcadeFlipCard.flipped .arcadeFlipFace.front {
+  transform: rotateY(180deg);
+}
+
+.arcadeFlipCard.flipped .arcadeFlipFace.back {
+  transform: rotateY(360deg);
+}
+
+.arcadeChoiceRow {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.arcadeGameFinish {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.arcadeGameEmoji {
+  font-size: 48px;
+}
+
+.arcadeQuizQuestion {
+  padding: 20px 22px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.arcadeQuizQuestion strong {
+  color: var(--violet-light);
+}
+
+.arcadeQuizChoices {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  gap: 10px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.arcadeQuizChoice {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 14px 16px;
+  text-align: left;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.arcadeQuizChoice:hover {
+  transform: translateY(-1px);
+  border-color: var(--violet-light);
+}
+
+.arcadeQuizChoice.correct {
+  border-color: var(--emerald);
+  background: var(--emerald-dim);
+  color: var(--emerald);
+}
+
+.arcadeQuizChoice.wrong {
+  border-color: var(--rose);
+  background: var(--rose-dim);
+  color: var(--rose);
+}
+
+.arcadeMatchGrid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.arcadeMatchLabel {
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.arcadeMatchChip {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  text-align: center;
+}
+
+.arcadeMatchChip.selected {
+  border-color: var(--violet);
+  background: var(--violet-dim);
+  color: var(--violet-light);
+}
+
+.arcadeMatchChip.matched {
+  border-color: var(--emerald);
+  background: var(--emerald-dim);
+  color: var(--emerald);
+}
+
+.arcadeMatchChip.wrong {
+  border-color: var(--rose);
+  background: var(--rose-dim);
+  color: var(--rose);
+}
+
+.workspaceSelectedDeckBanner,
+.selectedDeckBanner {
+  max-width: 760px;
+  margin: 18px auto 0;
+  padding: 14px 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  gap: 4px;
+  background: rgba(124, 58, 237, 0.16);
+}
+
+.workspaceCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.workspaceCardHeader h3 {
+  font-size: 26px;
+}
+
+.workspaceSubcopy {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.selectedDeckPill {
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff2a6;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.workspaceDecks {
+  display: grid;
+  gap: 16px;
+}
+
+.workspaceUploadCard {
+  width: min(460px, 100%);
+}
+
+.workspaceDeckList {
+  max-width: 760px;
+}
+
+.communityGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.communityCard {
+  border-radius: 26px;
+  padding: 18px;
+  background: rgba(18, 22, 34, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+  display: grid;
+  gap: 12px;
+}
+
+:root[data-forge-theme='light'] .communityCard {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+.communityCardTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.communityAvatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 24px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.22);
+}
+
+.communityCard strong {
+  font-size: 18px;
+}
+
+.communityCard p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.55;
+}
+
+:root[data-forge-theme='light'] .communityCard p {
+  color: rgba(20, 24, 39, 0.82);
+}
+
+.communityMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.communityAction.isRequested {
+  background: rgba(255, 211, 77, 0.16);
+  color: #fff2a6;
+  border-color: rgba(255, 211, 77, 0.28);
+}
+
+.requestOnlyPanel {
+  display: grid;
+  place-items: center;
+}
+
+.panelCard {
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  padding: 22px;
+  border-radius: 30px;
+  background: rgba(16, 19, 30, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.24);
+}
+
+:root[data-forge-theme='light'] .panelCard {
+  background: rgba(255, 255, 255, 0.84);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+.panelButton,
+.authSubmit,
+.authSwitch,
+.miniToggle,
+.iconButton,
+.inner-nav-item,
+.nav-item,
+.workspaceBackButton {
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.panelButton {
+  border: 0;
+  border-radius: 16px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, var(--violet), var(--cyan));
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 0 rgba(31, 0, 70, 0.5);
+}
+
+.panelButton:hover,
+.authSubmit:hover,
+.workspaceBackButton:hover,
+.authSwitch:hover,
+.miniToggle:hover {
+  transform: translateY(-1px);
+}
+
+.panelButton.ghost,
+.authSwitch {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.iconButton {
+  border: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.iconButton.active {
+  background: rgba(124, 58, 237, 0.2);
+  color: #eadcff;
+}
+
+.input,
+.authForm input,
+.chatSearch,
+.groupComposer input,
+.plannerField input,
+.plannerField textarea,
+.deckNameInput,
+.deckFileInput input,
+.chatComposer input,
+.workspaceDecks input,
+.workspaceDecks textarea,
+.workspaceDecks select {
+  width: 100%;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  padding: 12px 14px;
+  outline: none;
+}
+
+.authShell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.authCard {
+  width: min(560px, 100%);
+  padding: 28px;
+  border-radius: 34px;
+  background: rgba(16, 19, 30, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
+  display: grid;
+  gap: 14px;
+}
+
+:root[data-forge-theme='light'] .authCard {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+.authCard h3 {
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 0.95;
+}
+
+.authCard p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.authPill {
+  width: fit-content;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.16);
+  color: #fff1a0;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.roleToggle,
+.chatActions,
+.editActions,
+.ratingPicker,
+.plannerTimerControls,
+.plannerSheetBar,
+.ownerCreateRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.miniToggle {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 800;
+}
+
+.miniToggle.on,
+.workspaceTab.isActive,
+.inner-nav-item.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: #e8dfff;
+  border-color: rgba(124, 58, 237, 0.28);
+}
+
+.authHelper,
+.authDivider {
+  color: var(--text-muted);
+}
+
+.authError,
+.inlineMessage,
+.emptyState,
+.emptyMini,
+.selectedDeckLabel {
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+.authError {
+  background: rgba(255, 95, 122, 0.12);
+  border-color: rgba(255, 95, 122, 0.22);
+  color: #ffd7de;
+}
+
+.authSubmit {
+  border: 0;
+  border-radius: 18px;
+  padding: 13px 18px;
+  background: linear-gradient(135deg, var(--amber), #ff9d4f);
+  color: #1a1430;
+  font-weight: 1000;
+  box-shadow: 0 10px 0 rgba(58, 28, 0, 0.45);
+}
+
+.deckUploadCard,
+.ratingCard,
+.chatMessageCard,
+.groupComposer,
+.plannerSection,
+.plannerStudyCard,
+.plannerAssignmentsCard,
+.plannerTimerDial,
+.plannerNotesCard {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+}
+
+.deckUploadCard {
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.deckBubble {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-radius: 22px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.deckBubble.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+}
+
+.deckBubbleMark {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff1a0;
+  font-weight: 1000;
+}
+
+.deckBubbleText {
+  display: grid;
+  gap: 2px;
+}
+
+.profileTopRow,
+.privateAppDetailHeader,
+.chatHeader,
+.plannerSectionHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.profileTopRow p,
+.privateAppDetailHeader p,
+.chatHeader p,
+.plannerSectionHeader p {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+}
+
+.profileLayout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.profileFields {
+  display: grid;
+  gap: 12px;
+}
+
+.profileFields > div,
+.statTile,
+.inviteRow,
+.threadRow,
+.chatRow,
+.messageBubble,
+.plannerTaskCard,
+.plannerNoteCard,
+.plannerSheetChip,
+.plannerQuestionChip,
+.communityCard {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profileFields > div {
+  padding: 14px 16px;
+  border-radius: 20px;
+}
+
+.profileFields strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 18px;
+}
+
+.maskedPassword {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.12em;
+}
+
+.chatLayout,
+.plannerTwoColumn {
+  grid-template-columns: 360px minmax(0, 1fr);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.statsGrid.threeUp {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.statTile {
+  border-radius: 22px;
+  padding: 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.ratingCard {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.starRating {
+  display: flex;
+  gap: 8px;
+}
+
+.starButton {
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.22);
+  font-size: 26px;
+  cursor: pointer;
+}
+
+.starButton.isFilled {
+  color: #ffd34d;
+}
+
+.chatSearch {
+  margin-bottom: 14px;
+}
+
+.chatLayout {
+  display: grid;
+  gap: 14px;
+  min-height: 520px;
+}
+
+.chatSidebar,
+.chatThread,
+.groupComposer,
+.chatMessageCard {
+  border-radius: 24px;
+  padding: 16px;
+}
+
+.chatSidebar {
+  display: grid;
+  gap: 14px;
+}
+
+.chatList {
+  display: grid;
+  gap: 10px;
+}
+
+.threadRow,
+.chatRow {
+  width: 100%;
+  border-radius: 20px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.threadRow.isActive {
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.chatThread {
+  display: grid;
+}
+
+.groupPerson {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--text);
+}
+
+.chatMessages {
+  display: grid;
+  gap: 10px;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.messageBubble {
+  padding: 12px 14px;
+  border-radius: 18px;
+}
+
+.chatComposer {
+  display: flex;
+  gap: 10px;
+}
+
+.privateAppsPanel,
+.privateAppDetailPage {
+  display: grid;
+  gap: 16px;
+}
+
+.privateAppsColumns {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(220px, 260px) minmax(220px, 260px) minmax(0, 1fr);
+}
+
+.privateColumn {
+  display: grid;
+  gap: 12px;
+}
+
+.privateGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.privateCard,
+.inviteRow {
+  border-radius: 22px;
+  padding: 14px;
+  text-align: left;
+}
+
+.privateCard {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.privateDetail {
+  display: grid;
+  gap: 12px;
+}
+
+.privateDetail > div {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px;
+}
+
+.workspaceTab,
+.plannerSheetChip,
+.plannerQuestionChip,
+.plannerMiniAction,
+.plannerSheetClose {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.workspaceTab {
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 900;
+}
+
+.gameGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  justify-items: stretch;
+  max-width: 1280px;
+  margin: 18px auto 0;
+}
+
+.gameButton {
+  appearance: none;
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.gameCard {
+  height: 156px;
+  width: 100%;
+  border: 8px solid #1b102f;
+  border-radius: 12px;
+  transform: skewX(-4deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.28), rgba(72, 216, 255, 0.2));
+}
+
+.gameTitle {
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: 1000;
+  letter-spacing: 0.04em;
+  text-shadow: 0 6px 0 rgba(11, 0, 31, 0.72);
+}
+
+.gameSubtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.navIcon,
+.tinyIcon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tooltip {
+  left: 52px;
+  background: rgba(18, 22, 34, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+:root[data-forge-theme='light'] .tooltip {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+@media (max-width: 1180px) {
+  .workspaceLauncherGrid,
+  .gameGrid,
+  .privateGrid,
+  .communityGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .privateAppsColumns,
+  .chatLayout,
+  .plannerTwoColumn,
+  .profileLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  body {
+    overflow: auto;
+  }
+
+  .forgeSidebar {
+    width: 72px;
+  }
+
+  .forgeMain {
+    padding: 12px;
+  }
+
+  .workspaceShell {
+    flex-direction: column;
+  }
+
+  .workspaceSidebar {
+    width: 100%;
+    grid-auto-flow: column;
+    justify-content: start;
+    overflow-x: auto;
+  }
+
+  .workspaceLauncherGrid,
+  .gameGrid,
+  .communityGrid,
+  .privateGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .chatLayout,
+  .plannerTwoColumn,
+  .statsGrid.threeUp {
+    grid-template-columns: 1fr;
+  }
+}
+
+body {
+  background:
+    radial-gradient(circle at 14% 82%, rgba(91, 148, 255, 0.16), transparent 22%),
+    radial-gradient(circle at 88% 20%, rgba(255, 59, 186, 0.12), transparent 22%),
+    linear-gradient(135deg, #0a0d17 0%, #090b13 48%, #0f1320 100%);
+}
+
+:root[data-forge-theme='light'] body {
+  background:
+    radial-gradient(circle at 16% 82%, rgba(109, 40, 217, 0.08), transparent 24%),
+    radial-gradient(circle at 86% 18%, rgba(16, 159, 197, 0.08), transparent 24%),
+    linear-gradient(135deg, #f5f7ff 0%, #eef2ff 50%, #ffffff 100%);
+}
+
+.page {
+  padding: 18px 18px 28px;
+}
+
+.hubLayout {
+  grid-template-columns: minmax(300px, 330px) minmax(0, 1fr);
+  gap: 16px;
+}
+
+.hubSidebar {
+  border-radius: 28px;
+  padding: 16px;
+  background: rgba(16, 19, 30, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(18px);
+}
+
+.sidebarLabel {
+  color: rgba(255, 255, 255, 0.56);
+  letter-spacing: 0.18em;
+}
+
+.sidebarNavButton {
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sidebarNavButton.isActive {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+  border-color: rgba(124, 58, 237, 0.28);
+}
+
+.sidebarNavButton:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: white;
+}
+
+.deckUploadCard,
+.deckBubble,
+.selectedDeckBanner {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.deckUploadCard {
+  border-radius: 22px;
+}
+
+.deckBubble {
+  border-radius: 20px;
+}
+
+.deckBubble.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+}
+
+.deckBubbleMark {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff1a0;
+}
+
+.workspaceTabs {
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.workspaceTab {
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.workspaceTab.isActive {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+  border-color: rgba(124, 58, 237, 0.28);
+}
+
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel {
+  border-radius: 30px;
+  padding: 18px 18px 20px;
+  background: rgba(14, 16, 24, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.workspaceHero {
+  gap: 10px;
+}
+
+.workspaceEyebrow {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #9ca3af;
+}
+
+.workspaceHero h1 {
+  font-size: clamp(56px, 7vw, 108px);
+  line-height: 0.92;
+  font-weight: 1000;
+  letter-spacing: 0.03em;
+  text-shadow: 0 10px 0 rgba(11, 0, 31, 0.72);
+}
+
+.workspaceHero h2 {
+  font-size: 15px;
+  max-width: 760px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid,
+.gameGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  justify-items: stretch;
+  max-width: 1280px;
+  margin: 18px auto 0;
+}
+
+.workspaceLaunchButton,
+.plannerLaunchButton,
+.gameButton {
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  justify-content: flex-start;
+  align-items: stretch;
+  text-align: left;
+  text-decoration: none;
+}
+
+.workspaceLaunchButton,
+.plannerLaunchButton {
+  min-height: 268px;
+}
+
+.workspaceLaunchLink,
+.plannerLaunchLink {
+  color: inherit;
+}
+
+.cardShadow {
+  order: 1;
+  width: 100%;
+  height: auto;
+  transform: rotate(-2deg);
+  filter: drop-shadow(12px 18px 0 rgba(37, 0, 79, 0.55));
+}
+
+.workspaceLaunchCard,
+.plannerLaunchCard,
+.gameCard {
+  height: 156px;
+  width: 100%;
+  border: 8px solid #1b102f;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+}
+
+.workspaceLaunchButton .gameTitle,
+.plannerLaunchButton .gameTitle,
+.gameTitle {
+  order: 2;
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: 1000;
+  letter-spacing: 0.04em;
+  color: white;
+  text-shadow: 0 6px 0 rgba(11, 0, 31, 0.72);
+}
+
+.workspaceLaunchButton .gameSubtitle,
+.plannerLaunchButton .gameSubtitle,
+.gameSubtitle {
+  order: 3;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.plannerWorkspace {
+  display: grid;
+  gap: 18px;
+}
+
+.plannerWorkspaceIntro {
+  gap: 10px;
+  padding: 10px 0 6px;
+}
+
+.plannerWorkspaceIntro h3 {
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 0.96;
+  font-weight: 1000;
+  letter-spacing: 0.03em;
+  text-shadow: 0 10px 0 rgba(11, 0, 31, 0.72);
+}
+
+.plannerWorkspaceIntro p:last-child {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.plannerWorkspaceTab {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.plannerWorkspaceTab.isActive {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+  border-color: rgba(124, 58, 237, 0.28);
+}
+
+.plannerLaunchCard .svgIcon {
+  width: 104px;
+  height: 104px;
+}
+
+.workspaceSelectedDeckBanner,
+.selectedDeckBanner {
+  border-radius: 24px;
+  background: rgba(124, 58, 237, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.workspaceSidebar {
+  border-radius: 28px;
+  background: rgba(16, 19, 30, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
+}
+
+.workspaceSidebarLabel {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.forgeSidebar {
+  width: 84px;
+  padding: 14px 0 16px;
+  background: rgba(14, 17, 27, 0.9);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.forgeRailButton {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.forgeRailButton:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.forgeRailButton.active {
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.inner-nav-item {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.inner-nav-item.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+  border-color: rgba(124, 58, 237, 0.28);
+}
+
+.workspaceCardHeader h3,
+.workspaceHero h1,
+.plannerWorkspaceIntro h3,
+.profileTopRow p {
+  text-shadow: none;
+}
+
+/* Figma shell override: keep this last so it wins over earlier Forge-era theme blocks. */
+:root {
+  --figma-bg: #0d1117;
+  --figma-surface: #161b22;
+  --figma-surface-2: #21262d;
+  --figma-surface-3: #2d333b;
+  --figma-border: #30363d;
+  --figma-text: #e6edf3;
+  --figma-text-muted: #8b949e;
+  --figma-text-subtle: #484f58;
+  --figma-violet: #7c3aed;
+  --figma-cyan: #06b6d4;
+  --figma-emerald: #10b981;
+  --figma-amber: #f59e0b;
+  --figma-rose: #f43f5e;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(circle at 14% 82%, rgba(91, 148, 255, 0.16), transparent 22%),
+    radial-gradient(circle at 88% 20%, rgba(255, 59, 186, 0.12), transparent 22%),
+    linear-gradient(135deg, #0a0d17 0%, #090b13 48%, #0f1320 100%);
+  color: var(--figma-text);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+:root[data-forge-theme='light'] body {
+  background:
+    radial-gradient(circle at 16% 82%, rgba(109, 40, 217, 0.08), transparent 24%),
+    radial-gradient(circle at 86% 18%, rgba(16, 159, 197, 0.08), transparent 24%),
+    linear-gradient(135deg, #f5f7ff 0%, #eef2ff 50%, #ffffff 100%);
+}
+
+.page {
+  padding: 18px 18px 28px;
+}
+
+.forgeShell {
+  background: transparent;
+}
+
+.forgeSidebar {
+  width: 64px;
+  padding: 12px 0 14px;
+  gap: 12px;
+  background: rgba(14, 17, 27, 0.76);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.forgeBrandMark {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  box-shadow: 0 12px 28px rgba(124, 58, 237, 0.28);
+}
+
+.forgeRailGroup {
+  gap: 10px;
+}
+
+.forgeRailButton {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.forgeRailButton.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.forgeMain {
+  padding: 18px;
+}
+
+.workspaceShell {
+  gap: 16px;
+}
+
+.workspaceSidebar {
+  width: 228px;
+  padding: 18px 14px;
+  border-radius: 28px;
+  background: rgba(16, 19, 30, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.26);
+}
+
+.workspaceSidebarLabel {
+  color: rgba(255, 255, 255, 0.56);
+  letter-spacing: 0.18em;
+}
+
+.workspaceStage {
+  padding: 8px 6px 8px 2px;
+}
+
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel {
+  min-height: 100%;
+  padding: 18px 18px 20px;
+  border-radius: 30px;
+  background: rgba(14, 16, 24, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.workspaceHero {
+  gap: 8px;
+  padding: 6px 12px 10px;
+}
+
+.workspaceHero.compact {
+  padding-top: 12px;
+}
+
+.workspaceEyebrow {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.workspaceHero h1 {
+  margin: 0;
+  font-size: clamp(56px, 7vw, 108px);
+  line-height: 0.92;
+  font-weight: 1000;
+  letter-spacing: 0.03em;
+  text-shadow: 0 10px 0 rgba(11, 0, 31, 0.72);
+}
+
+.workspaceHero h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid,
+.gameGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+  justify-items: stretch;
+  max-width: 1280px;
+  margin: 18px auto 0;
+}
+
+.workspaceLaunchButton,
+.plannerLaunchButton,
+.gameButton {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  color: var(--figma-text);
+  text-decoration: none;
+  justify-content: flex-start;
+  align-items: stretch;
+  text-align: left;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.workspaceLaunchButton,
+.plannerLaunchButton {
+  min-height: 268px;
+}
+
+.workspaceLaunchButton:hover,
+.plannerLaunchButton:hover,
+.gameButton:hover {
+  transform: translateY(-2px);
+}
+
+.cardShadow {
+  order: 1;
+  width: 100%;
+  height: auto;
+  transform: rotate(-2deg);
+  filter: drop-shadow(12px 18px 0 rgba(37, 0, 79, 0.55));
+  pointer-events: none;
+}
+
+.workspaceLaunchCard,
+.plannerLaunchCard,
+.gameCard {
+  width: 100%;
+  height: 156px;
+  border: 8px solid #1b102f;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.workspaceLaunchButton .gameTitle,
+.plannerLaunchButton .gameTitle,
+.gameTitle {
+  order: 2;
+  margin-top: 16px;
+  font-size: 22px;
+  font-weight: 1000;
+  letter-spacing: 0.04em;
+  color: white;
+  text-shadow: 0 6px 0 rgba(11, 0, 31, 0.72);
+}
+
+.workspaceLaunchButton .gameSubtitle,
+.plannerLaunchButton .gameSubtitle,
+.gameSubtitle {
+  order: 3;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.selectedDeckBanner,
+.workspaceSelectedDeckBanner {
+  max-width: 760px;
+  margin: 18px auto 0;
+  padding: 14px 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(124, 58, 237, 0.16);
+}
+
+.workspaceCardHeader h3,
+.workspaceHero h1,
+.plannerWorkspaceIntro h3,
+.profileTopRow p {
+  text-shadow: none;
+}
+
+.panelCard,
+.authCard {
+  background: rgba(16, 19, 30, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.24);
+}
+
+.panelCard {
+  width: min(1160px, 100%);
+  border-radius: 30px;
+}
+
+.profileLayout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.profileFields > div,
+.statTile,
+.inviteRow,
+.threadRow,
+.chatRow,
+.messageBubble,
+.plannerTaskCard,
+.plannerNoteCard,
+.communityCard,
+.privateCard,
+.emptyMini,
+.emptyState {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.statsGrid.threeUp {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.privateAppsColumns {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) minmax(220px, 260px) minmax(0, 1fr);
+  gap: 14px;
+}
+
+.privateGrid,
+.communityGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.inner-nav-item {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.inner-nav-item.active,
+.workspaceTab.isActive,
+.miniToggle.on {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+  border-color: rgba(124, 58, 237, 0.28);
+}
+
+.workspaceTab {
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.workspaceTab.isActive {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+}
+
+.plannerWorkspaceIntro h3 {
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 0.96;
+  font-weight: 1000;
+  letter-spacing: 0.03em;
+  text-shadow: 0 10px 0 rgba(11, 0, 31, 0.72);
+}
+
+.plannerWorkspaceIntro p:last-child {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.plannerLaunchCard .svgIcon {
+  width: 104px;
+  height: 104px;
+}
+
+.panelButton {
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--figma-violet), var(--figma-cyan));
+  color: white;
+  box-shadow: 0 10px 0 rgba(31, 0, 70, 0.5);
+}
+
+.panelButton.ghost,
+.authSwitch {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--figma-text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+.authPill {
+  background: rgba(124, 58, 237, 0.16);
+  color: #fff1a0;
+}
+
+.authHelper,
+.authDivider,
+.workspaceSubcopy,
+.selectedDeckLabel,
+.chatSectionLabel {
+  color: var(--figma-text-muted);
+}
+
+.deckUploadCard,
+.ratingCard,
+.chatMessageCard,
+.groupComposer,
+.plannerSection,
+.plannerStudyCard,
+.plannerAssignmentsCard,
+.plannerTimerDial,
+.plannerNotesCard {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+}
+
+.deckBubble {
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.deckBubble.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: #eadcff;
+}
+
+.deckBubbleMark {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff1a0;
+}
+
+.svgIcon {
+  width: 105px;
+  height: 105px;
+  transform: skewX(4deg);
+  filter: drop-shadow(0 7px 0 rgba(0, 0, 0, 0.25));
+}
+
+@media (max-width: 1180px) {
+  .workspaceLauncherGrid,
+  .gameGrid,
+  .privateGrid,
+  .communityGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .privateAppsColumns,
+  .profileLayout,
+  .statsGrid.threeUp {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  body {
+    overflow: auto;
+  }
+
+  .forgeSidebar {
+    width: 72px;
+  }
+
+  .forgeMain {
+    padding: 12px;
+  }
+
+  .workspaceShell {
+    flex-direction: column;
+  }
+
+  .workspaceSidebar {
+    width: 100%;
+    grid-auto-flow: column;
+    justify-content: start;
+    overflow-x: auto;
+  }
+
+  .workspaceLauncherGrid,
+  .plannerLauncherGrid,
+  .gameGrid,
+  .communityGrid,
+  .privateGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Final Figma shell overrides: keep this at the very end so it wins over older Forge-era blocks. */
+.forgeSidebar {
+  width: 64px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.forgeRailButton {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  width: 44px;
+  height: 44px;
+}
+
+.forgeRailButton .tooltip {
+  position: absolute;
+  left: 56px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.forgeRailButton:hover .tooltip,
+.forgeRailButton:focus-visible .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton,
+.ownerQuickButton {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.workspaceSidebar,
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel,
+.panelCard,
+.authCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.workspaceSidebar {
+  border-right: 1px solid var(--border);
+}
+
+.workspaceSidebarLabel {
+  color: var(--text-muted);
+}
+
+.workspaceHero h1,
+.plannerWorkspaceIntro h3,
+.profileTopRow h3,
+.panelCard h3 {
+  color: var(--text);
+}
+
+.workspaceHero h2,
+.plannerWorkspaceIntro p:last-child,
+.profileTopRow p,
+.privateAppDetailHeader p,
+.chatHeader p,
+.plannerSectionHeader p,
+.workspaceSubcopy,
+.selectedDeckLabel,
+.chatSectionLabel,
+.authHelper,
+.authDivider {
+  color: var(--text-muted);
+}
+
+.workspaceEyebrow {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+.workspaceSelectedDeckBanner,
+.selectedDeckBanner {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.statsGrid.threeUp {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profileLayout {
+  gap: 18px;
+}
+
+.profileFields > div,
+.statTile,
+.inviteRow,
+.threadRow,
+.chatRow,
+.messageBubble,
+.plannerTaskCard,
+.plannerNoteCard,
+.plannerSheetChip,
+.plannerQuestionChip,
+.communityCard,
+.privateCard,
+.emptyMini,
+.emptyState,
+.ratingCard,
+.deckUploadCard,
+.chatMessageCard,
+.groupComposer {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.profileFields > div,
+.statTile,
+.inviteRow,
+.threadRow,
+.chatRow,
+.messageBubble,
+.plannerTaskCard,
+.plannerNoteCard,
+.communityCard,
+.privateCard,
+.emptyMini,
+.emptyState,
+.ratingCard,
+.deckUploadCard,
+.chatMessageCard,
+.groupComposer {
+  box-shadow: none;
+}
+
+.profileFields span,
+.statTile span,
+.inviteRow span,
+.chatRow span,
+.threadRow span,
+.emptyMini,
+.emptyState span,
+.ratingCard span,
+.groupComposer h4,
+.chatMessageCard p,
+.chatSectionLabel {
+  color: var(--text-muted);
+}
+
+.profileFields strong,
+.statTile strong,
+.inviteRow strong,
+.chatRow strong,
+.threadRow strong,
+.emptyState strong,
+.chatMessageCard h4 {
+  color: var(--text);
+}
+
+.maskedPassword {
+  color: var(--text-muted);
+}
+
+.privateCard {
+  border-radius: 18px;
+}
+
+.privateCard.isActive,
+.threadRow.isActive,
+.inner-nav-item.active,
+.workspaceTab.isActive,
+.miniToggle.on,
+.deckBubble.active {
+  background: var(--violet-dim);
+  color: var(--violet-light);
+  border-color: color-mix(in srgb, var(--violet) 36%, var(--border));
+}
+
+.inner-nav-item {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid transparent;
+}
+
+.inner-nav-item:hover {
+  background: var(--surface-2);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.workspaceTab {
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.workspaceTab.isActive {
+  color: var(--violet-light);
+}
+
+.panelButton,
+.authSwitch {
+  color: var(--text);
+}
+
+.panelButton.ghost {
+  background: var(--surface-2);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid,
+.gameGrid {
+  max-width: 1280px;
+  gap: 18px;
+  align-items: start;
+}
+
+.launchCardButton {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  text-decoration: none;
+}
+
+.launchCardFrame {
+  aspect-ratio: 1.68 / 1;
+  min-height: 180px;
+  border-radius: 18px;
+  border: 6px solid rgba(30, 18, 50, 0.96);
+  box-shadow: 0 18px 0 rgba(37, 0, 79, 0.45);
+  overflow: hidden;
+  background-position: center;
+  background-size: cover;
+  padding: 18px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.launchCardIcon {
+  width: 92px;
+  height: 92px;
+  display: grid;
+  place-items: center;
+}
+
+.launchCardCopy {
+  display: grid;
+  gap: 4px;
+  padding-left: 2px;
+}
+
+.launchCardTitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.launchCardSubtitle {
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.launchCardCta {
+  align-self: flex-start;
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.workspaceLaunchButton,
+.plannerLaunchButton,
+.gameButton,
+.workspaceLaunchLink,
+.plannerLaunchLink {
+  color: var(--text);
+}
+
+.workspaceLaunchButton:hover .launchCardFrame,
+.plannerLaunchButton:hover .launchCardFrame,
+.launchCardButton:hover .launchCardFrame {
+  border-color: color-mix(in srgb, var(--violet) 34%, var(--border));
+  transform: translateY(-2px);
+}
+
+:root[data-forge-theme='light'] .forgeSidebar {
+  background: rgba(255, 255, 255, 0.88);
+  border-right-color: rgba(20, 24, 39, 0.12);
+}
+
+:root[data-forge-theme='light'] .workspaceSidebar,
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel,
+:root[data-forge-theme='light'] .panelCard,
+:root[data-forge-theme='light'] .authCard {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+:root[data-forge-theme='light'] .launchCardFrame {
+  border-color: rgba(20, 24, 39, 0.48);
+  box-shadow: 0 18px 0 rgba(84, 92, 122, 0.18);
+}
+
+:root[data-forge-theme='light'] .launchCardTitle {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .launchCardSubtitle,
+:root[data-forge-theme='light'] .workspaceHero h2,
+:root[data-forge-theme='light'] .plannerWorkspaceIntro p:last-child,
+:root[data-forge-theme='light'] .profileTopRow p,
+:root[data-forge-theme='light'] .privateAppDetailHeader p,
+:root[data-forge-theme='light'] .chatHeader p,
+:root[data-forge-theme='light'] .plannerSectionHeader p,
+:root[data-forge-theme='light'] .workspaceSubcopy,
+:root[data-forge-theme='light'] .selectedDeckLabel,
+:root[data-forge-theme='light'] .chatSectionLabel,
+:root[data-forge-theme='light'] .authHelper,
+:root[data-forge-theme='light'] .authDivider {
+  color: rgba(20, 24, 39, 0.66);
+}
+
+:root[data-forge-theme='light'] .launchCardCta,
+:root[data-forge-theme='light'] .workspaceEyebrow {
+  background: transparent;
+  border-color: transparent;
+  color: rgba(20, 24, 39, 0.58);
+}
+
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel,
+:root[data-forge-theme='light'] .plannerWorkspace {
+  padding-bottom: 120px;
+}
+
+:root[data-forge-theme='light'] .profileFields > div,
+:root[data-forge-theme='light'] .statTile,
+:root[data-forge-theme='light'] .inviteRow,
+:root[data-forge-theme='light'] .threadRow,
+:root[data-forge-theme='light'] .chatRow,
+:root[data-forge-theme='light'] .messageBubble,
+:root[data-forge-theme='light'] .plannerTaskCard,
+:root[data-forge-theme='light'] .plannerNoteCard,
+:root[data-forge-theme='light'] .plannerSheetChip,
+:root[data-forge-theme='light'] .plannerQuestionChip,
+:root[data-forge-theme='light'] .communityCard,
+:root[data-forge-theme='light'] .privateCard,
+:root[data-forge-theme='light'] .emptyMini,
+:root[data-forge-theme='light'] .emptyState,
+:root[data-forge-theme='light'] .ratingCard,
+:root[data-forge-theme='light'] .deckUploadCard,
+:root[data-forge-theme='light'] .chatMessageCard,
+:root[data-forge-theme='light'] .groupComposer {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+:root[data-forge-theme='light'] .profileFields span,
+:root[data-forge-theme='light'] .statTile span,
+:root[data-forge-theme='light'] .inviteRow span,
+:root[data-forge-theme='light'] .chatRow span,
+:root[data-forge-theme='light'] .threadRow span,
+:root[data-forge-theme='light'] .emptyMini,
+:root[data-forge-theme='light'] .emptyState span,
+:root[data-forge-theme='light'] .ratingCard span,
+:root[data-forge-theme='light'] .groupComposer h4,
+:root[data-forge-theme='light'] .chatMessageCard p,
+:root[data-forge-theme='light'] .chatSectionLabel {
+  color: rgba(20, 24, 39, 0.62);
+}
+
+:root[data-forge-theme='light'] .profileFields strong,
+:root[data-forge-theme='light'] .statTile strong,
+:root[data-forge-theme='light'] .inviteRow strong,
+:root[data-forge-theme='light'] .chatRow strong,
+:root[data-forge-theme='light'] .threadRow strong,
+:root[data-forge-theme='light'] .emptyState strong,
+:root[data-forge-theme='light'] .chatMessageCard h4 {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .inner-nav-item {
+  color: rgba(20, 24, 39, 0.7);
+}
+
+:root[data-forge-theme='light'] .inner-nav-item:hover {
+  background: rgba(20, 24, 39, 0.04);
+  border-color: rgba(20, 24, 39, 0.08);
+}
+
+:root[data-forge-theme='light'] .workspaceTab,
+:root[data-forge-theme='light'] .panelButton.ghost,
+:root[data-forge-theme='light'] .authSwitch {
+  background: rgba(20, 24, 39, 0.04);
+  border-color: rgba(20, 24, 39, 0.08);
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .forgeRailButton:hover .tooltip,
+:root[data-forge-theme='light'] .forgeRailButton:focus-visible .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Figma shell polishing pass: keep this last so the reference layout wins over older Forge styles. */
+.forgeSidebar {
+  width: 64px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.forgeRailButton {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+}
+
+.forgeRailButton .tooltip {
+  position: absolute;
+  left: 56px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.forgeRailButton:hover .tooltip,
+.forgeRailButton:focus-visible .tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton,
+.ownerQuickButton {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.workspaceShell {
+  align-items: stretch;
+}
+
+.workspaceSidebar {
+  width: 228px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.workspaceSidebarLabel {
+  color: var(--text-muted);
+}
+
+.workspaceStage {
+  overflow-y: auto;
+}
+
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel,
+.panelCard,
+.authCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.workspaceHero {
+  gap: 8px;
+}
+
+.workspaceEyebrow {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+.workspaceHero h1,
+.plannerWorkspaceIntro h3,
+.profileTopRow h3,
+.panelCard h3 {
+  color: var(--text);
+  text-shadow: none;
+}
+
+.workspaceHero h2,
+.plannerWorkspaceIntro p:last-child,
+.profileTopRow p,
+.privateAppDetailHeader p,
+.chatHeader p,
+.plannerSectionHeader p,
+.workspaceSubcopy,
+.selectedDeckLabel,
+.chatSectionLabel,
+.authHelper,
+.authDivider {
+  color: var(--text-muted);
+}
+
+.selectedDeckBanner,
+.workspaceSelectedDeckBanner {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid,
+.gameGrid {
+  width: min(100%, 1280px);
+  max-width: 1280px;
+  margin: 18px auto 0;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.launchCardButton {
+  display: block;
+  text-decoration: none;
+  color: var(--text);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.launchCardFrame {
+  position: relative;
+  min-height: 258px;
+  aspect-ratio: 1.48 / 1;
+  padding: 20px 18px 18px;
+  border-radius: 14px;
+  border: 6px solid rgba(27, 16, 47, 0.98);
+  box-shadow: 0 14px 0 rgba(43, 0, 82, 0.42);
+  overflow: hidden;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+.launchCardButton:hover .launchCardFrame,
+.launchCardButton:focus-visible .launchCardFrame {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--violet) 34%, var(--border));
+}
+
+.launchCardIcon {
+  width: 92px;
+  height: 92px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.launchCardCopy {
+  display: grid;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.launchCardTitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.launchCardSubtitle {
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.launchCardCta {
+  align-self: flex-start;
+  margin-top: 6px;
+  padding: 8px 15px;
+  border-radius: 11px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel {
+  padding-bottom: 124px;
+}
+
+:root[data-forge-theme='light'] .forgeSidebar {
+  background: rgba(255, 255, 255, 0.92);
+  border-right-color: rgba(20, 24, 39, 0.14);
+}
+
+:root[data-forge-theme='light'] .workspaceSidebar,
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel,
+:root[data-forge-theme='light'] .panelCard,
+:root[data-forge-theme='light'] .authCard {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(20, 24, 39, 0.1);
+}
+
+:root[data-forge-theme='light'] .launchCardFrame {
+  border-color: rgba(20, 24, 39, 0.42);
+  box-shadow: 0 14px 0 rgba(84, 92, 122, 0.16);
+}
+
+:root[data-forge-theme='light'] .launchCardTitle,
+:root[data-forge-theme='light'] .panelCard h3,
+:root[data-forge-theme='light'] .profileTopRow h3,
+:root[data-forge-theme='light'] .workspaceHero h1,
+:root[data-forge-theme='light'] .plannerWorkspaceIntro h3 {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .launchCardSubtitle,
+:root[data-forge-theme='light'] .workspaceHero h2,
+:root[data-forge-theme='light'] .plannerWorkspaceIntro p:last-child,
+:root[data-forge-theme='light'] .profileTopRow p,
+:root[data-forge-theme='light'] .privateAppDetailHeader p,
+:root[data-forge-theme='light'] .chatHeader p,
+:root[data-forge-theme='light'] .plannerSectionHeader p,
+:root[data-forge-theme='light'] .workspaceSubcopy,
+:root[data-forge-theme='light'] .selectedDeckLabel,
+:root[data-forge-theme='light'] .chatSectionLabel,
+:root[data-forge-theme='light'] .authHelper,
+:root[data-forge-theme='light'] .authDivider,
+:root[data-forge-theme='light'] .launchCardCta {
+  color: rgba(20, 24, 39, 0.66);
+}
+
+:root[data-forge-theme='light'] .launchCardCta {
+  background: rgba(20, 24, 39, 0.04);
+  border-color: rgba(20, 24, 39, 0.12);
+}
+
+:root[data-forge-theme='light'] .workspaceEyebrow {
+  background: rgba(20, 24, 39, 0.04);
+  border-color: rgba(20, 24, 39, 0.08);
+  color: rgba(20, 24, 39, 0.58);
+}
+
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel,
+:root[data-forge-theme='light'] .plannerWorkspace {
+  padding-bottom: 132px;
+}
+
+/* Final Figma shell override */
+:root {
+  --shell-border: rgba(255, 255, 255, 0.15);
+  --shell-border-strong: rgba(255, 255, 255, 0.22);
+  --shell-panel: rgba(16, 19, 30, 0.9);
+  --shell-panel-soft: rgba(20, 24, 38, 0.92);
+  --shell-card: rgba(23, 27, 41, 0.94);
+}
+
+:root[data-forge-theme='light'] {
+  --shell-border: rgba(20, 24, 39, 0.12);
+  --shell-border-strong: rgba(20, 24, 39, 0.18);
+  --shell-panel: rgba(255, 255, 255, 0.92);
+  --shell-panel-soft: rgba(248, 250, 255, 0.92);
+  --shell-card: rgba(255, 255, 255, 0.96);
+}
+
+.forgeShell {
+  background: transparent;
+}
+
+.forgeMain {
+  padding: 16px 18px 18px 16px;
+}
+
+.pagePanel {
+  min-height: 100%;
+  overflow: auto;
+}
+
+.forgeSidebar {
+  width: 82px;
+  gap: 10px;
+  background: rgba(10, 13, 22, 0.82);
+  border-right: 1px solid var(--shell-border);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
+}
+
+:root[data-forge-theme='light'] .forgeSidebar {
+  background: rgba(255, 255, 255, 0.9);
+  border-right-color: var(--shell-border);
+  box-shadow: inset -1px 0 0 rgba(20, 24, 39, 0.03);
+}
+
+.forgeBrandMark {
+  width: 40px;
+  height: 40px;
+  border: 1px solid transparent;
+  box-shadow: 0 10px 28px rgba(124, 58, 237, 0.26);
+}
+
+.forgeBrandMark.active {
+  outline: 1px solid var(--shell-border-strong);
+  box-shadow: 0 12px 30px rgba(124, 58, 237, 0.28);
+}
+
+.forgeOwnerQuick {
+  gap: 6px;
+}
+
+.ownerQuickButton {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  padding: 4px 2px;
+  gap: 0;
+  border-radius: 12px;
+  border: 1px solid var(--shell-border);
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.ownerQuickButton span {
+  font-size: 18px;
+}
+
+.ownerQuickButton small {
+  font-size: 10px;
+  line-height: 1;
+  color: var(--text-muted);
+  margin-top: -1px;
+}
+
+.forgeSidebarDivider {
+  width: 34px;
+  background: var(--shell-border);
+}
+
+.forgeRailGroup {
+  gap: 8px;
+}
+
+.forgeRailButton {
+  width: 42px;
+  height: 42px;
+  border: 1px solid transparent;
+  color: var(--text);
+}
+
+.forgeRailButton.active {
+  border-color: var(--shell-border-strong);
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--shell-border);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+:root[data-forge-theme='light'] .forgeThemeToggle,
+:root[data-forge-theme='light'] .forgeAvatarButton {
+  background: rgba(20, 24, 39, 0.03);
+}
+
+.workspaceShell {
+  gap: 14px;
+}
+
+.workspaceSidebar {
+  width: 228px;
+  padding: 18px 16px;
+  border-radius: 26px;
+  background: var(--shell-panel);
+  border: 1px solid var(--shell-border);
+  box-shadow: none;
+}
+
+.inner-nav-item {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.inner-nav-item.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: var(--text);
+  border-color: var(--shell-border-strong);
+}
+
+.forgeHomePanel,
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel,
+.panelCard,
+.authCard {
+  background: var(--shell-panel) !important;
+  border-color: var(--shell-border) !important;
+}
+
+.workspaceHero,
+.forgeHomeHero,
+.profilePageHeader {
+  text-align: center;
+}
+
+.workspaceEyebrow,
+.forgeHomeEyebrow {
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--shell-border);
+}
+
+:root[data-forge-theme='light'] .workspaceEyebrow,
+:root[data-forge-theme='light'] .forgeHomeEyebrow {
+  background: rgba(20, 24, 39, 0.04);
+}
+
+.workspaceHero h1,
+.forgeHomeHero h1,
+.profilePageHeader h3 {
+  color: var(--text);
+  text-shadow: none;
+}
+
+.workspaceHero h2,
+.forgeHomeDescription,
+.profilePageHeader p {
+  color: var(--text-muted);
+}
+
+.forgeHomePage {
+  display: grid;
+  gap: 20px;
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: 14px 8px 136px;
+}
+
+.forgeHomeHero {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.forgeHomeEyebrow {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.forgeHomeDescription {
+  max-width: 960px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 700;
+}
+
+.forgeHomeUpdates {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--shell-border);
+  background: rgba(124, 58, 237, 0.16);
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  text-align: center;
+}
+
+.forgeHomeUpdates span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-weight: 900;
+  color: var(--text-muted);
+}
+
+.forgeHomeUpdates strong {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.forgeHomeCardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  padding-bottom: 6px;
+}
+
+.forgeHomeCard {
+  min-height: 170px;
+  border-radius: 22px;
+  border: 1px solid var(--shell-border);
+  background: var(--shell-panel-soft);
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 10px;
+  padding: 18px;
+  text-align: left;
+  color: var(--text);
+}
+
+.forgeHomeCardIcon {
+  width: 28px;
+  height: 28px;
+  color: var(--text);
+}
+
+.forgeHomeCard strong {
+  font-size: 20px;
+  line-height: 1.1;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.forgeHomeCard p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.45;
+  font-size: 14px;
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid {
+  width: min(100%, 1240px);
+  max-width: 1240px;
+  margin: 18px auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.launchCardButton {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.launchCardShell {
+  display: grid;
+  gap: 10px;
+}
+
+.launchCardFrame {
+  min-height: 205px;
+  aspect-ratio: 1.55 / 1;
+  padding: 18px;
+  border-radius: 14px;
+  border: 6px solid rgba(32, 16, 56, 0.98);
+  box-shadow: 0 14px 0 rgba(43, 0, 82, 0.34);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.launchCardButton:hover .launchCardFrame,
+.launchCardButton:focus-visible .launchCardFrame {
+  transform: translateY(-1px);
+}
+
+.launchCardIcon {
+  width: 82px;
+  height: 82px;
+}
+
+.launchCardCopy {
+  display: grid;
+  gap: 4px;
+}
+
+.launchCardTitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.launchCardSubtitle {
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.launchCardCta {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--shell-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.workspaceSelectedDeckBanner,
+.selectedDeckBanner {
+  width: min(760px, 100%);
+  margin: 18px auto 0;
+  background: var(--shell-panel-soft);
+  border-color: var(--shell-border);
+  color: var(--text);
+}
+
+.selectedDeckBanner span {
+  color: var(--text-muted);
+}
+
+.selectedDeckBanner small,
+.selectedDeckBanner strong {
+  color: var(--text);
+}
+
+.profilePage {
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  padding: 14px 8px 136px;
+  display: grid;
+  gap: 18px;
+}
+
+.profilePageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.profilePageHeader h3 {
+  margin: 0;
+  font-size: clamp(36px, 4vw, 58px);
+  line-height: 0.92;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.profilePageHeader p {
+  margin: 10px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.profileSummaryCard {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.profileSummaryAvatar {
+  width: 92px;
+  height: 92px;
+}
+
+.profileSummaryCopy {
+  display: grid;
+  gap: 4px;
+}
+
+.profileSummaryCopy strong {
+  font-size: 26px;
+  line-height: 1.05;
+  color: var(--text);
+}
+
+.profileSummaryCopy span {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.profileBadge {
+  width: fit-content;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(32, 185, 130, 0.16);
+  color: #1db286;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.profileDetailsCard {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.profileDetailField {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--shell-border);
+}
+
+.profileDetailField span {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.profileDetailField strong {
+  font-size: 18px;
+  color: var(--text);
+}
+
+.profileStatsCard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.profileStatTile {
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  padding: 14px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--shell-border);
+  text-align: center;
+}
+
+.profileStatTile span {
+  font-size: 24px;
+}
+
+.profileStatTile strong {
+  font-size: 32px;
+  line-height: 1;
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.profileStatTile small {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.profileLogoutCard {
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.profileLogoutButton {
+  margin: 0;
+}
+
+.profileEditCard {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.profileEditCard label {
+  display: grid;
+  gap: 8px;
+}
+
+.profileEditCard span {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profileEditCard input {
+  width: 100%;
+}
+
+.workspaceStage {
+  padding-bottom: 140px;
+}
+
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel,
+.panelCard {
+  border-radius: 30px;
+}
+
+.workspaceHome {
+  padding: 18px 18px 24px;
+}
+
+.workspaceHero.compact {
+  padding-top: 4px;
+}
+
+.emptyState,
+.emptyMini {
+  color: var(--text);
+}
+
+.sidebarNavButton,
+.deckBubble,
+.inner-nav-item,
+.workspaceTab,
+.forgeHomeCard,
+.launchCardButton {
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.sidebarNavButton:hover,
+.inner-nav-item:hover,
+.forgeHomeCard:hover,
+.launchCardButton:hover,
+.workspaceTab:hover,
+.deckBubble:hover {
+  transform: translateY(-1px);
+}
+
+:root[data-forge-theme='light'] .forgeShell,
+:root[data-forge-theme='light'] .forgeMain {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .forgeSidebar,
+:root[data-forge-theme='light'] .workspaceSidebar,
+:root[data-forge-theme='light'] .panelCard,
+:root[data-forge-theme='light'] .authCard,
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel,
+:root[data-forge-theme='light'] .profilePage {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .forgeRailButton,
+:root[data-forge-theme='light'] .forgeThemeToggle,
+:root[data-forge-theme='light'] .forgeAvatarButton,
+:root[data-forge-theme='light'] .sidebarNavButton,
+:root[data-forge-theme='light'] .inner-nav-item,
+:root[data-forge-theme='light'] .deckBubble,
+:root[data-forge-theme='light'] .workspaceTab,
+:root[data-forge-theme='light'] .launchCardButton,
+:root[data-forge-theme='light'] .panelButton.ghost,
+:root[data-forge-theme='light'] .authSwitch {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .forgeOwnerQuick .ownerQuickButton,
+:root[data-forge-theme='light'] .ownerQuickButton {
+  background: rgba(109, 40, 217, 0.12);
+  border-color: rgba(20, 24, 39, 0.12);
+  color: #6d28d9;
+}
+
+:root[data-forge-theme='light'] .launchCardFrame {
+  border-color: rgba(20, 24, 39, 0.36);
+  box-shadow: 0 14px 0 rgba(84, 92, 122, 0.14);
+}
+
+:root[data-forge-theme='light'] .launchCardCta,
+:root[data-forge-theme='light'] .profileSummaryCard,
+:root[data-forge-theme='light'] .profileDetailsCard,
+:root[data-forge-theme='light'] .profileStatsCard,
+:root[data-forge-theme='light'] .profileLogoutCard,
+:root[data-forge-theme='light'] .profileEditCard,
+:root[data-forge-theme='light'] .forgeHomeUpdates,
+:root[data-forge-theme='light'] .forgeHomeCard {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(20, 24, 39, 0.1);
+}
+
+:root[data-forge-theme='light'] .forgeHomeUpdates strong,
+:root[data-forge-theme='light'] .forgeHomeCard strong,
+:root[data-forge-theme='light'] .profileSummaryCopy strong,
+:root[data-forge-theme='light'] .profileDetailField strong,
+:root[data-forge-theme='light'] .profileStatTile strong,
+:root[data-forge-theme='light'] .workspaceHero h1,
+:root[data-forge-theme='light'] .forgeHomeHero h1 {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .forgeHomeDescription,
+:root[data-forge-theme='light'] .forgeHomeCard p,
+:root[data-forge-theme='light'] .profilePageHeader p,
+:root[data-forge-theme='light'] .profileSummaryCopy span,
+:root[data-forge-theme='light'] .profileDetailField span,
+:root[data-forge-theme='light'] .profileStatTile small,
+:root[data-forge-theme='light'] .workspaceHero h2,
+:root[data-forge-theme='light'] .forgeHomeUpdates span,
+:root[data-forge-theme='light'] .launchCardSubtitle,
+:root[data-forge-theme='light'] .selectedDeckBanner span,
+:root[data-forge-theme='light'] .selectedDeckBanner small,
+:root[data-forge-theme='light'] .workspaceEyebrow,
+:root[data-forge-theme='light'] .workspaceSidebarLabel,
+:root[data-forge-theme='light'] .sidebarLabel,
+:root[data-forge-theme='light'] .authHelper,
+:root[data-forge-theme='light'] .authDivider,
+:root[data-forge-theme='light'] .workspaceSubcopy,
+:root[data-forge-theme='light'] .selectedDeckLabel,
+:root[data-forge-theme='light'] .chatSectionLabel,
+:root[data-forge-theme='light'] .privateAppDetailHeader p,
+:root[data-forge-theme='light'] .profilePageHeader p {
+  color: rgba(20, 24, 39, 0.64);
+}
+
+:root[data-forge-theme='light'] .forgeHomePage,
+:root[data-forge-theme='light'] .profilePage,
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel {
+  padding-bottom: 140px;
+}
+
+@media (max-width: 1200px) {
+  .workspaceLauncherGrid,
+  .plannerLauncherGrid,
+  .forgeHomeCardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .forgeShell {
+    flex-direction: column;
+  }
+
+  .forgeSidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    padding: 10px 12px;
+    gap: 12px;
+  }
+
+  .forgeSidebarSpacer {
+    display: none;
+  }
+
+  .forgeRailGroup {
+    grid-auto-flow: column;
+    grid-template-rows: repeat(2, auto);
+  }
+
+  .workspaceShell {
+    flex-direction: column;
+  }
+
+  .workspaceSidebar {
+    width: 100%;
+  }
+
+  .workspaceLauncherGrid,
+  .plannerLauncherGrid,
+  .forgeHomeCardGrid,
+  .profileStatsCard {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Runtime lock for the current cleanup pass.
+   This intentionally sits at the very end so it wins over older duplicate rules. */
+.forgeShell {
+  display: flex !important;
+  align-items: stretch !important;
+  min-height: 100dvh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+.forgeMain {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.pagePanel {
+  width: 100% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable !important;
+}
+
+.workspaceShell {
+  display: flex !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.workspaceStage {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable !important;
+}
+
+.forgeSidebar {
+  display: flex !important;
+  flex: 0 0 84px !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  width: 84px !important;
+  min-width: 84px !important;
+  height: 100dvh !important;
+  padding: 14px 8px 16px !important;
+  position: sticky !important;
+  top: 0 !important;
+  overflow: hidden !important;
+  z-index: 5 !important;
+}
+
+.forgeSidebarSpacer {
+  flex: 1 1 auto !important;
+  min-height: 12px !important;
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton {
+  flex: 0 0 auto !important;
+  margin-top: 0 !important;
+}
+
+.ownerQuickButton {
+  width: 30px !important;
+  min-width: 30px !important;
+  height: 30px !important;
+  padding: 0 !important;
+}
+
+.ownerQuickButton small {
+  font-size: 8px !important;
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid,
+.communityGrid,
+.forgeHomeCardGrid {
+  width: min(100%, 1480px) !important;
+  max-width: 1480px !important;
+  margin-inline: auto !important;
+  isolation: isolate !important;
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.launchCardButton {
+  position: relative !important;
+  z-index: 2 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.launchCardButton > *,
+.launchCardShell,
+.launchCardFrame,
+.launchCardContent,
+.launchCardIcon {
+  pointer-events: none !important;
+}
+
+.workspaceLaunchButton,
+.plannerLaunchButton {
+  pointer-events: auto !important;
+}
+
+.communityPage,
+.requestOnlyPanel,
+.profilePage,
+.forgeHomePage {
+  width: min(100%, 1480px) !important;
+  max-width: 1480px !important;
+  margin-inline: auto !important;
+  padding-inline: 18px !important;
+}
+
+.communityPage,
+.requestOnlyPanel {
+  padding-top: 18px !important;
+  padding-bottom: 168px !important;
+}
+
+.profilePage {
+  padding-top: 18px !important;
+  padding-bottom: 168px !important;
+}
+
+.communityGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+/* Ensure dark mode footer buttons and light-mode text stay visible regardless of tab changes. */
+:root[data-forge-theme='dark'] .forgeShell,
+:root[data-forge-theme='dark'] .forgeMain,
+:root[data-forge-theme='dark'] .pagePanel,
+:root[data-forge-theme='dark'] .workspaceShell,
+:root[data-forge-theme='dark'] .workspaceStage,
+:root[data-forge-theme='dark'] .profilePage,
+:root[data-forge-theme='dark'] .communityPage,
+:root[data-forge-theme='dark'] .requestOnlyPanel {
+  color: var(--text) !important;
+}
+
+:root[data-forge-theme='light'] .forgeShell,
+:root[data-forge-theme='light'] .forgeMain,
+:root[data-forge-theme='light'] .pagePanel,
+:root[data-forge-theme='light'] .workspaceShell,
+:root[data-forge-theme='light'] .workspaceStage,
+:root[data-forge-theme='light'] .profilePage,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel {
+  color: #141827 !important;
+}
+
+:root[data-forge-theme='light'] .forgeSidebar {
+  border-color: rgba(20, 24, 39, 0.16) !important;
+}
+
+:root[data-forge-theme='dark'] .forgeSidebar {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+
+/* Final shell cleanup for the Figma-style hub. Keep these overrides last. */
+.forgeShell {
+  display: flex !important;
+  align-items: stretch !important;
+  min-height: 100dvh !important;
+}
+
+.forgeMain {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  min-height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+.pagePanel {
+  width: 100% !important;
+  min-height: calc(100dvh - 32px) !important;
+  max-width: none !important;
+  overflow: auto !important;
+  scrollbar-gutter: stable both-edges !important;
+}
+
+.workspaceShell {
+  width: 100% !important;
+  min-height: calc(100dvh - 32px) !important;
+}
+
+.workspaceStage {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+.forgeSidebar {
+  display: flex !important;
+  flex-direction: column !important;
+  align-self: stretch !important;
+  position: sticky !important;
+  top: 0 !important;
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow: visible !important;
+  z-index: 8 !important;
+}
+
+.forgeSidebarSpacer {
+  flex: 1 1 auto !important;
+  min-height: 18px !important;
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton {
+  flex: 0 0 auto !important;
+  margin-top: 0 !important;
+}
+
+.forgeOwnerQuick {
+  gap: 6px !important;
+}
+
+.ownerQuickButton {
+  width: 30px !important;
+  min-width: 30px !important;
+  height: 30px !important;
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid {
+  width: min(100%, 1280px) !important;
+  max-width: 1280px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.launchCardButton {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+.launchCardButton > *,
+.launchCardShell,
+.launchCardFrame,
+.launchCardContent,
+.launchCardIcon {
+  pointer-events: none !important;
+}
+
+.communityPage,
+.requestOnlyPanel {
+  width: min(1480px, 100%) !important;
+  max-width: 1480px !important;
+  margin: 0 auto !important;
+  padding: 16px 18px 150px !important;
+}
+
+.communityGrid {
+  width: 100% !important;
+  max-width: none !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+.profilePage {
+  width: min(1200px, 100%) !important;
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 14px 12px 176px !important;
+}
+
+.profileDetailsCard {
+  gap: 14px !important;
+}
+
+.profileDetailsCard input[type='text'],
+.profileDetailsCard input[type='file'],
+.profileDetailsCard input:not([type]) {
+  width: 100% !important;
+  color: inherit !important;
+}
+
+.profileInlineEditor {
+  display: grid !important;
+  gap: 12px !important;
+  margin-top: 4px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid var(--shell-border) !important;
+}
+
+.profileInlineEditor label {
+  display: grid !important;
+  gap: 8px !important;
+}
+
+.profileInlineEditor span {
+  color: var(--text-muted) !important;
+}
+
+.profileInlineMessage {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 900px) {
+  .forgeShell {
+    flex-direction: column !important;
+  }
+
+  .forgeSidebar {
+    width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+    position: relative !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    overflow-x: auto !important;
+  }
+
+  .forgeSidebarSpacer {
+    display: none !important;
+  }
+
+  .workspaceLauncherGrid,
+  .plannerLauncherGrid,
+  .communityGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Final Figma-shell overrides
+   These rules intentionally sit at the end so they win over the older neon
+   styling that is still present higher up in this file.
+--------------------------------------------------------------------------- */
+
+:root {
+  --figma-shell-dark: #0f1218;
+  --figma-shell-dark-2: #151a22;
+  --figma-shell-surface: rgba(24, 29, 39, 0.96);
+  --figma-shell-surface-soft: rgba(26, 31, 42, 0.86);
+  --figma-shell-border-dark: rgba(255, 255, 255, 0.08);
+  --figma-shell-border-light: rgba(15, 19, 29, 0.14);
+  --figma-shell-text-dark: #e8edf5;
+  --figma-shell-text-muted-dark: rgba(232, 237, 245, 0.66);
+  --figma-shell-text-light: #141827;
+  --figma-shell-text-muted-light: rgba(20, 24, 39, 0.62);
+  --figma-shell-accent: #8e5ff8;
+  --figma-shell-accent-2: #3e7cff;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: linear-gradient(180deg, #070a10 0%, #090d14 100%) !important;
+}
+
+:root[data-forge-theme='dark'] body {
+  background:
+    radial-gradient(circle at 16% 78%, rgba(65, 88, 255, 0.18), transparent 22%),
+    radial-gradient(circle at 92% 14%, rgba(141, 72, 255, 0.16), transparent 20%),
+    linear-gradient(180deg, #070a10 0%, #090d14 100%) !important;
+  color: var(--figma-shell-text-dark) !important;
+}
+
+:root[data-forge-theme='light'] body {
+  background:
+    radial-gradient(circle at 15% 80%, rgba(92, 126, 255, 0.12), transparent 24%),
+    radial-gradient(circle at 88% 16%, rgba(232, 92, 167, 0.08), transparent 20%),
+    linear-gradient(180deg, #f7f8fc 0%, #eef1f7 100%) !important;
+  color: var(--figma-shell-text-light) !important;
+}
+
+.forgeShell,
+.forgeMain,
+.hubLayout,
+.hubMain,
+.pagePanel,
+.workspaceShell,
+.workspaceStage,
+.workspaceHome,
+.forgeHomePage,
+.profilePage,
+.communityPage,
+.requestOnlyPanel,
+.panelCard {
+  color: inherit !important;
+}
+
+.forgeShell {
+  min-height: 100vh;
+  background: transparent !important;
+}
+
+.forgeMain {
+  min-width: 0;
+  padding: 0;
+  background: transparent !important;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 24px 18px 36px;
+  color: inherit !important;
+}
+
+.hubLayout {
+  width: min(1600px, 100%);
+  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.hubSidebar {
+  width: 100%;
+  min-width: 260px;
+  border-radius: 26px;
+  border: 1px solid var(--figma-shell-border-dark) !important;
+  background: rgba(18, 22, 30, 0.88) !important;
+  box-shadow: none !important;
+  padding: 18px 16px;
+  gap: 18px;
+}
+
+:root[data-forge-theme='light'] .hubSidebar {
+  border-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+}
+
+.sidebarLabel,
+.workspaceSidebarLabel,
+.selectedDeckLabel,
+.authDivider,
+.authHelper,
+.forgeHomeDescription,
+.forgeHomeUpdates span,
+.forgeHomeCard p,
+.workspaceEyebrow,
+.workspaceHero h2,
+.profilePageHeader p,
+.profileSummaryCopy span,
+.profileDetailField span,
+.profileStatTile small,
+.chatSectionLabel,
+.workspaceSubcopy,
+.privateAppDetailHeader p,
+.communityPage h2,
+.requestOnlyPanel h2 {
+  color: var(--figma-shell-text-muted-dark) !important;
+}
+
+:root[data-forge-theme='light'] .sidebarLabel,
+:root[data-forge-theme='light'] .workspaceSidebarLabel,
+:root[data-forge-theme='light'] .selectedDeckLabel,
+:root[data-forge-theme='light'] .authDivider,
+:root[data-forge-theme='light'] .authHelper,
+:root[data-forge-theme='light'] .forgeHomeDescription,
+:root[data-forge-theme='light'] .forgeHomeUpdates span,
+:root[data-forge-theme='light'] .forgeHomeCard p,
+:root[data-forge-theme='light'] .workspaceEyebrow,
+:root[data-forge-theme='light'] .workspaceHero h2,
+:root[data-forge-theme='light'] .profilePageHeader p,
+:root[data-forge-theme='light'] .profileSummaryCopy span,
+:root[data-forge-theme='light'] .profileDetailField span,
+:root[data-forge-theme='light'] .profileStatTile small,
+:root[data-forge-theme='light'] .chatSectionLabel,
+:root[data-forge-theme='light'] .workspaceSubcopy,
+:root[data-forge-theme='light'] .privateAppDetailHeader p,
+:root[data-forge-theme='light'] .communityPage h2,
+:root[data-forge-theme='light'] .requestOnlyPanel h2 {
+  color: var(--figma-shell-text-muted-light) !important;
+}
+
+.sidebarNavButton,
+.deckBubble,
+.ownerPlus,
+.panelButton,
+.authSubmit,
+.authSwitch,
+.miniToggle,
+.workspaceTab,
+.inner-nav-item,
+.forgeRailButton,
+.forgeThemeToggle,
+.forgeAvatarButton,
+.ownerQuickButton,
+.deckPickerChip,
+.plannerQuestionChip,
+.plannerMiniAction,
+.plannerSheetChip,
+.plannerSheetClose,
+.plannerFolderChip,
+.plannerTaskCard,
+.plannerTimerPresets button,
+.plannerTimerControls button {
+  color: inherit !important;
+}
+
+.ownerPlus {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  border-radius: 999px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.ownerCreateRow,
+.forgeOwnerQuick {
+  gap: 8px !important;
+}
+
+.ownerCreateLabels,
+.ownerQuickButton small {
+  font-size: 10px !important;
+  letter-spacing: 0.14em !important;
+}
+
+.forgeBrandMark,
+.forgeThemeToggle,
+.forgeAvatarButton,
+.ownerQuickButton,
+.sidebarNavButton,
+.deckBubble,
+.workspaceTab,
+.inner-nav-item,
+.launchCardButton,
+.gameButton,
+.panelButton,
+.authSubmit,
+.authSwitch,
+.miniToggle,
+.deckPickerChip,
+.plannerQuestionChip,
+.plannerMiniAction,
+.plannerSheetChip,
+.plannerFolderChip,
+.plannerTimerPresets button {
+  border-radius: 14px !important;
+}
+
+.forgeBrandMark,
+.forgeThemeToggle,
+.forgeAvatarButton {
+  border: 1px solid var(--figma-shell-border-dark) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+:root[data-forge-theme='light'] .forgeBrandMark,
+:root[data-forge-theme='light'] .forgeThemeToggle,
+:root[data-forge-theme='light'] .forgeAvatarButton {
+  border-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.86) !important;
+}
+
+.forgeSidebar {
+  width: 76px !important;
+  min-width: 76px !important;
+  max-width: 76px !important;
+  border-right: 1px solid var(--figma-shell-border-dark) !important;
+  background: rgba(15, 18, 24, 0.92) !important;
+}
+
+:root[data-forge-theme='light'] .forgeSidebar {
+  border-right-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.forgeSidebarDivider {
+  width: 42px !important;
+  margin: 0 auto !important;
+  opacity: 0.55;
+}
+
+.forgeOwnerQuick {
+  gap: 8px !important;
+}
+
+.ownerQuickButton {
+  width: 56px !important;
+  min-width: 56px !important;
+  padding: 8px 6px !important;
+  gap: 2px !important;
+  border: 1px solid var(--figma-shell-border-dark) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+:root[data-forge-theme='light'] .ownerQuickButton {
+  border-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+}
+
+.ownerQuickButton span {
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+.ownerQuickButton small {
+  text-transform: lowercase !important;
+  text-align: center !important;
+}
+
+.forgeRailGroup {
+  gap: 8px !important;
+}
+
+.forgeRailButton {
+  width: 48px !important;
+  height: 48px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  justify-content: center !important;
+}
+
+.forgeRailButton .tooltip {
+  display: none !important;
+}
+
+.forgeRailButton svg,
+.forgeRailButton .navIcon {
+  width: 22px !important;
+  height: 22px !important;
+  stroke-width: 1.9;
+}
+
+.forgeRailButton.active {
+  background: linear-gradient(135deg, rgba(145, 93, 248, 0.95), rgba(57, 126, 255, 0.95)) !important;
+  color: #fff !important;
+}
+
+.forgeMain {
+  padding: 0;
+}
+
+.pagePanel,
+.workspaceShell {
+  background: transparent !important;
+}
+
+.workspaceShell {
+  display: grid !important;
+  grid-template-columns: 200px minmax(0, 1fr) !important;
+  gap: 20px !important;
+  align-items: stretch !important;
+}
+
+.workspaceSidebar {
+  width: 200px !important;
+  min-width: 200px !important;
+  border-radius: 24px !important;
+  border: 1px solid var(--figma-shell-border-dark) !important;
+  background: rgba(19, 23, 31, 0.88) !important;
+  box-shadow: none !important;
+  padding: 18px 14px !important;
+  gap: 12px !important;
+}
+
+:root[data-forge-theme='light'] .workspaceSidebar {
+  border-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+}
+
+.workspaceSidebarLabel {
+  letter-spacing: 0.16em !important;
+  font-size: 11px !important;
+  margin-bottom: 2px !important;
+}
+
+.inner-nav-item,
+.sidebarNavButton {
+  border: 1px solid var(--figma-shell-border-dark) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  box-shadow: none !important;
+  min-height: 44px !important;
+  padding: 10px 12px !important;
+  gap: 10px !important;
+  font-size: 14px !important;
+  border-radius: 12px !important;
+}
+
+.sidebarNavButton {
+  min-height: 42px !important;
+  border-radius: 12px !important;
+}
+
+.sidebarNavButton.isActive,
+.inner-nav-item.active {
+  background: rgba(114, 84, 203, 0.16) !important;
+  border-color: rgba(142, 95, 248, 0.42) !important;
+  color: #ffffff !important;
+}
+
+:root[data-forge-theme='light'] .inner-nav-item,
+:root[data-forge-theme='light'] .sidebarNavButton {
+  border-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+}
+
+:root[data-forge-theme='light'] .sidebarNavButton.isActive,
+:root[data-forge-theme='light'] .inner-nav-item.active {
+  background: rgba(142, 95, 248, 0.13) !important;
+  border-color: rgba(142, 95, 248, 0.28) !important;
+  color: #141827 !important;
+}
+
+.workspaceStage {
+  min-width: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+.workspaceHome,
+.forgeHomePage,
+.profilePage,
+.communityPage,
+.requestOnlyPanel {
+  width: min(1280px, 100%) !important;
+  margin: 0 auto !important;
+  padding: 12px 0 136px !important;
+}
+
+.workspaceHero {
+  text-align: center !important;
+  gap: 8px !important;
+}
+
+.workspaceHero h1,
+.forgeHomeHero h1,
+.profilePageHeader h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  color: inherit !important;
+  text-shadow: none !important;
+}
+
+.workspaceHero h1 {
+  font-size: clamp(56px, 7vw, 110px) !important;
+  line-height: 0.9 !important;
+  letter-spacing: 0.02em !important;
+}
+
+.workspaceHero h2 {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  margin-top: 0 !important;
+}
+
+.selectedDeckBanner,
+.workspaceSelectedDeckBanner,
+.forgeHomeUpdates,
+.panelCard,
+.authCard,
+.profileSummaryCard,
+.profileDetailsCard,
+.profileStatsCard,
+.profileLogoutCard,
+.profileEditCard,
+.privateColumn,
+.privateCard,
+.chatMessageCard,
+.chatRow,
+.threadRow,
+.groupComposer,
+.communityCard,
+.requestOnlyPanel {
+  border: 1px solid var(--figma-shell-border-dark) !important;
+  background: rgba(24, 28, 37, 0.9) !important;
+  box-shadow: none !important;
+}
+
+:root[data-forge-theme='light'] .selectedDeckBanner,
+:root[data-forge-theme='light'] .workspaceSelectedDeckBanner,
+:root[data-forge-theme='light'] .forgeHomeUpdates,
+:root[data-forge-theme='light'] .panelCard,
+:root[data-forge-theme='light'] .authCard,
+:root[data-forge-theme='light'] .profileSummaryCard,
+:root[data-forge-theme='light'] .profileDetailsCard,
+:root[data-forge-theme='light'] .profileStatsCard,
+:root[data-forge-theme='light'] .profileLogoutCard,
+:root[data-forge-theme='light'] .profileEditCard,
+:root[data-forge-theme='light'] .privateColumn,
+:root[data-forge-theme='light'] .privateCard,
+:root[data-forge-theme='light'] .chatMessageCard,
+:root[data-forge-theme='light'] .chatRow,
+:root[data-forge-theme='light'] .threadRow,
+:root[data-forge-theme='light'] .groupComposer,
+:root[data-forge-theme='light'] .communityCard,
+:root[data-forge-theme='light'] .requestOnlyPanel {
+  border-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+}
+
+.selectedDeckBanner span,
+.selectedDeckBanner small,
+.forgeHomeUpdates span,
+.forgeHomeUpdates strong {
+  color: inherit !important;
+}
+
+.forgeHomeHero {
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+
+.forgeHomeEyebrow,
+.workspaceEyebrow {
+  border-radius: 999px !important;
+  letter-spacing: 0.16em !important;
+}
+
+.forgeHomeDescription {
+  max-width: 980px !important;
+  line-height: 1.6 !important;
+  font-size: 16px !important;
+}
+
+.forgeHomeUpdates {
+  max-width: 760px !important;
+  margin: 10px auto 0 !important;
+  padding: 16px 18px !important;
+  border-radius: 22px !important;
+}
+
+.forgeHomeCardGrid {
+  width: min(1220px, 100%) !important;
+  margin: 18px auto 0 !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.forgeHomeCard {
+  min-height: 164px !important;
+  border-radius: 18px !important;
+  padding: 18px !important;
+  text-align: left !important;
+  background: rgba(24, 28, 37, 0.88) !important;
+  border: 1px solid var(--figma-shell-border-dark) !important;
+}
+
+.forgeHomeCardIcon {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid,
+.gameGrid,
+.forgeHomeCardGrid {
+  width: min(1240px, 100%) !important;
+  max-width: 1240px !important;
+  margin: 18px auto 0 !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  align-items: stretch !important;
+}
+
+.launchCardButton,
+.gameButton {
+  position: relative !important;
+  z-index: 2 !important;
+  pointer-events: auto !important;
+}
+
+.launchCardButton > *,
+.gameButton > * {
+  pointer-events: none !important;
+}
+
+.launchCardShell {
+  gap: 10px !important;
+}
+
+.launchCardFrame {
+  min-height: 200px !important;
+  aspect-ratio: 1.44 / 1 !important;
+  padding: 16px !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--figma-shell-border-dark) !important;
+  box-shadow: 0 12px 0 rgba(27, 16, 47, 0.28) !important;
+}
+
+:root[data-forge-theme='light'] .launchCardFrame {
+  border-color: var(--figma-shell-border-light) !important;
+  box-shadow: 0 12px 0 rgba(90, 95, 124, 0.18) !important;
+}
+
+.launchCardIcon {
+  width: 74px !important;
+  height: 74px !important;
+}
+
+.launchCardContent {
+  gap: 4px !important;
+}
+
+.launchCardTitle {
+  font-size: 18px !important;
+  letter-spacing: 0.04em !important;
+}
+
+.launchCardSubtitle {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.launchCardCta {
+  margin-top: 4px !important;
+  width: 100% !important;
+  padding: 6px 10px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--figma-shell-border-dark) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+:root[data-forge-theme='light'] .launchCardCta {
+  border-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+}
+
+.profilePage {
+  width: min(1120px, 100%) !important;
+  padding: 8px 0 136px !important;
+  gap: 18px !important;
+  justify-items: center !important;
+}
+
+.profilePageHeader {
+  width: min(560px, 100%) !important;
+  align-items: center !important;
+  text-align: center !important;
+  margin: 0 auto !important;
+}
+
+.profilePageHeader h3 {
+  font-size: clamp(40px, 4vw, 58px) !important;
+  line-height: 0.95 !important;
+  letter-spacing: 0.01em !important;
+}
+
+.profilePageHeader p {
+  margin-top: 8px !important;
+}
+
+.profileSummaryCard,
+.profileDetailsCard,
+.profileStatsCard,
+.profileLogoutCard,
+.profileEditCard {
+  width: min(560px, 100%) !important;
+  margin: 0 auto !important;
+  border-radius: 18px !important;
+}
+
+.profileSummaryCard {
+  padding: 18px !important;
+  gap: 16px !important;
+  align-items: center !important;
+}
+
+.profileSummaryAvatar {
+  width: 96px !important;
+  height: 96px !important;
+}
+
+.profileSummaryCopy strong {
+  font-size: 25px !important;
+}
+
+.profileSummaryCopy span {
+  font-size: 15px !important;
+}
+
+.profileBadge {
+  background: rgba(19, 166, 120, 0.16) !important;
+  color: #2bd19a !important;
+}
+
+.profileDetailsCard {
+  display: grid !important;
+  gap: 14px !important;
+  padding: 20px !important;
+}
+
+.profileDetailField {
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
+  min-height: 0 !important;
+}
+
+.profileDetailField span {
+  font-size: 11px !important;
+  letter-spacing: 0.12em !important;
+}
+
+.profileDetailField strong {
+  font-size: 18px !important;
+  margin-top: 6px !important;
+}
+
+.profileStatsCard {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 0 !important;
+  padding: 18px 20px !important;
+}
+
+.profileStatTile {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.profileStatTile span {
+  font-size: 24px !important;
+}
+
+.profileStatTile strong {
+  font-size: 26px !important;
+}
+
+.profileLogoutCard {
+  padding: 18px !important;
+}
+
+.profileLogoutButton {
+  min-width: 120px !important;
+}
+
+.workspaceCardHeader,
+.workspaceSectionHeader,
+.plannerSectionHeader,
+.chatHeader,
+.privateAppDetailHeader,
+.profilePageHeader {
+  color: inherit !important;
+}
+
+.chatHeader {
+  align-items: center !important;
+}
+
+.chatSearch,
+.plannerSheetInput,
+.deckNameInput,
+.plannerAddRow input,
+.plannerTimerPresets button,
+.plannerTimerControls button,
+.plannerField input,
+.plannerField textarea,
+.plannerAssignmentForm input,
+.authForm input,
+.authForm textarea,
+.authForm select,
+.deckFileInput input {
+  color: inherit !important;
+  border-color: var(--figma-shell-border-dark) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+:root[data-forge-theme='light'] .chatSearch,
+:root[data-forge-theme='light'] .plannerSheetInput,
+:root[data-forge-theme='light'] .deckNameInput,
+:root[data-forge-theme='light'] .plannerAddRow input,
+:root[data-forge-theme='light'] .plannerTimerPresets button,
+:root[data-forge-theme='light'] .plannerTimerControls button,
+:root[data-forge-theme='light'] .plannerField input,
+:root[data-forge-theme='light'] .plannerField textarea,
+:root[data-forge-theme='light'] .plannerAssignmentForm input,
+:root[data-forge-theme='light'] .authForm input,
+:root[data-forge-theme='light'] .authForm textarea,
+:root[data-forge-theme='light'] .authForm select,
+:root[data-forge-theme='light'] .deckFileInput input {
+  border-color: var(--figma-shell-border-light) !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+}
+
+.emptyState,
+.emptyMini {
+  color: inherit !important;
+}
+
+.workspaceHome,
+.forgeHomePage,
+.profilePage,
+.communityPage,
+.requestOnlyPanel {
+  overflow: visible !important;
+}
+
+.communityGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.communityCard {
+  border-radius: 18px !important;
+  padding: 18px !important;
+}
+
+.privateAppsColumns {
+  gap: 16px !important;
+}
+
+.privateColumn {
+  border-radius: 18px !important;
+}
+
+.privateGrid {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+.privateCard {
+  min-height: 120px !important;
+  border-radius: 16px !important;
+}
+
+.requestOnlyPanel {
+  max-width: 920px !important;
+}
+
+.requestOnlyPanel .workspaceHero h1 {
+  font-size: clamp(48px, 6vw, 90px) !important;
+}
+
+@media (max-width: 1200px) {
+  .workspaceLauncherGrid,
+  .plannerLauncherGrid,
+  .gameGrid,
+  .forgeHomeCardGrid,
+  .communityGrid,
+  .privateGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hubLayout,
+  .workspaceShell {
+    grid-template-columns: 1fr !important;
+  }
+
+  .forgeSidebar,
+  .workspaceSidebar {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .workspaceLauncherGrid,
+  .plannerLauncherGrid,
+  .gameGrid,
+  .forgeHomeCardGrid,
+  .communityGrid,
+  .privateGrid,
+  .profileStatsCard {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Figma export parity pass */
+.forgeSidebar {
+  width: 64px;
+}
+
+.forgeRailButton {
+  width: 44px;
+  height: 44px;
+}
+
+.workspaceSidebar {
+  width: 200px;
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid {
+  width: min(100%, 1220px);
+  gap: 16px;
+  margin-top: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.forgeHomeCardGrid {
+  width: min(100%, 1220px);
+  gap: 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.launchCardShell {
+  display: grid;
+  gap: 10px;
+}
+
+.launchCardFrame {
+  min-height: 240px;
+  aspect-ratio: 1.46 / 1;
+  padding: 18px;
+  border-radius: 14px;
+  border: 6px solid rgba(30, 18, 50, 0.96);
+  box-shadow: 0 14px 0 rgba(37, 0, 79, 0.42);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.launchCardIcon {
+  width: 78px;
+  height: 78px;
+  margin-bottom: auto;
+}
+
+.launchCardContent {
+  display: grid;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.launchCardTitle {
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0.03em;
+}
+
+.launchCardSubtitle {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.launchCardCta {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--shell-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.profilePage {
+  width: min(560px, 100%);
+  margin: 0 auto;
+  padding: 14px 8px 136px;
+  gap: 24px;
+}
+
+.profilePageHeader h3 {
+  font-size: clamp(28px, 3vw, 36px);
+}
+
+.profilePageHeader p {
+  font-size: 13px;
+}
+
+.profileSummaryCard {
+  padding: 24px;
+  gap: 20px;
+}
+
+.profileSummaryAvatar {
+  width: 72px;
+  height: 72px;
+}
+
+.profileSummaryCopy strong {
+  font-size: 20px;
+}
+
+.profileSummaryCopy span {
+  font-size: 13px;
+}
+
+.profileDetailsCard {
+  padding: 24px;
+  gap: 18px;
+}
+
+.profileDetailField {
+  padding: 0 0 14px;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--shell-border);
+}
+
+.profileDetailField span {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.profileDetailField strong {
+  font-size: 13px;
+}
+
+.profileStatsCard {
+  padding: 20px;
+  gap: 16px;
+}
+
+.profileStatTile {
+  padding: 12px 10px;
+}
+
+.profileStatTile span {
+  font-size: 22px;
+}
+
+.profileStatTile strong {
+  font-size: 22px;
+}
+
+.profileStatTile small {
+  font-size: 11px;
+}
+
+.profileLogoutCard {
+  padding: 20px;
+}
+
+:root[data-forge-theme='light'] .forgeSidebar {
+  border-right-color: rgba(20, 24, 39, 0.14);
+}
+
+:root[data-forge-theme='light'] .workspaceSidebar {
+  border-color: rgba(20, 24, 39, 0.12);
+}
+
+:root[data-forge-theme='light'] .launchCardFrame {
+  border-color: rgba(20, 24, 39, 0.36);
+  box-shadow: 0 14px 0 rgba(84, 92, 122, 0.14);
+}
+
+/* Final Figma-shell lock: keep these overrides last so older styles cannot win. */
+.forgeShell,
+.forgeMain,
+.pagePanel,
+.workspaceShell,
+.workspaceStage,
+.forgeHomePage,
+.profilePage,
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel {
+  min-height: 0;
+}
+
+.forgeShell {
+  color: var(--text);
+}
+
+.forgeMain {
+  padding: 16px 16px 16px 14px;
+  overflow: hidden;
+}
+
+.pagePanel {
+  display: block;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.forgeSidebar {
+  width: 82px;
+  padding: 14px 8px 16px;
+  gap: 10px;
+  background: var(--shell-panel);
+  border: 1px solid var(--shell-border);
+  border-radius: 0;
+  box-shadow: inset -1px 0 0 var(--shell-border);
+}
+
+:root[data-forge-theme='light'] .forgeSidebar {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--shell-border);
+  box-shadow: inset -1px 0 0 var(--shell-border);
+}
+
+.forgeBrandMark {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  font-size: 17px;
+  box-shadow: 0 10px 28px rgba(124, 58, 237, 0.26);
+}
+
+.forgeOwnerQuick {
+  gap: 6px;
+}
+
+.ownerQuickButton {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid var(--shell-border);
+  background: rgba(124, 58, 237, 0.16);
+  color: var(--text);
+}
+
+.ownerQuickButton span {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.ownerQuickButton small {
+  font-size: 9px;
+  line-height: 1;
+  margin-top: -1px;
+}
+
+.forgeSidebarDivider {
+  width: 36px;
+  height: 1px;
+  background: var(--shell-border);
+}
+
+.forgeRailButton {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--shell-border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+}
+
+.forgeRailButton.active {
+  border-color: var(--shell-border-strong);
+  background: rgba(124, 58, 237, 0.18);
+}
+
+.forgeThemeToggle,
+.forgeAvatarButton {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--shell-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.workspaceShell {
+  gap: 14px;
+  min-height: 0;
+}
+
+.workspaceSidebar {
+  width: 228px;
+  padding: 16px 14px;
+  border-radius: 26px;
+  background: var(--shell-panel);
+  border: 1px solid var(--shell-border);
+  box-shadow: none;
+}
+
+:root[data-forge-theme='light'] .workspaceSidebar {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: var(--shell-border);
+}
+
+.workspaceSidebarLabel {
+  color: var(--text-muted);
+}
+
+.inner-nav-item {
+  width: 100%;
+  min-height: 50px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+}
+
+.inner-nav-item.active {
+  background: rgba(124, 58, 237, 0.18);
+  color: var(--text);
+  border-color: var(--shell-border-strong);
+}
+
+.workspaceStage {
+  min-height: 0;
+  padding: 8px 6px 8px 2px;
+}
+
+.workspaceHome,
+.communityPage,
+.requestOnlyPanel,
+.panelCard,
+.authCard {
+  background: var(--shell-panel);
+  border-color: var(--shell-border);
+}
+
+.workspaceHero,
+.forgeHomeHero,
+.profilePageHeader {
+  text-align: center;
+}
+
+.workspaceEyebrow,
+.forgeHomeEyebrow {
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--shell-border);
+}
+
+.forgeHomePage {
+  width: min(1280px, 100%);
+  margin: 0 auto;
+  padding: 14px 4px 144px;
+  gap: 18px;
+}
+
+.forgeHomeHero {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.forgeHomeHero h1 {
+  font-size: clamp(64px, 7vw, 128px);
+  line-height: 0.9;
+}
+
+.forgeHomeDescription {
+  max-width: 940px;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.forgeHomeUpdates {
+  max-width: 740px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px 18px;
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.forgeHomeCardGrid {
+  gap: 14px;
+}
+
+.forgeHomeCard {
+  min-height: 168px;
+  padding: 18px;
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.workspaceLauncherGrid,
+.plannerLauncherGrid {
+  width: min(100%, 1240px);
+  max-width: 1240px;
+  margin: 16px auto 0;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.launchCardButton {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  pointer-events: auto;
+}
+
+.launchCardButton > * {
+  pointer-events: none;
+}
+
+.launchCardShell {
+  display: grid;
+  gap: 8px;
+}
+
+.launchCardFrame {
+  min-height: 170px;
+  aspect-ratio: 1.55 / 1;
+  padding: 16px;
+  border-radius: 14px;
+  border: 6px solid rgba(27, 16, 47, 0.98);
+  box-shadow: 0 14px 0 rgba(43, 0, 82, 0.34);
+}
+
+.launchCardIcon {
+  width: 76px;
+  height: 76px;
+}
+
+.launchCardCopy {
+  gap: 3px;
+}
+
+.launchCardTitle {
+  font-size: 18px;
+  letter-spacing: 0.03em;
+}
+
+.launchCardSubtitle {
+  font-size: 12px;
+}
+
+.launchCardCta {
+  padding: 7px 11px;
+  border-radius: 12px;
+  font-size: 11px;
+}
+
+.workspaceSelectedDeckBanner,
+.selectedDeckBanner {
+  width: min(760px, 100%);
+  margin: 18px auto 0;
+  background: var(--shell-panel-soft);
+  border-color: var(--shell-border);
+  color: var(--text);
+}
+
+.selectedDeckBanner span,
+.selectedDeckBanner small,
+.selectedDeckBanner strong {
+  color: var(--text);
+}
+
+.profilePage {
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  padding: 14px 8px 136px;
+  display: grid;
+  gap: 18px;
+}
+
+.profilePageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.profilePageHeader h3 {
+  margin: 0;
+  font-size: clamp(36px, 4vw, 58px);
+  line-height: 0.92;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text);
+}
+
+.profilePageHeader p {
+  margin: 10px 0 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.profileSummaryCard {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.profileSummaryAvatar {
+  width: 92px;
+  height: 92px;
+}
+
+.profileSummaryCopy {
+  display: grid;
+  gap: 4px;
+}
+
+.profileSummaryCopy strong {
+  font-size: 26px;
+  line-height: 1.05;
+  color: var(--text);
+}
+
+.profileSummaryCopy span {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.profileBadge {
+  width: fit-content;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(32, 185, 130, 0.16);
+  color: #1db286;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.profileDetailsCard,
+.profileStatsCard,
+.profileLogoutCard,
+.profileEditCard {
+  background: var(--shell-panel-soft);
+  border: 1px solid var(--shell-border);
+}
+
+.profileDetailsCard,
+.profileStatsCard,
+.profileLogoutCard,
+.profileEditCard {
+  border-radius: 20px;
+}
+
+.profileDetailField,
+.profileStatTile {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--shell-border);
+}
+
+.profileDetailField span,
+.profileStatTile small,
+.profileEditCard span {
+  color: var(--text-muted);
+}
+
+.profileDetailField strong,
+.profileStatTile strong {
+  color: var(--text);
+}
+
+.workspaceHome h1,
+.workspaceHome h2,
+.forgeHomePage h1,
+.forgeHomePage h2,
+.profilePage h3,
+.profilePage p,
+.communityPage h1,
+.communityPage h2,
+.requestOnlyPanel h1,
+.requestOnlyPanel h2,
+.profileSummaryCopy span,
+.profileDetailField span,
+.profileStatTile small {
+  text-shadow: none;
+}
+
+.forgeShell :is(h1, h2, h3, h4, p, span, strong, small, label, button, input, textarea, select) {
+  color: inherit;
+}
+
+:root[data-forge-theme='light'] .forgeShell,
+:root[data-forge-theme='light'] .forgeMain,
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel,
+:root[data-forge-theme='light'] .profilePage,
+:root[data-forge-theme='light'] .forgeHomePage {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .forgeHomePanel,
+:root[data-forge-theme='light'] .workspaceHome,
+:root[data-forge-theme='light'] .communityPage,
+:root[data-forge-theme='light'] .requestOnlyPanel,
+:root[data-forge-theme='light'] .panelCard,
+:root[data-forge-theme='light'] .authCard,
+:root[data-forge-theme='light'] .profileDetailsCard,
+:root[data-forge-theme='light'] .profileStatsCard,
+:root[data-forge-theme='light'] .profileLogoutCard,
+:root[data-forge-theme='light'] .profileEditCard,
+:root[data-forge-theme='light'] .forgeHomeUpdates,
+:root[data-forge-theme='light'] .forgeHomeCard {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(20, 24, 39, 0.1);
+}
+
+:root[data-forge-theme='light'] .forgeHomeUpdates strong,
+:root[data-forge-theme='light'] .forgeHomeCard strong,
+:root[data-forge-theme='light'] .profileSummaryCopy strong,
+:root[data-forge-theme='light'] .profileDetailField strong,
+:root[data-forge-theme='light'] .profileStatTile strong,
+:root[data-forge-theme='light'] .workspaceHero h1,
+:root[data-forge-theme='light'] .forgeHomeHero h1,
+:root[data-forge-theme='light'] .profilePageHeader h3 {
+  color: #141827;
+}
+
+:root[data-forge-theme='light'] .forgeHomeDescription,
+:root[data-forge-theme='light'] .forgeHomeCard p,
+:root[data-forge-theme='light'] .profilePageHeader p,
+:root[data-forge-theme='light'] .profileSummaryCopy span,
+:root[data-forge-theme='light'] .profileDetailField span,
+:root[data-forge-theme='light'] .profileStatTile small,
+:root[data-forge-theme='light'] .workspaceHero h2,
+:root[data-forge-theme='light'] .forgeHomeUpdates span,
+:root[data-forge-theme='light'] .launchCardSubtitle,
+:root[data-forge-theme='light'] .selectedDeckBanner span,
+:root[data-forge-theme='light'] .selectedDeckBanner small,
+:root[data-forge-theme='light'] .workspaceEyebrow,
+:root[data-forge-theme='light'] .workspaceSidebarLabel,
+:root[data-forge-theme='light'] .sidebarLabel,
+:root[data-forge-theme='light'] .authHelper,
+:root[data-forge-theme='light'] .authDivider,
+:root[data-forge-theme='light'] .workspaceSubcopy,
+:root[data-forge-theme='light'] .selectedDeckLabel,
+:root[data-forge-theme='light'] .chatSectionLabel,
+:root[data-forge-theme='light'] .privateAppDetailHeader p,
+:root[data-forge-theme='light'] .profileEditCard span {
+  color: rgba(20, 24, 39, 0.64);
+}
+
+:root[data-forge-theme='light'] .launchCardFrame {
+  border-color: rgba(20, 24, 39, 0.36);
+  box-shadow: 0 14px 0 rgba(84, 92, 122, 0.14);
+}
+
+:root[data-forge-theme='light'] .forgeSidebar,
+:root[data-forge-theme='light'] .workspaceSidebar {
+  border-color: var(--shell-border);
+}
+
+@media (max-width: 1200px) {
+  .workspaceLauncherGrid,
+  .plannerLauncherGrid,
+  .forgeHomeCardGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .forgeShell {
+    flex-direction: column;
+  }
+
+  .forgeSidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    padding: 10px 12px;
+    gap: 12px;
+  }
+
+  .forgeSidebarSpacer {
+    display: none;
+  }
+
+  .forgeRailGroup {
+    grid-auto-flow: column;
+    grid-template-rows: repeat(2, auto);
+  }
+
+  .workspaceShell {
+    flex-direction: column;
+  }
+
+  .workspaceSidebar {
+    width: 100%;
+  }
+
+  .workspaceLauncherGrid,
+  .plannerLauncherGrid,
+  .forgeHomeCardGrid,
+  .profileStatsCard {
+    grid-template-columns: 1fr;
+  }
+}

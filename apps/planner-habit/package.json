@@ -1,0 +1,12 @@
+{
+  "name": "planner-habit-tracker",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5314 --strictPort"
+  },
+  "devDependencies": {
+    "vite": "latest"
+  }
+}
