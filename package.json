@@ -14,10 +14,19 @@
     "dev:planner-habit": "npm run dev --prefix apps/planner-habit",
     "dev:planner-todo": "npm run dev --prefix apps/planner-todo",
     "dev:planner-timer": "npm run dev --prefix apps/planner-timer",
-    "dev:planner-assignments": "npm run dev --prefix apps/planner-assignments"
+    "dev:planner-assignments": "npm run dev --prefix apps/planner-assignments",
+    "lint": "eslint scripts tests --max-warnings=0",
+    "type-check": "node scripts/verify-known-defects.mjs",
+    "build": "npm run build --prefix apps/hub && node scripts/verify-known-defects.mjs",
+    "test:unit": "node --test tests/unit/*.test.mjs",
+    "test:integration": "node --test tests/integration/*.test.mjs",
+    "test:e2e": "playwright test",
+    "test": "npm run test:unit && npm run test:integration && npm run test:e2e"
   },
   "devDependencies": {
+    "@playwright/test": "1.55.0",
     "concurrently": "latest",
+    "eslint": "9.21.0",
     "tsx": "latest",
     "vite": "latest"
   }

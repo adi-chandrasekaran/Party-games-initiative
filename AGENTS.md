@@ -15,8 +15,10 @@ Before changing code:
 5. Check `git status`, the current branch, and recent commits.
 
 Do not depend on previous chat history. Repository documentation is the project memory.
-If implementation and documentation disagree, stop and surface the discrepancy before
-proceeding.
+If implementation and documentation disagree, first record the exact discrepancy and the
+evidence used to establish it. When reconciling that discrepancy is explicitly in scope for
+the active milestone, update the affected documentation in the same branch before proceeding
+with the milestone. Otherwise, stop and surface the discrepancy for a human decision.
 
 ## 2. Protect Existing Behavior
 

@@ -16,7 +16,7 @@ human-approved PR.
 
 | ID | Milestone | Status | Required branch |
 |---|---|---|---|
-| PR-01 | Canonical repository and behavior baseline | Planned | `feat/pr-01-canonical-baseline` |
+| PR-01 | Canonical repository and behavior baseline | In progress | `feat/pr-01-canonical-baseline` |
 | PR-02 | Workspace foundation | Planned | `feat/pr-02-workspace-foundation` |
 | PR-03 | Shared contracts and app registry | Planned | `feat/pr-03-app-registry` |
 | PR-04 | Figma web shell and design system | Planned | `feat/pr-04-figma-shell` |
@@ -59,6 +59,25 @@ human-approved PR.
   not silently ignored.
 - Root quality commands have deterministic exit codes.
 - All current files are tracked or intentionally ignored.
+
+### Test Plan
+
+- `npm run lint`
+- `npm run type-check`
+- `npm run build`
+- `npm run test` (unit, integration, and Playwright launcher smoke coverage)
+
+### Rollback
+
+Revert the PR-01 documentation, root quality configuration, test harness, and the test-only
+`HUB_DATA_FILE` override. The legacy runtime, its default data path, and all launcher behavior
+remain unchanged.
+
+### Evidence
+
+- Canonical baseline: `19b36582ecf33325e54b08e3ab8eaebedeaeaafa`.
+- Pinned Figma source: `4e57eb0ccf3e766c5b2dc2dee90c11bf70f5fe36`.
+- Full behavior and defect inventory: `docs/architecture/pr-01-baseline.md`.
 
 ## PR-02: Workspace Foundation
 

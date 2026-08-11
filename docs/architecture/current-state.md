@@ -4,7 +4,9 @@ Status: **Legacy system to be incrementally migrated**
 
 ## Repository State
 
-- The repository currently has no baseline commit; project files are untracked on `main`.
+- The canonical baseline is commit `19b36582ecf33325e54b08e3ab8eaebedeaeaafa`
+  (`chore: establish Party Games baseline`); its repository files are tracked or intentionally
+  ignored. PR-01 records the remaining behavior and portability baseline from this commit.
 - Similar Party Games directories have existed outside this repository, creating a risk that
   the wrong copy is edited or launched.
 - The root package is not a true workspace. It manually installs and starts child projects.
