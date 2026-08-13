@@ -18,7 +18,9 @@ import {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const STORE_PATH = path.join(__dirname, "data", "store.json");
+// The default keeps the legacy runtime unchanged. Tests can supply disposable state so they do
+// not create accounts or sessions in a contributor's local store.
+const STORE_PATH = process.env.HUB_DATA_FILE || path.join(__dirname, "data", "store.json");
 const OWNER_ADMIN_CODE = process.env.OWNER_ADMIN_CODE || "aisc-admin";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const PORT = 8787;

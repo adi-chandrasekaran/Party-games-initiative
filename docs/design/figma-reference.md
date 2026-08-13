@@ -17,9 +17,9 @@ during visual parity work.
 
 | Reference | Value |
 |---|---|
-| Source commit | `TBD in PR-01` |
-| Prototype capture date | `TBD in PR-01` |
-| Approved viewport baselines | `TBD in PR-01` |
+| Source commit | `4e57eb0ccf3e766c5b2dc2dee90c11bf70f5fe36` |
+| Prototype capture date | `2026-08-11` |
+| Approved viewport baselines | Desktop `1440 × 900`; narrow `390 × 844` |
 
 ## What Is Canonical
 
