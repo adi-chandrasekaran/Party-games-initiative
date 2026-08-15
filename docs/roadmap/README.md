@@ -20,7 +20,7 @@ human-approved PR.
 | PR-02 | Workspace foundation | Complete | `feat/pr-02-workspace-foundation` |
 | PR-03 | Shared contracts and app registry | Complete | `feat/pr-03-app-registry` |
 | PR-04 | Figma web shell and design system | In review | `feat/pr-04-figma-shell` |
-| PR-05 | Imposter and planner micro-app migration | In progress | `feat/pr-05-simple-microapps` |
+| PR-05 | Imposter and planner micro-app migration | In review | `feat/pr-05-simple-microapps` |
 | PR-06 | Quiz Shooter and Build A Beast client migration | Planned | `feat/pr-06-multiplayer-clients` |
 | PR-07 | Modular TypeScript platform server | Planned | `feat/pr-07-platform-server` |
 | PR-08 | PostgreSQL-backed persistence | Planned | `feat/pr-08-postgres-persistence` |
