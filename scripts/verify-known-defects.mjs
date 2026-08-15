@@ -3,13 +3,13 @@ import { spawnSync } from "node:child_process";
 const expectedFailures = [
   {
     name: "Quiz Shooter client implicit choice type",
-    command: ["npm", ["run", "build", "--prefix", "apps/quiz-shooter/client"]],
+    command: ["pnpm", ["--filter", "quiz-shooter-3d-client", "run", "build"]],
     error: /Parameter ['\"]choice['\"] implicitly has an ['\"]any['\"] type/,
     defect: "docs/architecture/baseline-defects.md#bd-001-quiz-shooter-client-build",
   },
   {
     name: "Build A Beast client void truthiness",
-    command: ["npm", ["run", "build", "--prefix", "apps/build-a-beast/client"]],
+    command: ["pnpm", ["--filter", "build-a-beast-client", "run", "build"]],
     error: /expression of type ['\"]void['\"] cannot be tested for truthiness/i,
     defect: "docs/architecture/baseline-defects.md#bd-002-build-a-beast-client-build",
   },

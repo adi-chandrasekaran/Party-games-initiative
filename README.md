@@ -70,8 +70,9 @@ party-games/
 ## Current legacy startup
 
 ```bash
-npm run install:all
-npm run dev
+corepack enable
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
 Then open:
@@ -80,7 +81,7 @@ Then open:
 http://localhost:5176
 ```
 
-`npm run dev` currently starts the hub and individual local apps. These separate ports are a
+`pnpm dev` currently starts the hub and individual local apps. These separate ports are a
 temporary legacy constraint and will be removed by the monorepo migration.
 
 - Hub: `http://localhost:5176`

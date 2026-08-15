@@ -9,7 +9,8 @@ Status: **Legacy system to be incrementally migrated**
   ignored. PR-01 records the remaining behavior and portability baseline from this commit.
 - Similar Party Games directories have existed outside this repository, creating a risk that
   the wrong copy is edited or launched.
-- The root package is not a true workspace. It manually installs and starts child projects.
+- PR-02 introduces the pnpm/Turborepo workspace foundation for active app packages; historical
+  `old-games/` copies remain outside that workspace until PR-13.
 
 ## Frontend
 
@@ -17,8 +18,8 @@ Status: **Legacy system to be incrementally migrated**
   containing overlapping generations of design rules.
 - Each arcade and planner frontend starts its own Vite process and browser port.
 - Launch routes and back links contain hardcoded local URLs.
-- The hub server resolves PDFJS through a contributor-specific absolute path outside the
-  repository.
+- The hub resolves PDFJS through its workspace manifest; launcher and service endpoints remain
+  legacy hardcoded URLs until PR-03 and later milestones.
 - React and Vite versions differ between applications.
 - Planner state is primarily browser-local.
 
@@ -32,8 +33,8 @@ Status: **Legacy system to be incrementally migrated**
 
 ## Testing
 
-- There is no root lint, type-check, unit, integration, or Playwright test harness.
-- There is no automated launcher regression test or visual comparison against Figma.
+- PR-01 supplies root lint, type-check, unit, integration, and Playwright launcher smoke checks.
+- There is no visual comparison against Figma yet; that belongs to PR-04.
 - There is no CI gate or documented definition of done.
 - The Quiz Shooter client build currently fails because `DeckEditor.tsx` has an implicitly typed
   `choice` parameter.

@@ -12,7 +12,7 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "npm run dev --prefix apps/hub",
+    command: "pnpm --dir apps/hub run dev",
     url: "http://localhost:5176",
     timeout: 120_000,
     reuseExistingServer: !process.env.CI,

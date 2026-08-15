@@ -21,9 +21,10 @@
 | Timer | Vite on `http://localhost:5316` | Configured target; browser-click navigation is BD-003. |
 | Assignments | Vite on `http://localhost:5317` | Configured target; browser-click navigation is BD-003. |
 
-The required local commands remain `npm run install:all` and `npm run dev`. The root launcher is
-`http://localhost:5176`. See [`../PORTS_AND_RUNNING.md`](../PORTS_AND_RUNNING.md) for the
-complete port map and [`../development/local-development.md`](../development/local-development.md)
+At the PR-01 baseline, the required local commands were `npm run install:all` and `npm run dev`.
+PR-02 replaces that setup with the documented pinned pnpm workspace commands while preserving the
+root launcher at `http://localhost:5176`. See [`../PORTS_AND_RUNNING.md`](../PORTS_AND_RUNNING.md)
+for the complete port map and [`../development/local-development.md`](../development/local-development.md)
 for prerequisites and constraints.
 
 The Playwright harness starts the hub only and supplies `HUB_DATA_FILE` only during tests. This
@@ -33,11 +34,13 @@ separate legacy processes.
 
 ## Portability Defects
 
-- The hub server resolves PDFJS through a contributor-specific absolute filesystem path.
+- At the PR-01 baseline, the hub server resolved PDFJS through a contributor-specific absolute
+  filesystem path.
 - Launchers, navigation, and API clients contain hardcoded `localhost` endpoints.
 - Legacy applications require separate frontend/browser ports.
 
-These are baseline findings only. PR-02 and later milestones own their removal.
+These are baseline findings only. PR-02 removes the PDFJS path; later milestones own the remaining
+findings.
 
 ## Reference Capture
 

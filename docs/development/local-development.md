@@ -12,30 +12,31 @@ test -f "$(git rev-parse --show-toplevel)/AGENTS.md"
 
 Do not infer the canonical repository from a folder name or an absolute filesystem path.
 
-## Current Legacy Startup
+## Current Workspace Startup
 
-Until roadmap PR-02 changes task orchestration, the current project uses:
-
-```bash
-npm run install:all
-npm run dev
-```
-
-The current launcher is `http://localhost:5176`. Additional frontend and backend ports are a
-documented legacy constraint, not the target architecture. See `PORTS_AND_RUNNING.md` only when
-diagnosing the legacy startup.
-
-## Target Startup
-
-The monorepo target is:
+Use the pinned package manager and lockfile:
 
 ```bash
-pnpm install
+corepack enable
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The developer should open one Forge web URL. Micro-apps should not require manually copying or
-opening individual Vite URLs.
+The current launcher is `http://localhost:5176`. Additional frontend and backend ports are a
+documented legacy runtime constraint, not the target architecture. See `PORTS_AND_RUNNING.md`
+only when diagnosing the legacy runtime.
+
+## Target Startup
+
+The current workspace foundation uses:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+The developer opens the hub at `http://localhost:5176`; PR-05 and PR-06 will later eliminate
+the separate micro-app frontend URLs.
 
 ## Environment Files
 

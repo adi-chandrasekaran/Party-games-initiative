@@ -27,7 +27,6 @@ const PORT = 8787;
 const COOKIE_NAME = "party_games_session";
 const SCHOOL_DOMAIN = "@aischennai.org";
 const ADMIN_HEADER = "x-owner-admin-code";
-const PDFJS_MODULE_PATH = "/Users/aditi/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/pdfjs-dist/legacy/build/pdf.mjs";
 
 const defaultStore = {
   users: [],
@@ -146,7 +145,7 @@ function decodeDataUrl(dataUrl) {
 }
 
 async function extractPdfText(buffer) {
-  const pdfjs = await import(PDFJS_MODULE_PATH);
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   const loadingTask = pdfjs.getDocument({
     data: new Uint8Array(buffer),
     useWorkerFetch: false,

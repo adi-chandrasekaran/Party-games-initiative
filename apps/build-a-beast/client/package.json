@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "../../../node_modules/.bin/vite --host 0.0.0.0",
-    "build": "tsc && ../../../node_modules/.bin/vite build",
-    "preview": "../../../node_modules/.bin/vite preview"
+    "dev": "vite --host 0.0.0.0 --port 5174 --strictPort",
+    "build": "tsc && vite build",
+    "type-check": "node ../../../scripts/verify-known-defect.mjs BD-002",
+    "preview": "vite preview"
   },
   "dependencies": {
     "socket.io-client": "^4.7.5",

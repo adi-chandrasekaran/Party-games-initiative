@@ -1,4 +1,7 @@
 node_modules/
+.pnpm-store/
+.turbo/
+package-lock.json
 dist/
 .DS_Store
 .env

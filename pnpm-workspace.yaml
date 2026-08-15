@@ -1,0 +1,14 @@
+packages:
+  - apps/hub
+  - apps/imposter
+  - apps/planner-assignments
+  - apps/planner-habit
+  - apps/planner-timer
+  - apps/planner-todo
+  - apps/quiz-shooter/client
+  - apps/quiz-shooter/server
+  - apps/build-a-beast/client
+  - apps/build-a-beast/server
+
+allowBuilds:
+  esbuild: true
