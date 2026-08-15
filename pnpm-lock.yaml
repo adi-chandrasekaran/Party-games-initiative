@@ -97,6 +97,9 @@ importers:
       '@forge/app-registry':
         specifier: workspace:*
         version: link:../../packages/app-registry
+      '@forge/design-tokens':
+        specifier: workspace:*
+        version: link:../../packages/design-tokens
       '@vitejs/plugin-react':
         specifier: latest
         version: 6.0.5(vite@8.2.1(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.12))
@@ -224,6 +227,8 @@ importers:
         version: link:../contracts
 
   packages/contracts: {}
+
+  packages/design-tokens: {}
 
 packages:
 
