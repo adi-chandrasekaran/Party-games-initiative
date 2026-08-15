@@ -1,7 +1,7 @@
 export const PRODUCT_AREAS = Object.freeze(["arcade", "planner"]);
 export const ACCESS_POLICIES = Object.freeze(["authenticated-member", "public-host"]);
 export const DECK_CAPABILITIES = Object.freeze(["none", "optional", "required"]);
-export const LAUNCH_MODES = Object.freeze(["legacy-external", "embedded"]);
+export const LAUNCH_MODES = Object.freeze(["legacy-external", "same-origin", "embedded"]);
 
 export const API_CONTRACTS = Object.freeze({
   platformGames: Object.freeze({ method: "GET", path: "/api/platform/games" }),

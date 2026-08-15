@@ -9,6 +9,7 @@ dist/
 *.log
 playwright-report/
 test-results/
+apps/hub/public/microapps/
 
 # Local runtime state. This can contain account hashes, sessions, chats, and uploaded deck data.
 apps/hub/data/store.json

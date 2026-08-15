@@ -20,7 +20,7 @@ human-approved PR.
 | PR-02 | Workspace foundation | Complete | `feat/pr-02-workspace-foundation` |
 | PR-03 | Shared contracts and app registry | Complete | `feat/pr-03-app-registry` |
 | PR-04 | Figma web shell and design system | In review | `feat/pr-04-figma-shell` |
-| PR-05 | Imposter and planner micro-app migration | Planned | `feat/pr-05-simple-microapps` |
+| PR-05 | Imposter and planner micro-app migration | In review | `feat/pr-05-simple-microapps` |
 | PR-06 | Quiz Shooter and Build A Beast client migration | Planned | `feat/pr-06-multiplayer-clients` |
 | PR-07 | Modular TypeScript platform server | Planned | `feat/pr-07-platform-server` |
 | PR-08 | PostgreSQL-backed persistence | Planned | `feat/pr-08-postgres-persistence` |
@@ -172,6 +172,24 @@ for its primary workflow; all five open under the shell origin; no separate fron
 needed for them; legacy versions remain available behind a temporary fallback.
 
 **Rollback:** Switch their registry entries back to the legacy launch adapter.
+
+### Excluded
+
+- No Quiz Shooter or Build A Beast client migration; those multiplayer clients remain PR-06.
+- No platform-server replacement, persistence/auth migration, realtime protocol change, or legacy
+  source removal.
+- No game-rule or planner-workflow redesign. Existing standalone destinations remain temporary
+  fallbacks until the same-origin routes pass acceptance tests.
+
+### Test Plan
+
+- Unit tests cover each migrated app's route adapter and deterministic workflow entry state.
+- Playwright covers each app's primary workflow under the hub origin, including the temporary
+  legacy fallback when a same-origin route cannot load.
+- Existing launcher smoke coverage verifies all five cards now use same-origin registry routes;
+  PR-06 multiplayer launcher destinations remain unchanged.
+- Root lint, type-check, build, unit, integration, and Playwright commands remain green, with
+  BD-001 and BD-002 retained as explicit expected baseline results.
 
 ## PR-06: Multiplayer Client Micro-Apps
 

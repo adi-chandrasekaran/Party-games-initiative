@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import AdminPage from "./AdminPage";
-import { ARCADE_APPS, PLANNER_APPS, resolveHubLaunch } from "./appRegistry";
+import { ARCADE_APPS, PLANNER_APPS, getHubAppManifest, resolveHubLaunch } from "./appRegistry";
 import "./index.css";
 
 const NAV_ITEMS = [
@@ -311,6 +311,22 @@ function buildCardBackground(accent, theme = "dark") {
   const shadow = theme === "light" ? 0.05 : 0.08;
   const tint = theme === "light" ? 0.1 : 0.12;
   return `linear-gradient(135deg, ${hexToRgba(accent, shadow)} 0%, ${hexToRgba(accent, tint)} 42%, ${base} 100%)`;
+}
+
+function SameOriginMicroapp({ app, onBack }) {
+  return (
+    <section className="sameOriginMicroapp" aria-label={`${app.title} app`}>
+      <div className="sameOriginMicroappToolbar">
+        <button type="button" className="workspaceBackButton" onClick={onBack}>
+          Back to {app.area === "planner" ? "Planner" : "Arcade"}
+        </button>
+        <a className="sameOriginFallbackLink" href={app.legacyUrl}>
+          Open legacy fallback
+        </a>
+      </div>
+      <iframe className="sameOriginMicroappFrame" title={app.title} src={app.sameOriginEntry} />
+    </section>
+  );
 }
 
 function LaunchCard({ item, ctaLabel, onLaunch, theme }) {
@@ -1269,10 +1285,12 @@ function ForgeShell({
   isOwner,
   onCreateGameDraft,
   onRecordGamePlay,
+  initialMicroappId,
 }) {
   const [theme, setTheme] = useState(() => window.localStorage.getItem("forge.theme") || "dark");
   const [workspaceTabs, setWorkspaceTabs] = useState({ arcade: "home", planner: "home" });
   const [activeArcadeGame, setActiveArcadeGame] = useState("");
+  const [activeMicroappId, setActiveMicroappId] = useState(initialMicroappId || "");
   const [ratingDraft, setRatingDraft] = useState({ game: "", stars: {} });
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -1326,9 +1344,26 @@ function ForgeShell({
   const selectView = (view) => {
     setActiveView(view);
     setActiveArcadeGame("");
+    setActiveMicroappId("");
+    window.history.pushState({}, "", `/?workspace=${view === "planner" ? "planner" : "arcade"}`);
     if (view === "arcade" || view === "planner") {
       setWorkspaceTabs((prev) => ({ ...prev, [view]: "home" }));
     }
+  };
+
+  const openSameOriginMicroapp = (item) => {
+    setActiveView(item.area);
+    setWorkspaceTabs((prev) => ({ ...prev, [item.area]: "home" }));
+    setActiveMicroappId(item.id);
+    window.history.pushState({}, "", item.canonicalRoute);
+    return onRecordGamePlay?.(item.title);
+  };
+
+  const closeSameOriginMicroapp = () => {
+    const app = getHubAppManifest(activeMicroappId);
+    const workspace = app?.area || currentWorkspace;
+    setActiveMicroappId("");
+    window.history.pushState({}, "", `/?workspace=${workspace}`);
   };
 
   const arcadeHome = () => (
@@ -1340,6 +1375,7 @@ function ForgeShell({
       theme={theme}
       onLaunchItem={(item) => {
         if (item.launchMode === "legacy-external") return onGameClick(item);
+        if (item.launchMode === "same-origin") return openSameOriginMicroapp(item);
         setActiveArcadeGame(item.id);
         return onRecordGamePlay?.(item.title);
       }}
@@ -1354,12 +1390,17 @@ function ForgeShell({
       selectedDeck={selectedDeck}
       items={PLANNER_APPS}
       theme={theme}
-      onLaunchItem={onGameClick}
+      onLaunchItem={(item) => item.launchMode === "same-origin" ? openSameOriginMicroapp(item) : onGameClick(item)}
       isPlanner
     />
   );
 
   const renderWorkspaceContent = () => {
+    if (activeMicroappId) {
+      const app = [...arcadeGames, ...PLANNER_APPS].find((candidate) => candidate.id === activeMicroappId);
+      if (app?.launchMode === "same-origin") return <SameOriginMicroapp app={app} onBack={closeSameOriginMicroapp} />;
+    }
+
     if (currentWorkspace === "arcade" && activeArcadeGame === "flashcards") {
       return (
         <ArcadeFlashcardsGame
@@ -1455,7 +1496,7 @@ function ForgeShell({
           <div className="workspaceShell">
             <WorkspaceSidebar title={currentWorkspace === "planner" ? "Planner" : "Arcade"} activeTab={currentTab} onSelectTab={setCurrentTab} />
             <div className="workspaceStage">
-              {currentTab !== "home" ? (
+              {currentTab !== "home" && !activeMicroappId ? (
                 <button type="button" className="workspaceBackButton" onClick={() => setCurrentTab("home")}>
                   Back to {currentWorkspace === "planner" ? "Planner" : "Arcade"}
                 </button>
@@ -2777,7 +2818,11 @@ export default function App() {
     chats: { threads: [] },
     privateApps: { invites: [], memberships: [], all: [EMPTY_PRIVATE_APP], requestedIds: [] },
   });
+  const directMicroapp = ["imposter", "habit-tracker", "todo-board", "timer", "assignments"]
+    .map((id) => getHubAppManifest(id))
+    .find((app) => app?.canonicalRoute === window.location.pathname);
   const [activeView, setActiveView] = useState(() => {
+    if (directMicroapp) return directMicroapp.area;
     const params = new URLSearchParams(window.location.search);
     const workspaceFromUrl = params.get("workspace");
     if (workspaceFromUrl === "planner" || workspaceFromUrl === "arcade") return workspaceFromUrl;
@@ -2970,6 +3015,7 @@ export default function App() {
       onUploadDeck={uploadDeck}
       isOwner={user?.role === "owner" || user?.email === "caditi28@aischennai.org"}
       onRecordGamePlay={recordInternalGame}
+      initialMicroappId={directMicroapp?.id || ""}
       onCreateGameDraft={(kind) => {
         window.alert(`make a new ${kind} game\nGo to codex to do so.`);
       }}

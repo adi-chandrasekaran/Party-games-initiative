@@ -43,3 +43,25 @@ existing hub through the shared shell tokens; it does not migrate any launcher d
 
 Expected result: all seven shell destinations work in both themes and viewport sizes; rail
 controls work by keyboard; legacy game and planner launch behavior is unchanged.
+
+## PR-05 same-origin simple micro-apps
+
+This is the manual equivalent of the PR-05 Playwright coverage. Start the workspace with
+`pnpm dev`, open `http://localhost:5176`, and create a disposable local account.
+
+1. Open **Arcade**, select **Imposter**, and confirm the address stays on `localhost:5176` at
+   `/arcade/imposter`. Enter a manual secret word and select **Next**; the player-entry screen
+   must appear.
+2. Open **Planner**. For **Habit Tracker**, add a habit. For **To-do Board**, add a task. For
+   **Timer**, select a preset. For **Assignments**, add a row with a subject and assignment.
+   Each address must remain on `localhost:5176` under its `/planner/...` route.
+3. In each embedded app, use **Back to Arcade/Planner** in the shell toolbar. Confirm the
+   corresponding launcher grid reappears.
+4. Select **Open legacy fallback** in one migrated app only. Confirm its existing standalone URL
+   still opens, then return to the hub.
+5. Confirm **Quiz Shooter** and **Build A Beast** still open their existing legacy URLs. They are
+   not part of PR-05.
+
+Expected result: the five migrated apps run through the shell origin with their existing primary
+workflows, their standalone versions remain available as fallbacks, and only the two multiplayer
+clients retain separate frontend ports.

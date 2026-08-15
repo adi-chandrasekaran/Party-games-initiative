@@ -1,13 +1,16 @@
 import { expect, test } from "@playwright/test";
 
 const externalLaunchers = [
-  ["arcade", "IMPOSTER", "http://localhost:5181/"],
   ["arcade", "QUIZ SHOOTER", "http://localhost:5173/"],
   ["arcade", "BUILD A BEAST", "http://localhost:5174/"],
-  ["planner", "HABIT TRACKER", "http://localhost:5314/"],
-  ["planner", "TO-DO BOARD", "http://localhost:5315/"],
-  ["planner", "TIMER", "http://localhost:5316/"],
-  ["planner", "ASSIGNMENTS", "http://localhost:5317/"],
+];
+
+const sameOriginLaunchers = [
+  ["arcade", "IMPOSTER", "/arcade/imposter", "Imposter Who"],
+  ["planner", "HABIT TRACKER", "/planner/habit-tracker", "Habit Tracker"],
+  ["planner", "TO-DO BOARD", "/planner/todo-board", "To-Do Board"],
+  ["planner", "TIMER", "/planner/timer", "Timer"],
+  ["planner", "ASSIGNMENTS", "/planner/assignments", "Assignments"],
 ];
 
 const internalArcadeLaunchers = ["FLASHCARDS", "QUIZ BOWL", "WORD MATCH"];
@@ -37,6 +40,16 @@ for (const [workspace, title, target] of externalLaunchers) {
     await signUpForSmokeTest(page, workspace);
     await page.getByRole("button", { name: title }).click();
     await expect(page).toHaveURL(target);
+  });
+}
+
+for (const [workspace, title, route, frameHeading] of sameOriginLaunchers) {
+  test(`${title} opens through its same-origin shell route`, async ({ page }) => {
+    await signUpForSmokeTest(page, workspace);
+    await page.getByRole("button", { name: title }).click();
+    await expect(page).toHaveURL(new RegExp(`${route}$`));
+    await expect(page.locator(".sameOriginMicroappFrame")).toHaveAttribute("src", /\/microapps\//);
+    await expect(page.frameLocator(".sameOriginMicroappFrame").getByRole("heading", { name: frameHeading, exact: true })).toBeVisible();
   });
 }
 

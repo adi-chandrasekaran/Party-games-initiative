@@ -18,7 +18,9 @@ Status: **Legacy system to be incrementally migrated**
 
 - The hub is a large React/Vite application with a monolithic `App.jsx` and a large stylesheet
   containing overlapping generations of design rules.
-- Each arcade and planner frontend starts its own Vite process and browser port.
+- PR-05 stages Imposter and the four planner tools into same-origin, lazy iframe adapters within
+  the hub. Their standalone Vite frontends remain compatibility fallbacks; only Quiz Shooter and
+  Build A Beast still require separate frontend ports pending PR-06.
 - The hub's launcher metadata comes from the shared registry; legacy destination URLs are
   compatibility configuration until the same-origin migrations in PR-05 and PR-06.
 - The hub resolves PDFJS through its workspace manifest; the platform API and legacy realtime
