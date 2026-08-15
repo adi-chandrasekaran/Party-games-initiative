@@ -18,9 +18,9 @@ Status: **Legacy system to be incrementally migrated**
 
 - The hub is a large React/Vite application with a monolithic `App.jsx` and a large stylesheet
   containing overlapping generations of design rules.
-- PR-05 stages Imposter and the four planner tools into same-origin, lazy iframe adapters within
-  the hub. Their standalone Vite frontends remain compatibility fallbacks; only Quiz Shooter and
-  Build A Beast still require separate frontend ports pending PR-06.
+- PR-05 and PR-06 stage all seven standalone clients into same-origin, lazy iframe adapters
+  within the hub. Their standalone Vite frontends remain compatibility fallbacks; Quiz Shooter
+  and Build A Beast retain only their Socket.IO backend ports (4000 and 4100).
 - The hub's launcher metadata comes from the shared registry; legacy destination URLs are
   compatibility configuration until the same-origin migrations in PR-05 and PR-06.
 - The hub resolves PDFJS through its workspace manifest; the platform API and legacy realtime
@@ -38,14 +38,17 @@ Status: **Legacy system to be incrementally migrated**
 
 ## Testing
 
-- PR-03 adds registry unit/contract/integration coverage and ordinary Playwright click coverage
-  for all current launcher cards.
-- There is no visual comparison against Figma yet; that belongs to PR-04.
+- PR-03 adds registry unit/contract/integration coverage and PR-04/PR-05 extend Playwright
+  coverage to shell visuals, same-origin launcher routes, and the five simple micro-app workflows.
+- PR-04 maintains committed Figma shell screenshots at the approved desktop and narrow viewports
+  in light and dark themes.
 - There is no CI gate or documented definition of done.
 - The Quiz Shooter client build currently fails because `DeckEditor.tsx` has an implicitly typed
   `choice` parameter.
 - The Build A Beast client build currently fails because `App.tsx` tests a `void` expression for
   truthiness.
+- Build A Beast displays a shared-deck selector, but its legacy Socket.IO server does not retain
+  or apply the submitted `studyDeckId`; PR-11 owns the shared deck pipeline needed to resolve it.
 
 ## Consequences
 

@@ -59,9 +59,39 @@ This is the manual equivalent of the PR-05 Playwright coverage. Start the worksp
    corresponding launcher grid reappears.
 4. Select **Open legacy fallback** in one migrated app only. Confirm its existing standalone URL
    still opens, then return to the hub.
-5. Confirm **Quiz Shooter** and **Build A Beast** still open their existing legacy URLs. They are
-   not part of PR-05.
+5. At the PR-05 milestone, **Quiz Shooter** and **Build A Beast** were intentionally left on their
+   legacy URLs. Their migration is verified by the PR-06 checklist below.
 
-Expected result: the five migrated apps run through the shell origin with their existing primary
-workflows, their standalone versions remain available as fallbacks, and only the two multiplayer
-clients retain separate frontend ports.
+Expected result at the PR-05 milestone: the five migrated apps run through the shell origin with
+their existing primary workflows, their standalone versions remain available as fallbacks, and
+only the two multiplayer clients retain separate frontend ports.
+
+## PR-06 same-origin multiplayer clients
+
+This is the manual equivalent of the PR-06 Playwright and Socket.IO contract coverage. Start the
+workspace with `pnpm dev`, then open `http://localhost:5176` in two separate browser windows (or
+one normal and one private window). Create a disposable local account in each window.
+
+1. In the first window, open **Arcade** and select **Quiz Shooter**. Confirm the address is
+   `http://localhost:5176/arcade/quiz-shooter`, the game is displayed inside the shell, and the
+   shell toolbar offers **Back to Arcade** and **Open legacy fallback**. Enter a username and
+   choose **Host Game**. Copy the displayed room code.
+2. In the second window, open **Arcade** and select **Quiz Shooter**. Enter a different username,
+   paste the room code, and choose **Join as Player**. Confirm **Waiting for Host** appears.
+   Refresh that window, reopen Quiz Shooter, and join with the same room code again; the lobby
+   must accept the fresh connection. Back in the first window, use the deck editor to change the
+   question deck before starting a round.
+3. Repeat the two-window flow for **Build A Beast** at
+   `http://localhost:5176/arcade/build-a-beast`: host a room, copy the room code, join it from the
+   other window, and confirm **Waiting for host...** appears. Refresh and reopen the player game,
+   then join the same lobby again.
+4. In either game, select **Host Game** with a blank AISC username. Confirm the app presents an
+   error and does not create a room. Use **Back to Arcade** to return to the launcher grid. The
+   **Open legacy fallback** link must retain the configured standalone URL; the legacy client is
+   not started by the standard `pnpm dev` command.
+5. Stop local processes with `Ctrl+C`.
+
+Expected result: both clients load from the hub origin and support host/join/disconnect/fresh-join
+flows while their existing Socket.IO servers remain unchanged. Quiz Shooter applies a host-selected
+question deck. Build A Beast's visible shared-deck selector is a recorded legacy limitation: its
+server does not yet apply a selected deck, which is deferred to PR-11.
