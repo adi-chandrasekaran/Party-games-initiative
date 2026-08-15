@@ -38,6 +38,13 @@ pnpm dev
 The developer opens the hub at `http://localhost:5176`; PR-05 and PR-06 will later eliminate
 the separate micro-app frontend URLs.
 
+## Registry compatibility configuration
+
+PR-03 resolves launcher destinations through `@forge/app-registry`. The documented legacy
+origins are the defaults. A local override may use the corresponding `VITE_*_ORIGIN` value, such
+as `VITE_IMPOSTER_ORIGIN`; it must be a complete `http` or `https` origin with no path. Do not
+add app URLs directly to the hub.
+
 ## Environment Files
 
 - Commit `.env.example` with safe placeholders.

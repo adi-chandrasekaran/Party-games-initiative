@@ -1,0 +1,13 @@
+{
+  "name": "@forge/app-registry",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "@forge/contracts": "workspace:*"
+  }
+}

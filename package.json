@@ -16,6 +16,8 @@
     "workspace:check": "node --test tests/workspace/*.test.mjs"
   },
   "devDependencies": {
+    "@forge/app-registry": "workspace:*",
+    "@forge/contracts": "workspace:*",
     "@playwright/test": "1.55.0",
     "concurrently": "latest",
     "eslint": "9.21.0",

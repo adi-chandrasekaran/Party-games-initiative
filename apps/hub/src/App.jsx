@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import AdminPage from "./AdminPage";
-import { fetchPlatformGames } from "./platformApi";
-import { games as fallbackGames } from "./gamesConfig";
+import { ARCADE_APPS, PLANNER_APPS, resolveHubLaunch } from "./appRegistry";
 import "./index.css";
 
 const NAV_ITEMS = [
@@ -17,67 +16,6 @@ const WORKSPACE_TABS = [
   { id: "planner", label: "AISC Planner" },
 ];
 
-const PLANNER_APPS = [
-  {
-    id: "habit-tracker",
-    title: "HABIT TRACKER",
-    subtitle: "Month tabs, daily checkboxes",
-    url: "http://localhost:5314",
-    color: "#4dd6ff",
-    icon: "habit",
-  },
-  {
-    id: "todo-board",
-    title: "TO-DO BOARD",
-    subtitle: "Priority tabs and task lanes",
-    url: "http://localhost:5315",
-    color: "#ff8a3d",
-    icon: "todo",
-  },
-  {
-    id: "timer",
-    title: "TIMER",
-    subtitle: "Six study timers in one app",
-    url: "http://localhost:5316",
-    color: "#7cff2f",
-    icon: "timer",
-  },
-  {
-    id: "assignments",
-    title: "ASSIGNMENTS",
-    subtitle: "Spreadsheet-style tracker",
-    url: "http://localhost:5317",
-    color: "#ff59c7",
-    icon: "assignments",
-  },
-];
-
-const FIGMA_ARCADE_GAMES = [
-  {
-    id: "flashcards",
-    title: "FLASHCARDS",
-    subtitle: "Study term-definition pairs",
-    color: "#8b5cf6",
-    icon: "flashcards",
-    launch: "flashcards",
-  },
-  {
-    id: "quiz-bowl",
-    title: "QUIZ BOWL",
-    subtitle: "Multiple choice challenge",
-    color: "#06b6d4",
-    icon: "quizbowl",
-    launch: "quiz-bowl",
-  },
-  {
-    id: "word-match",
-    title: "WORD MATCH",
-    subtitle: "Match terms to definitions",
-    color: "#10b981",
-    icon: "wordmatch",
-    launch: "word-match",
-  },
-];
 
 const FORGE_HOME_CARDS = [
   {
@@ -379,7 +317,6 @@ function LaunchCard({ item, ctaLabel, onLaunch, theme }) {
   const sharedProps = {
     className: "launchCardButton",
     onClick: onLaunch,
-    onPointerUp: onLaunch,
     onKeyDown: (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -1372,7 +1309,7 @@ function ForgeShell({
   }, [onSearchUsers, searchQuery]);
 
   const selectedDeck = decks.find((deck) => deck.id === selectedDeckId) || null;
-  const arcadeGames = [...games, ...FIGMA_ARCADE_GAMES];
+  const arcadeGames = games;
   const currentWorkspace = activeView === "planner" ? "planner" : "arcade";
   const currentTab = workspaceTabs[currentWorkspace];
   const setCurrentTab = (tab) => {
@@ -1402,12 +1339,9 @@ function ForgeShell({
       items={arcadeGames}
       theme={theme}
       onLaunchItem={(item) => {
-        if (item.url) {
-          onGameClick(item);
-          return;
-        }
-        setActiveArcadeGame(item.launch || item.id);
-        onRecordGamePlay?.(item.title);
+        if (item.launchMode === "legacy-external") return onGameClick(item);
+        setActiveArcadeGame(item.id);
+        return onRecordGamePlay?.(item.title);
       }}
       isPlanner={false}
     />
@@ -1420,7 +1354,7 @@ function ForgeShell({
       selectedDeck={selectedDeck}
       items={PLANNER_APPS}
       theme={theme}
-      onLaunchItem={(app) => app.url && window.location.assign(app.url)}
+      onLaunchItem={onGameClick}
       isPlanner
     />
   );
@@ -2836,7 +2770,7 @@ function AuthGate({ onGoogleSignIn }) {
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  const [hubGames, setHubGames] = useState(fallbackGames);
+  const [hubGames] = useState(ARCADE_APPS);
   const [dashboard, setDashboard] = useState({
     stats: {},
     decks: [],
@@ -2865,14 +2799,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    Promise.all([
-      refreshState().catch(() => null),
-      fetchPlatformGames()
-        .then((games) => {
-          if (games.length) setHubGames(games);
-        })
-        .catch(() => null),
-    ]).finally(() => setLoading(false));
+    refreshState().catch(() => null).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -2951,7 +2878,7 @@ export default function App() {
   };
 
   const recordGame = async (game) => {
-    const target = new URL(game.url || game.route);
+    const target = new URL(resolveHubLaunch(game));
     const selectedDeck = dashboard.decks?.find((deck) => deck.id === selectedDeckId);
     if (selectedDeck) {
       target.searchParams.set("deckId", selectedDeck.id);
