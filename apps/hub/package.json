@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@forge/app-registry": "workspace:*",
+    "@forge/design-tokens": "workspace:*",
     "@vitejs/plugin-react": "latest",
     "vite": "latest",
     "react": "latest",

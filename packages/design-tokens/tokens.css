@@ -1,0 +1,45 @@
+:root {
+  --bg: #090b13;
+  --surface: rgba(17, 20, 31, 0.94);
+  --surface-2: rgba(25, 29, 43, 0.94);
+  --surface-3: rgba(34, 40, 57, 0.94);
+  --border: rgba(255, 255, 255, 0.14);
+  --text: #f6f7fb;
+  --text-muted: rgba(246, 247, 251, 0.68);
+  --text-subtle: rgba(246, 247, 251, 0.34);
+  --violet: #7c3aed;
+  --violet-hover: #6d28d9;
+  --violet-light: #b999ff;
+  --violet-dim: rgba(124, 58, 237, 0.18);
+  --cyan: #48d8ff;
+  --cyan-dim: rgba(72, 216, 255, 0.16);
+  --emerald: #48e0a4;
+  --emerald-dim: rgba(72, 224, 164, 0.16);
+  --amber: #ffd34d;
+  --amber-dim: rgba(255, 211, 77, 0.16);
+  --rose: #ff5f7a;
+  --rose-dim: rgba(255, 95, 122, 0.16);
+}
+
+:root[data-forge-theme='light'] {
+  --bg: #f5f7ff;
+  --surface: rgba(255, 255, 255, 0.95);
+  --surface-2: rgba(242, 245, 255, 0.96);
+  --surface-3: rgba(226, 232, 255, 0.96);
+  --border: rgba(25, 29, 43, 0.1);
+  --text: #141827;
+  --text-muted: rgba(20, 24, 39, 0.66);
+  --text-subtle: rgba(20, 24, 39, 0.36);
+  --violet: #6d28d9;
+  --violet-hover: #5b21b6;
+  --violet-light: #7c3aed;
+  --violet-dim: rgba(109, 40, 217, 0.12);
+  --cyan: #109fc5;
+  --cyan-dim: rgba(16, 159, 197, 0.12);
+  --emerald: #0f9a61;
+  --emerald-dim: rgba(15, 154, 97, 0.12);
+  --amber: #d38d00;
+  --amber-dim: rgba(211, 141, 0, 0.12);
+  --rose: #d93b5d;
+  --rose-dim: rgba(217, 59, 93, 0.12);
+}

@@ -1,6 +1,7 @@
 packages:
   - packages/contracts
   - packages/app-registry
+  - packages/design-tokens
   - apps/hub
   - apps/imposter
   - apps/planner-assignments

@@ -18,8 +18,8 @@ human-approved PR.
 |---|---|---|---|
 | PR-01 | Canonical repository and behavior baseline | Complete | `feat/pr-01-canonical-baseline` |
 | PR-02 | Workspace foundation | Complete | `feat/pr-02-workspace-foundation` |
-| PR-03 | Shared contracts and app registry | In progress | `feat/pr-03-app-registry` |
-| PR-04 | Figma web shell and design system | Planned | `feat/pr-04-figma-shell` |
+| PR-03 | Shared contracts and app registry | Complete | `feat/pr-03-app-registry` |
+| PR-04 | Figma web shell and design system | In review | `feat/pr-04-figma-shell` |
 | PR-05 | Imposter and planner micro-app migration | Planned | `feat/pr-05-simple-microapps` |
 | PR-06 | Quiz Shooter and Build A Beast client migration | Planned | `feat/pr-06-multiplayer-clients` |
 | PR-07 | Modular TypeScript platform server | Planned | `feat/pr-07-platform-server` |
@@ -134,16 +134,33 @@ implementation is removed.
 
 ## PR-04: Figma Web Shell and Design System
 
-Port the approved Figma shell into `apps/web`; extract tokens and components; wire real product
-data through adapters. Add light/dark, responsive, keyboard, and Playwright visual tests for
-Forge Home, Profile, Arcade, Planner, Clubs, Classes, and Requests.
+Port the approved Figma shell into the active `apps/hub` web-shell adapter; extract shared design
+tokens and components; wire real product data through adapters. Add light/dark, responsive,
+keyboard, and Playwright visual tests for Forge Home, Profile, Arcade, Planner, Clubs, Classes,
+and Requests. The target `apps/web` directory remains a later physical migration so this PR does
+not create a second competing web runtime.
 
 **Acceptance gate:** Approved Playwright screenshots pass for all seven shell destinations in
 light and dark themes; keyboard navigation and persistent rail controls pass end-to-end; current
 app launch behavior remains unchanged through adapters.
 
-**Rollback:** A shell feature flag returns users to the legacy hub. Micro-app and backend code is
-not migrated in this PR.
+**Rollback:** Revert the shell-token and visual-regression commits to return to the existing hub
+stylesheet. Micro-app and backend code is not migrated in this PR.
+
+### Excluded
+
+- No micro-app relocation, registry-contract change, persistence/auth migration, or realtime
+  server change.
+- No physical `apps/hub` to `apps/web` relocation; that target-layout step requires its own
+  documented milestone.
+- Existing legacy launcher destinations remain registry-backed compatibility targets.
+
+### Test Plan
+
+- Playwright screenshots at desktop `1440 × 900` and narrow `390 × 844` viewports in light and
+  dark themes for Forge Home, Profile, Arcade, Planner, Clubs, Classes, and Requests.
+- Keyboard navigation verifies the rail, workspace sidebar, theme control, and profile control.
+- Existing launcher Playwright tests remain green, with the same legacy destinations.
 
 ## PR-05: Imposter and Planner Micro-Apps
 

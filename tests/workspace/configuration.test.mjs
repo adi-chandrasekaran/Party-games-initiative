@@ -8,6 +8,7 @@ const root = new URL("../..", import.meta.url);
 const expectedPackages = [
   "packages/contracts",
   "packages/app-registry",
+  "packages/design-tokens",
   "apps/hub",
   "apps/imposter",
   "apps/planner-assignments",
@@ -20,7 +21,7 @@ const expectedPackages = [
   "apps/build-a-beast/server",
 ];
 
-test("workspace lists only active leaf packages", async () => {
+test("workspace lists the active packages and shared foundations", async () => {
   const workspace = await readFile(new URL("../../pnpm-workspace.yaml", import.meta.url), "utf8");
   for (const entry of expectedPackages) assert.match(workspace, new RegExp(`- ${entry}`));
   assert.doesNotMatch(workspace, /old-games/);

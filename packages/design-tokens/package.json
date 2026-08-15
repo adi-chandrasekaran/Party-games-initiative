@@ -1,0 +1,8 @@
+{
+  "name": "@forge/design-tokens",
+  "private": true,
+  "version": "0.1.0",
+  "exports": {
+    "./tokens.css": "./tokens.css"
+  }
+}
