@@ -35,8 +35,9 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The developer opens the hub at `http://localhost:5176`; PR-05 and PR-06 will later eliminate
-the separate micro-app frontend URLs.
+The developer opens the hub at `http://localhost:5176`. PR-05 eliminates the separate frontend
+URLs for Imposter and the four planner tools; PR-06 will migrate the remaining Quiz Shooter and
+Build A Beast clients.
 
 ## Registry compatibility configuration
 

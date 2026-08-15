@@ -21,12 +21,15 @@ test("registry rejects duplicate IDs, routes, and invalid compatibility targets"
   duplicateRoute[1].canonicalRoute = duplicateRoute[0].canonicalRoute;
   assert.throws(() => validateAppRegistry(duplicateRoute), /Duplicate canonical route/);
 
-  const invalidOrigin = appManifests.map((manifest) => ({ ...manifest, legacyTarget: manifest.legacyTarget && { ...manifest.legacyTarget } }));
-  invalidOrigin[0].legacyTarget.defaultOrigin = "file:///not-a-launcher";
+  const invalidOrigin = appManifests.map((manifest) => ({ ...manifest, legacyFallback: manifest.legacyFallback && { ...manifest.legacyFallback } }));
+  invalidOrigin[0].legacyFallback.defaultOrigin = "file:///not-a-launcher";
   assert.throws(() => validateAppRegistry(invalidOrigin), /Invalid legacy origin protocol/);
 });
 
-test("registry validates environment overrides and preserves legacy targets", () => {
+test("registry routes the five simple micro-apps through the hub and preserves fallbacks", () => {
+  const sameOriginApps = appManifests.filter((manifest) => manifest.launchMode === "same-origin");
+  assert.deepEqual(sameOriginApps.map((manifest) => manifest.id), ["imposter", "habit-tracker", "todo-board", "timer", "assignments"]);
+  assert.ok(sameOriginApps.every((manifest) => manifest.sameOriginEntry.startsWith("/microapps/")));
   assert.equal(resolveLegacyLaunch("imposter"), "http://localhost:5181");
   assert.equal(resolveLegacyLaunch("imposter", { VITE_IMPOSTER_ORIGIN: "https://forge.example.test" }), "https://forge.example.test");
   assert.throws(() => resolveLegacyLaunch("imposter", { VITE_IMPOSTER_ORIGIN: "not a url" }), /Invalid legacy origin/);

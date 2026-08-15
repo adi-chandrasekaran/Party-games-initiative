@@ -1862,6 +1862,35 @@ body {
   overflow: hidden;
 }
 
+.sameOriginMicroapp {
+  width: 100%;
+  min-height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(720px, 1fr);
+  gap: 12px;
+}
+
+.sameOriginMicroappToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sameOriginFallbackLink {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.sameOriginMicroappFrame {
+  width: 100%;
+  min-height: 720px;
+  border: 1px solid var(--shell-border);
+  border-radius: 20px;
+  background: var(--shell-panel);
+}
+
 .workspaceSidebar {
   width: 230px;
   flex: none;
@@ -5262,6 +5291,14 @@ body {
 
   .workspaceShell {
     flex-direction: column;
+  }
+
+  .sameOriginMicroapp {
+    grid-template-rows: auto minmax(680px, 1fr);
+  }
+
+  .sameOriginMicroappFrame {
+    min-height: 680px;
   }
 
   .workspaceSidebar {

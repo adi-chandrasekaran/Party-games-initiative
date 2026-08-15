@@ -5,7 +5,7 @@
   "packageManager": "pnpm@11.19.0",
   "description": "One launcher app for multiple party games.",
   "scripts": {
-    "dev": "turbo run dev --parallel --filter='./apps/**'",
+    "dev": "turbo run dev --parallel --filter=party-games-hub --filter=quiz-shooter-3d-client --filter=quiz-shooter-3d-server --filter=build-a-beast-client --filter=build-a-beast-server",
     "lint": "turbo run lint --filter='./apps/**' && eslint scripts tests --max-warnings=0",
     "type-check": "turbo run type-check --filter='./apps/**' && node scripts/verify-known-defects.mjs",
     "build": "turbo run build --filter=party-games-hub --filter=imposter-game --filter=planner-habit-tracker --filter=planner-todo-board --filter=planner-timer --filter=planner-assignments && node scripts/verify-known-defects.mjs",

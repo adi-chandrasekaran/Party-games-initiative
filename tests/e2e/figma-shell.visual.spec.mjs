@@ -34,7 +34,7 @@ for (const [viewportName, viewport] of [["desktop", { width: 1440, height: 900 }
         await expect(page).toHaveScreenshot(`${viewportName}-${theme}-${snapshot}.png`, {
           fullPage: true,
           mask: snapshot === "profile"
-            ? [page.locator(".profileSummaryCard"), page.locator(".profileDetailsCard")]
+            ? [page.locator(".profileSummaryCard"), page.locator(".profileDetailsCard"), page.locator(".profileStatsCard")]
             : [],
         });
       }
