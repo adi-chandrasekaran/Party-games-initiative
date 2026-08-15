@@ -8,6 +8,12 @@ importers:
 
   .:
     devDependencies:
+      '@forge/app-registry':
+        specifier: workspace:*
+        version: link:packages/app-registry
+      '@forge/contracts':
+        specifier: workspace:*
+        version: link:packages/contracts
       '@playwright/test':
         specifier: 1.55.0
         version: 1.55.0
@@ -88,6 +94,9 @@ importers:
 
   apps/hub:
     dependencies:
+      '@forge/app-registry':
+        specifier: workspace:*
+        version: link:../../packages/app-registry
       '@vitejs/plugin-react':
         specifier: latest
         version: 6.0.5(vite@8.2.1(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.12))
@@ -207,6 +216,14 @@ importers:
       typescript:
         specifier: ^5.4.2
         version: 5.9.3
+
+  packages/app-registry:
+    dependencies:
+      '@forge/contracts':
+        specifier: workspace:*
+        version: link:../contracts
+
+  packages/contracts: {}
 
 packages:
 

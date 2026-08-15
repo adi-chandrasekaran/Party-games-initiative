@@ -9,17 +9,20 @@ Status: **Legacy system to be incrementally migrated**
   ignored. PR-01 records the remaining behavior and portability baseline from this commit.
 - Similar Party Games directories have existed outside this repository, creating a risk that
   the wrong copy is edited or launched.
-- PR-02 introduces the pnpm/Turborepo workspace foundation for active app packages; historical
+- PR-02 establishes the pnpm/Turborepo workspace foundation for active app packages; historical
   `old-games/` copies remain outside that workspace until PR-13.
+- PR-03 introduces shared app contracts and a registry. Canonical same-origin routes and legacy
+  compatibility targets are defined once, while physical app migration remains deferred.
 
 ## Frontend
 
 - The hub is a large React/Vite application with a monolithic `App.jsx` and a large stylesheet
   containing overlapping generations of design rules.
 - Each arcade and planner frontend starts its own Vite process and browser port.
-- Launch routes and back links contain hardcoded local URLs.
-- The hub resolves PDFJS through its workspace manifest; launcher and service endpoints remain
-  legacy hardcoded URLs until PR-03 and later milestones.
+- The hub's launcher metadata comes from the shared registry; legacy destination URLs are
+  compatibility configuration until the same-origin migrations in PR-05 and PR-06.
+- The hub resolves PDFJS through its workspace manifest; the platform API and legacy realtime
+  services remain separate processes until later milestones.
 - React and Vite versions differ between applications.
 - Planner state is primarily browser-local.
 
@@ -33,7 +36,8 @@ Status: **Legacy system to be incrementally migrated**
 
 ## Testing
 
-- PR-01 supplies root lint, type-check, unit, integration, and Playwright launcher smoke checks.
+- PR-03 adds registry unit/contract/integration coverage and ordinary Playwright click coverage
+  for all current launcher cards.
 - There is no visual comparison against Figma yet; that belongs to PR-04.
 - There is no CI gate or documented definition of done.
 - The Quiz Shooter client build currently fails because `DeckEditor.tsx` has an implicitly typed
@@ -53,5 +57,6 @@ Status: **Legacy system to be incrementally migrated**
 
 ## Immediate Guardrail
 
-Until roadmap PR-02 replaces the startup architecture, contributors must launch and edit only
-this repository and verify `pwd` and `git rev-parse --show-toplevel` before working.
+Contributors must launch and edit only this repository, verify `pwd` and
+`git rev-parse --show-toplevel`, and register new product-facing apps through a manifest rather
+than adding launcher conditions or local URLs to the hub.

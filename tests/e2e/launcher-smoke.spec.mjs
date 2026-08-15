@@ -23,7 +23,7 @@ async function signUpForSmokeTest(page, workspace) {
   await page.getByLabel("Email", { exact: true }).fill(`pr01-${suffix}@aischennai.org`);
   await page.getByLabel("Password", { exact: true }).fill("not-a-production-password");
   await page.getByRole("button", { name: "Create account" }).click();
-  await expect(page.getByRole("heading", { name: workspace === "planner" ? "PLANNER" : "ARCADE" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: workspace === "planner" ? "PLANNER" : "ARCADE", exact: true })).toBeVisible();
 }
 
 test("hub loads its local authentication gate", async ({ page }) => {
@@ -34,7 +34,6 @@ test("hub loads its local authentication gate", async ({ page }) => {
 
 for (const [workspace, title, target] of externalLaunchers) {
   test(`${title} preserves its documented legacy launcher behavior`, async ({ page }) => {
-    test.fail(true, "Expected baseline failure: docs/architecture/baseline-defects.md#bd-003-launcher-click-navigation");
     await signUpForSmokeTest(page, workspace);
     await page.getByRole("button", { name: title }).click();
     await expect(page).toHaveURL(target);

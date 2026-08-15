@@ -22,10 +22,8 @@ the entry must be deliberately updated or removed in the PR that fixes it.
 
 ## BD-003: External launcher click navigation
 
-- **Status:** Expected failure
+- **Status:** Resolved by PR-03
 - **Command:** `pnpm run test:e2e`
-- **Observed failure:** A Playwright user click activates the external arcade and planner cards but
-  leaves the shell at `http://localhost:5176` instead of assigning the documented legacy URL.
-- **Scope:** PR-01 records all seven affected launchers as expected-failure smoke tests. The
-  external card click path must be fixed in a later focused PR with an ordinary passing regression
-  test; PR-01 does not change launcher behavior.
+- **Regression coverage:** Playwright clicks all seven registry-backed external cards and asserts
+  the documented compatibility target. Manual steps are in
+  [`../development/manual-testing.md`](../development/manual-testing.md).

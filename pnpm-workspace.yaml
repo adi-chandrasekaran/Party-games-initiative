@@ -1,4 +1,6 @@
 packages:
+  - packages/contracts
+  - packages/app-registry
   - apps/hub
   - apps/imposter
   - apps/planner-assignments

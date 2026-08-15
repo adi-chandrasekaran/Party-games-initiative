@@ -17,8 +17,8 @@ human-approved PR.
 | ID | Milestone | Status | Required branch |
 |---|---|---|---|
 | PR-01 | Canonical repository and behavior baseline | Complete | `feat/pr-01-canonical-baseline` |
-| PR-02 | Workspace foundation | In progress | `feat/pr-02-workspace-foundation` |
-| PR-03 | Shared contracts and app registry | Planned | `feat/pr-03-app-registry` |
+| PR-02 | Workspace foundation | Complete | `feat/pr-02-workspace-foundation` |
+| PR-03 | Shared contracts and app registry | In progress | `feat/pr-03-app-registry` |
 | PR-04 | Figma web shell and design system | Planned | `feat/pr-04-figma-shell` |
 | PR-05 | Imposter and planner micro-app migration | Planned | `feat/pr-05-simple-microapps` |
 | PR-06 | Quiz Shooter and Build A Beast client migration | Planned | `feat/pr-06-multiplayer-clients` |
@@ -117,6 +117,20 @@ destinations remain available.
 
 **Rollback:** Revert the registry adapter and restore the prior launcher configuration. No app
 implementation is removed.
+
+### Excluded
+
+- No app relocation, same-origin micro-app loading, shell redesign, persistence/auth change,
+  server replacement, or legacy app removal.
+- Legacy launcher URLs and ports remain compatibility targets until PR-05, PR-06, and PR-13.
+
+### Test Plan
+
+- Registry unit tests reject duplicate IDs/routes and invalid manifest capabilities.
+- Contract tests cover every manifest's package, API, realtime, permission, and deck metadata.
+- Hub integration tests confirm platform launcher records originate from the registry.
+- Playwright clicks every registry-backed launcher and verifies its legacy destination; the
+  manual equivalent is documented in the PR evidence.
 
 ## PR-04: Figma Web Shell and Design System
 

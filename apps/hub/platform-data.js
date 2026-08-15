@@ -1,47 +1,14 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { listPlatformGames } from "@forge/app-registry";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const PLATFORM_DATA_PATH = path.join(__dirname, "data", "platform-data.json");
 
-const GAME_SEED = [
-  {
-    id: "imposter",
-    title: "IMPOSTER",
-    route: "http://localhost:5181",
-    description: "Find the secret player",
-    isPublic: true,
-    status: "active",
-    hostUserIds: ["aditi"],
-    color: "#ff2fa3",
-    icon: "imposter",
-  },
-  {
-    id: "quiz-shooter",
-    title: "QUIZ SHOOTER",
-    route: "http://localhost:5173",
-    description: "Answer fast, shoot faster",
-    isPublic: true,
-    status: "active",
-    hostUserIds: ["aditi"],
-    color: "#18d8ff",
-    icon: "quiz",
-  },
-  {
-    id: "build-a-beast",
-    title: "BUILD A BEAST",
-    route: "http://localhost:5174",
-    description: "Create your monster",
-    isPublic: true,
-    status: "active",
-    hostUserIds: ["aditi"],
-    color: "#7cff2f",
-    icon: "beast",
-  },
-];
+const GAME_SEED = listPlatformGames(process.env).map((game) => ({ ...game, hostUserIds: ["aditi"] }));
 
 function defaultPlatformData() {
   return {
@@ -98,6 +65,11 @@ function uniqueIds(ids) {
   return Array.from(new Set((ids || []).map((id) => String(id).trim()).filter(Boolean)));
 }
 
+function withRegistryLaunch(game) {
+  const registryGame = listPlatformGames(process.env).find((entry) => entry.id === game.id);
+  return registryGame ? { ...game, route: registryGame.route } : game;
+}
+
 function syncUserHostGames(data, userId, hostGameIds) {
   for (const game of data.gameConfigs) {
     const shouldHost = hostGameIds.includes(game.id);
@@ -111,11 +83,11 @@ function syncUserHostGames(data, userId, hostGameIds) {
 }
 
 export function getPublicGames(data) {
-  return (data.gameConfigs || []).filter((game) => game.isPublic && game.status === "active");
+  return (data.gameConfigs || []).filter((game) => game.isPublic && game.status === "active").map(withRegistryLaunch);
 }
 
 export function getAllGamesForAdmin(data) {
-  return data.gameConfigs || [];
+  return (data.gameConfigs || []).map(withRegistryLaunch);
 }
 
 export function findUserByLogin(data, emailOrUsername) {

@@ -6,6 +6,8 @@ import { fileURLToPath } from "node:url";
 
 const root = new URL("../..", import.meta.url);
 const expectedPackages = [
+  "packages/contracts",
+  "packages/app-registry",
   "apps/hub",
   "apps/imposter",
   "apps/planner-assignments",
