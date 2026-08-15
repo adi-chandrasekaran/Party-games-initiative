@@ -18,29 +18,29 @@ A multiplayer educational/fun game where players build creatures from parts, the
 - Server: Node + Express + Socket.IO + TypeScript
 - State: in-memory for prototype
 
-## Run in Cursor
+## Run locally
 
 ```bash
-cd build-a-beast
-npm install
-npm run dev
+corepack enable
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
 Open:
 
 ```text
-http://localhost:5173
+http://localhost:5174
 ```
 
 Server:
 
 ```text
-http://localhost:4000
+http://localhost:4100
 ```
 
 ## Same-device testing
 
-Open multiple browser tabs at `http://localhost:5173`.
+Open multiple browser tabs at `http://localhost:5174`.
 
 One tab hosts. Other tabs join using the room code.
 
@@ -63,19 +63,19 @@ client/.env
 Add:
 
 ```bash
-VITE_SERVER_URL=http://YOUR-LAPTOP-IP:4000
+VITE_SERVER_URL=http://YOUR-LAPTOP-IP:4100
 ```
 
 Restart:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Players open:
 
 ```text
-http://YOUR-LAPTOP-IP:5173
+http://YOUR-LAPTOP-IP:5174
 ```
 
 ## Upgrade ideas

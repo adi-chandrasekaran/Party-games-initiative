@@ -2,32 +2,25 @@
   "name": "party-games",
   "private": true,
   "version": "0.1.0",
+  "packageManager": "pnpm@11.19.0",
   "description": "One launcher app for multiple party games.",
   "scripts": {
-    "install:all": "npm install && npm install --prefix apps/hub && npm install --prefix apps/imposter && npm install --prefix apps/quiz-shooter && npm install --prefix apps/build-a-beast && npm install --prefix apps/planner-habit && npm install --prefix apps/planner-todo && npm install --prefix apps/planner-timer && npm install --prefix apps/planner-assignments",
-    "dev": "node scripts/dev-all.mjs",
-    "dev:all": "node scripts/dev-all.mjs",
-    "dev:hub": "npm run dev --prefix apps/hub",
-    "dev:imposter": "npm run dev --prefix apps/imposter",
-    "dev:quiz": "npm run dev --prefix apps/quiz-shooter",
-    "dev:beast": "npm run dev --prefix apps/build-a-beast",
-    "dev:planner-habit": "npm run dev --prefix apps/planner-habit",
-    "dev:planner-todo": "npm run dev --prefix apps/planner-todo",
-    "dev:planner-timer": "npm run dev --prefix apps/planner-timer",
-    "dev:planner-assignments": "npm run dev --prefix apps/planner-assignments",
-    "lint": "eslint scripts tests --max-warnings=0",
-    "type-check": "node scripts/verify-known-defects.mjs",
-    "build": "npm run build --prefix apps/hub && node scripts/verify-known-defects.mjs",
-    "test:unit": "node --test tests/unit/*.test.mjs",
-    "test:integration": "node --test tests/integration/*.test.mjs",
-    "test:e2e": "playwright test",
-    "test": "npm run test:unit && npm run test:integration && npm run test:e2e"
+    "dev": "turbo run dev --parallel --filter='./apps/**'",
+    "lint": "turbo run lint --filter='./apps/**' && eslint scripts tests --max-warnings=0",
+    "type-check": "turbo run type-check --filter='./apps/**' && node scripts/verify-known-defects.mjs",
+    "build": "turbo run build --filter=party-games-hub --filter=imposter-game --filter=planner-habit-tracker --filter=planner-todo-board --filter=planner-timer --filter=planner-assignments && node scripts/verify-known-defects.mjs",
+    "test:unit": "turbo run test:unit --filter='./apps/**' && node --test tests/unit/*.test.mjs",
+    "test:integration": "turbo run test:integration --filter='./apps/**' && node --test tests/integration/*.test.mjs",
+    "test:e2e": "turbo run test:e2e --filter='./apps/**' && playwright test",
+    "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:e2e",
+    "workspace:check": "node --test tests/workspace/*.test.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.55.0",
     "concurrently": "latest",
     "eslint": "9.21.0",
     "tsx": "latest",
+    "turbo": "2.10.9",
     "vite": "latest"
   }
 }

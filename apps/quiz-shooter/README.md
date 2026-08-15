@@ -25,12 +25,12 @@ A multiplayer 3D quiz-shooter prototype.
 - Server: Node + Express + Socket.IO + TypeScript
 - No database yet. Room/game state is in-memory for the prototype.
 
-## How to run in Cursor
+## How to run locally
 
 ```bash
-cd quiz-shooter-3d
-npm install
-npm run dev
+corepack enable
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
 Then open:
@@ -75,7 +75,7 @@ VITE_SERVER_URL=http://YOUR-LAPTOP-IP:4000
 4. Restart:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 5. Players open:

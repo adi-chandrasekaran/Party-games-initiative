@@ -16,8 +16,8 @@ human-approved PR.
 
 | ID | Milestone | Status | Required branch |
 |---|---|---|---|
-| PR-01 | Canonical repository and behavior baseline | In progress | `feat/pr-01-canonical-baseline` |
-| PR-02 | Workspace foundation | Planned | `feat/pr-02-workspace-foundation` |
+| PR-01 | Canonical repository and behavior baseline | Complete | `feat/pr-01-canonical-baseline` |
+| PR-02 | Workspace foundation | In progress | `feat/pr-02-workspace-foundation` |
 | PR-03 | Shared contracts and app registry | Planned | `feat/pr-03-app-registry` |
 | PR-04 | Figma web shell and design system | Planned | `feat/pr-04-figma-shell` |
 | PR-05 | Imposter and planner micro-app migration | Planned | `feat/pr-05-simple-microapps` |
@@ -62,10 +62,10 @@ human-approved PR.
 
 ### Test Plan
 
-- `npm run lint`
-- `npm run type-check`
-- `npm run build`
-- `npm run test` (unit, integration, and Playwright launcher smoke coverage)
+- `pnpm run lint`
+- `pnpm run type-check`
+- `pnpm run build`
+- `pnpm run test` (unit, integration, and Playwright launcher smoke coverage)
 
 ### Rollback
 
@@ -90,8 +90,20 @@ dev tasks address every package; runtime dependencies, including PDFJS, resolve 
 workspace manifests without contributor-specific paths; Playwright smoke tests from PR-01
 produce the same results.
 
-**Rollback:** Revert workspace configuration and retain the legacy npm scripts. No product files
-or data formats change in this PR.
+**Rollback:** Revert this workspace/tooling configuration to restore the prior npm manifests and
+scripts from Git history. No product files or data formats change in this PR.
+
+### Excluded
+
+- No app relocation, route change, game fix, shell work, persistence/auth change, or old-game
+  removal. `apps/` is the active source; `old-games/` remains a historical duplicate until PR-13.
+
+### Test Plan
+
+- `corepack enable && pnpm install --frozen-lockfile`
+- `pnpm run workspace:check`
+- `pnpm run lint`, `pnpm run type-check`, `pnpm run build`, and `pnpm run test`
+- `pnpm dev` port-map verification and the PR-01 Playwright smoke result
 
 ## PR-03: Shared Contracts and App Registry
 

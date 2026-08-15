@@ -20,7 +20,7 @@ Assignments:      http://localhost:5317
 Run everything from the project root:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 The hub reads the game URLs from:
