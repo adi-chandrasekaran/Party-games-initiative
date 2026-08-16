@@ -22,8 +22,8 @@ human-approved PR.
 | PR-04 | Figma web shell and design system | In review | `feat/pr-04-figma-shell` |
 | PR-05 | Imposter and planner micro-app migration | In review | `feat/pr-05-simple-microapps` |
 | PR-06 | Quiz Shooter and Build A Beast client migration | Complete | `feat/pr-06-multiplayer-clients` |
-| PR-07 | Modular TypeScript platform server | In review | `feat/pr-07-platform-server` |
-| PR-08 | PostgreSQL-backed persistence | Planned | `feat/pr-08-postgres-persistence` |
+| PR-07 | Modular TypeScript platform server | Complete | `feat/pr-07-platform-server` |
+| PR-08 | PostgreSQL-backed persistence | In review | `feat/pr-08-postgres-persistence` |
 | PR-09 | Google authentication and authorization | Planned | `feat/pr-09-google-auth` |
 | PR-10 | Consolidated realtime and resilient rooms | Planned | `feat/pr-10-realtime` |
 | PR-11 | Shared deck storage and processing | Planned | `feat/pr-11-deck-pipeline` |
@@ -275,6 +275,24 @@ and social data survive browser and server restarts in Playwright.
 
 **Rollback:** Retain a read-only legacy export and documented down/restore procedure. Do not
 delete source JSON until human verification is complete.
+
+### Excluded
+
+- No authentication policy, realtime protocol, UI workflow, or deployment change.
+- No removal of the JSON compatibility adapter; `PERSISTENCE_MODE` rollback remains until PR-13.
+
+### Test Plan
+
+- Migration and rollback tests run against an isolated local PostgreSQL database.
+- Contract and Playwright suites run with `DATABASE_URL` so accounts, sessions, decks, chats,
+  statistics, and private-app records use PostgreSQL.
+- Concurrent writes preserve a valid JSONB state document and subsequent reads.
+
+### Evidence
+
+- PostgreSQL migration/read/write integration test passes against the local `forge-postgres`
+  container. Lint and type-check pass, and the 23-workflow Playwright suite runs with
+  `DATABASE_URL` supplied to the platform server.
 
 ## PR-09: Google Authentication
 

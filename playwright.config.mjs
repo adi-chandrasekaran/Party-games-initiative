@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const smokeStore = join(tmpdir(), `party-games-pr-01-playwright-${process.pid}.json`);
+const postgresUrl = "postgresql://forge:forge-local-password@127.0.0.1:5432/forge";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -21,6 +22,7 @@ export default defineConfig({
       env: {
         ...process.env,
         HUB_DATA_FILE: smokeStore,
+        DATABASE_URL: postgresUrl,
       },
     },
     {
@@ -31,6 +33,7 @@ export default defineConfig({
       env: {
         ...process.env,
         HUB_DATA_FILE: smokeStore,
+        DATABASE_URL: postgresUrl,
       },
     },
     { command: "pnpm --dir apps/quiz-shooter/server run start", url: "http://localhost:4000/health", timeout: 120_000, reuseExistingServer: !process.env.CI },
