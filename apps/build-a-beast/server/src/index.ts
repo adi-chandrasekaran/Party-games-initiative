@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
-import { Server } from "socket.io";
+import { Namespace, Server } from "socket.io";
 import { z } from "zod";
 
 type RoomPhase = "lobby" | "building" | "simulating" | "podium";
@@ -11,13 +11,13 @@ type Stats = Record<string, number>;
 type BeastPart = { id: string; name: string; category: string; description: string; cost: number; stats: Stats };
 type ArenaEvent = { id: string; title: string; description: string; statWeights: Stats; danger: number };
 type Challenge = { id: string; title: string; mode: "education" | "fun"; subject: string; description: string; minParts: number; maxParts: number; parts: BeastPart[]; events: ArenaEvent[] };
-type Player = { id: string; socketId: string; name: string; score: number; status: PlayerStatus; submittedAt?: number };
+type Player = { id: string; socketId: string; userId: string; name: string; score: number; status: PlayerStatus; submittedAt?: number };
 type BeastBuild = { playerId: string; playerName: string; beastName: string; selectedPartIds: string[]; submittedAt: number };
 type TimelineResult = { playerId: string; playerName: string; beastName: string; delta: number; scoreAfter: number; reasons: string[] };
 type SimulationStep = { eventId: string; title: string; description: string; results: TimelineResult[] };
 type FinalResult = { playerId: string; name: string; beastName: string; score: number; rank: number; partCount: number; summary: string };
 type SimulationOutput = { timeline: SimulationStep[]; leaderboard: FinalResult[] };
-type Room = { id: string; hostSocketId: string; challenge: Challenge; players: Record<string, Player>; builds: Record<string, BeastBuild>; phase: RoomPhase; createdAt: number; simulation?: SimulationOutput };
+type Room = { id: string; hostUserId: string; challenge: Challenge; players: Record<string, Player>; builds: Record<string, BeastBuild>; phase: RoomPhase; createdAt: number; simulation?: SimulationOutput };
 
 
 const biologyParts: BeastPart[] = [
@@ -182,6 +182,9 @@ const challengePresets: Challenge[] = [
 ];
 
 const rooms: Record<string, Room> = {};
+type RealtimeTransport = Server | Namespace;
+type RoomStore = { save(room: { gameId: string; roomId: string; payload: unknown; expiresAt: Date }): Promise<void>; load(gameId: string, roomId: string): Promise<{ payload: unknown } | null>; delete?(gameId: string, roomId: string): Promise<void> };
+let io: RealtimeTransport;
 
 function getPreset(id: string) { return challengePresets.find((c) => c.id === id) ?? challengePresets[0]; }
 function makeRoomCode() { const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; let code = ""; for (let i = 0; i < 5; i++) code += chars[Math.floor(Math.random() * chars.length)]; return code; }
@@ -262,21 +265,23 @@ const CreateRoomSchema = z.object({ hostName: z.string().min(1).max(40).default(
 const JoinRoomSchema = z.object({ roomId: z.string().min(4).max(10), name: z.string().min(1).max(40) });
 const SubmitBuildSchema = z.object({ roomId: z.string(), playerId: z.string(), beastName: z.string().min(1).max(40), selectedPartIds: z.array(z.string()).min(1) });
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.get("/health", (_, res) => res.json({ ok: true, rooms: Object.keys(rooms).length }));
-app.get("/challenges", (_, res) => res.json({ challenges: challengePresets }));
-const httpServer = createServer(app);
-const io = new Server(httpServer, { cors: { origin: "*" } });
-
-io.on("connection", (socket) => {
+export function registerBuildABeastRealtime(ioServer: RealtimeTransport, options: { roomStore?: RoomStore | null } = {}) {
+  io = ioServer;
+  io.on("connection", (socket) => {
+  const userId = String(socket.data.user?.id ?? socket.id);
+  const persist = (room: Room) => options.roomStore?.save({ gameId: "build-a-beast", roomId: room.id, payload: room, expiresAt: new Date(Date.now() + 30 * 60_000) }).catch(() => null);
+  socket.use((packet, next) => {
+    const roomId = packet[1]?.roomId;
+    if (!roomId || rooms[roomId] || !options.roomStore) return next();
+    options.roomStore.load("build-a-beast", roomId).then((saved) => { if (saved?.payload && typeof saved.payload === "object") rooms[roomId] = saved.payload as Room; next(); }).catch(next);
+  });
+  socket.onAny(() => queueMicrotask(() => Object.values(rooms).forEach(persist)));
   socket.on("create-room", (payload, callback) => {
     try {
       const parsed = CreateRoomSchema.parse(payload ?? {});
       let roomId = makeRoomCode();
       while (rooms[roomId]) roomId = makeRoomCode();
-      const room: Room = { id: roomId, hostSocketId: socket.id, challenge: getPreset(parsed.challengeId ?? "desert-survival"), players: {}, builds: {}, phase: "lobby", createdAt: Date.now() };
+      const room: Room = { id: roomId, hostUserId: userId, challenge: getPreset(parsed.challengeId ?? "desert-survival"), players: {}, builds: {}, phase: "lobby", createdAt: Date.now() };
       rooms[roomId] = room; socket.join(roomId);
       callback?.({ ok: true, room: publicRoom(room), challenge: room.challenge, challenges: challengePresets });
       emitState(room);
@@ -286,7 +291,7 @@ io.on("connection", (socket) => {
   socket.on("set-challenge", (payload, callback) => {
     const { roomId, challengeId } = payload ?? {}; const room = rooms[roomId];
     if (!room) return callback?.({ ok: false, error: "Room not found." });
-    if (room.hostSocketId !== socket.id) return callback?.({ ok: false, error: "Only the host can change the challenge." });
+    if (room.hostUserId !== userId) return callback?.({ ok: false, error: "Only the host can change the challenge." });
     if (room.phase !== "lobby" && room.phase !== "podium") return callback?.({ ok: false, error: "You can only change the challenge before or after a game." });
     room.challenge = getPreset(challengeId); room.builds = {}; room.simulation = undefined;
     for (const p of Object.values(room.players)) { p.status = "lobby"; p.score = 0; delete p.submittedAt; }
@@ -298,7 +303,9 @@ io.on("connection", (socket) => {
       const parsed = JoinRoomSchema.parse(payload); const room = rooms[parsed.roomId];
       if (!room) return callback?.({ ok: false, error: "Room not found." });
       if (room.phase !== "lobby") return callback?.({ ok: false, error: "This round has already started. Ask the host to restart." });
-      const player: Player = { id: makeId("player"), socketId: socket.id, name: parsed.name, score: 0, status: "lobby" };
+      const existing = Object.values(room.players).find((player) => player.userId === userId);
+      if (existing) { existing.socketId = socket.id; socket.join(room.id); callback?.({ ok: true, room: publicRoom(room), challenge: room.challenge, player: existing, leaderboard: leaderboard(room), reconnected: true }); emitState(room); return; }
+      const player: Player = { id: makeId("player"), socketId: socket.id, userId, name: parsed.name, score: 0, status: "lobby" };
       room.players[player.id] = player; socket.join(room.id);
       callback?.({ ok: true, room: publicRoom(room), challenge: room.challenge, player, leaderboard: leaderboard(room) });
       emitState(room);
@@ -308,7 +315,7 @@ io.on("connection", (socket) => {
   socket.on("start-build", (payload, callback) => {
     const { roomId } = payload ?? {}; const room = rooms[roomId];
     if (!room) return callback?.({ ok: false, error: "Room not found." });
-    if (room.hostSocketId !== socket.id) return callback?.({ ok: false, error: "Only the host can start the game." });
+    if (room.hostUserId !== userId) return callback?.({ ok: false, error: "Only the host can start the game." });
     if (!Object.keys(room.players).length) return callback?.({ ok: false, error: "No players have joined yet." });
     room.phase = "building"; room.builds = {}; room.simulation = undefined;
     for (const p of Object.values(room.players)) { p.status = "building"; p.score = 0; delete p.submittedAt; }
@@ -321,7 +328,7 @@ io.on("connection", (socket) => {
       const parsed = SubmitBuildSchema.parse(payload); const room = rooms[parsed.roomId];
       if (!room) return callback?.({ ok: false, error: "Room not found." });
       const player = room.players[parsed.playerId];
-      if (!player || player.socketId !== socket.id) return callback?.({ ok: false, error: "Player not found." });
+      if (!player || player.userId !== userId) return callback?.({ ok: false, error: "Player not found." });
       if (room.phase !== "building") return callback?.({ ok: false, error: "The build phase is not active." });
       const uniquePartIds = Array.from(new Set(parsed.selectedPartIds));
       if (uniquePartIds.length < room.challenge.minParts || uniquePartIds.length > room.challenge.maxParts) return callback?.({ ok: false, error: `Choose ${room.challenge.minParts}-${room.challenge.maxParts} parts.` });
@@ -341,7 +348,7 @@ io.on("connection", (socket) => {
   socket.on("run-simulation", (payload, callback) => {
     const { roomId } = payload ?? {}; const room = rooms[roomId];
     if (!room) return callback?.({ ok: false, error: "Room not found." });
-    if (room.hostSocketId !== socket.id) return callback?.({ ok: false, error: "Only the host can run the simulation." });
+    if (room.hostUserId !== userId) return callback?.({ ok: false, error: "Only the host can run the simulation." });
     if (!Object.keys(room.builds).length) return callback?.({ ok: false, error: "No builds have been submitted yet." });
     const output = simulateRoom(room); io.to(room.id).emit("simulation-started", { room: publicRoom(room), challenge: room.challenge, simulation: output }); emitState(room); callback?.({ ok: true, simulation: output });
   });
@@ -349,7 +356,7 @@ io.on("connection", (socket) => {
   socket.on("restart-game", (payload, callback) => {
     const { roomId } = payload ?? {}; const room = rooms[roomId];
     if (!room) return callback?.({ ok: false, error: "Room not found." });
-    if (room.hostSocketId !== socket.id) return callback?.({ ok: false, error: "Only the host can restart." });
+    if (room.hostUserId !== userId) return callback?.({ ok: false, error: "Only the host can restart." });
     room.phase = "building"; room.builds = {}; room.simulation = undefined;
     for (const p of Object.values(room.players)) { p.status = "building"; p.score = 0; delete p.submittedAt; }
     io.to(room.id).emit("build-started", { room: publicRoom(room), challenge: room.challenge }); emitState(room); callback?.({ ok: true, dashboard: hostDashboard(room) });
@@ -358,17 +365,35 @@ io.on("connection", (socket) => {
   socket.on("end-game", (payload, callback) => {
     const { roomId } = payload ?? {}; const room = rooms[roomId];
     if (!room) return callback?.({ ok: false, error: "Room not found." });
-    if (room.hostSocketId !== socket.id) return callback?.({ ok: false, error: "Only the host can end the game." });
-    io.to(room.id).emit("return-home", { reason: "Host ended the game." }); delete rooms[room.id]; callback?.({ ok: true });
+    if (room.hostUserId !== userId) return callback?.({ ok: false, error: "Only the host can end the game." });
+    io.to(room.id).emit("return-home", { reason: "Host ended the game." }); delete rooms[room.id]; void options.roomStore?.delete?.("build-a-beast", room.id); callback?.({ ok: true });
+  });
+
+  socket.on("resume-room", (payload, callback) => {
+    const room = rooms[payload?.roomId]; const player = room && Object.values(room.players).find((candidate) => candidate.userId === userId);
+    if (!room || (!player && room.hostUserId !== userId)) return callback?.({ ok: false, error: "Room membership not found." });
+    if (player) player.socketId = socket.id; socket.join(room.id);
+    callback?.({ ok: true, room: publicRoom(room), challenge: room.challenge, player, leaderboard: leaderboard(room), dashboard: hostDashboard(room), isHost: room.hostUserId === userId }); emitState(room);
   });
 
   socket.on("disconnect", () => {
     for (const room of Object.values(rooms)) {
-      for (const player of Object.values(room.players)) if (player.socketId === socket.id) { delete room.players[player.id]; delete room.builds[player.id]; emitState(room); }
-      if (room.hostSocketId === socket.id) io.to(room.id).emit("host-disconnected");
+      for (const player of Object.values(room.players)) if (player.socketId === socket.id) { player.socketId = ""; emitState(room); }
+      if (room.hostUserId === userId) { const successor = Object.values(room.players).sort((a, b) => a.id.localeCompare(b.id))[0]; if (successor) { room.hostUserId = successor.userId; io.to(room.id).emit("host-transferred", { userId: successor.userId, playerId: successor.id }); } else io.to(room.id).emit("host-disconnected"); }
     }
   });
-});
+  });
+}
 
-const PORT = process.env.PORT || 4000;
-httpServer.listen(PORT, () => console.log(`Build-a-Beast server running on http://localhost:${PORT}`));
+if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
+  app.get("/health", (_, res) => res.json({ ok: true, rooms: Object.keys(rooms).length }));
+  app.get("/challenges", (_, res) => res.json({ challenges: challengePresets }));
+  const httpServer = createServer(app);
+  const standaloneIo = new Server(httpServer, { cors: { origin: "*" } });
+  registerBuildABeastRealtime(standaloneIo);
+  const port = process.env.PORT || 4100;
+  httpServer.listen(port, () => console.log(`Build-a-Beast server running on http://localhost:${port}`));
+}

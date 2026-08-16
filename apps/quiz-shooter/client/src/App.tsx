@@ -14,10 +14,12 @@ import type {
   Question
 } from "./types";
 
-const SERVER_URL = import.meta.env.VITE_QUIZ_SHOOTER_SERVER_URL ?? "http://127.0.0.1:4000";
+const SERVER_URL = import.meta.env.VITE_PLATFORM_API_URL ?? "http://localhost:8787";
 
-const socket = io(SERVER_URL, {
-  autoConnect: true
+const socket = io(`${SERVER_URL}/quiz-shooter`, {
+  autoConnect: true,
+  withCredentials: true,
+  transports: ["websocket"]
 });
 
 const initialDeck = parseDeck(`What is 7 × 8?
@@ -272,6 +274,7 @@ export default function App() {
 
   const roleRef = useRef<Role>(role);
   const playerRef = useRef<Player | null>(player);
+  const roomIdRef = useRef(roomId);
 
   useEffect(() => {
     roleRef.current = role;
@@ -280,6 +283,10 @@ export default function App() {
   useEffect(() => {
     playerRef.current = player;
   }, [player]);
+
+  useEffect(() => {
+    roomIdRef.current = roomId;
+  }, [roomId]);
 
   useEffect(() => {
     platformRequest("/api/bootstrap")
@@ -381,6 +388,24 @@ export default function App() {
       setToast("Host disconnected. The room is paused.");
     }
 
+    function handleHostTransferred(payload: { playerId: string }) {
+      if (playerRef.current?.id !== payload.playerId) return;
+      setRole("host");
+      setMode("host-overview");
+      setToast("You are now the host.");
+    }
+
+    function resumeRoom() {
+      if (!roomIdRef.current) return;
+      socket.emit("resume-room", { roomId: roomIdRef.current }, (response: any) => {
+        if (!response?.ok) return;
+        if (response.player) setPlayer(response.player);
+        setLeaderboard(response.leaderboard ?? []);
+        setDashboard(response.dashboard ?? null);
+        if (response.isHost) setRole("host");
+      });
+    }
+
     function handleReturnHome(payload: { reason?: string }) {
       resetToHome(payload.reason ?? "Game ended.");
     }
@@ -392,7 +417,9 @@ export default function App() {
     socket.on("game-finished", handleGameFinished);
     socket.on("deck-updated", handleDeckUpdated);
     socket.on("host-disconnected", handleHostDisconnected);
+    socket.on("host-transferred", handleHostTransferred);
     socket.on("return-home", handleReturnHome);
+    socket.on("connect", resumeRoom);
 
     return () => {
       socket.off("leaderboard", handleLeaderboard);
@@ -402,7 +429,9 @@ export default function App() {
       socket.off("game-finished", handleGameFinished);
       socket.off("deck-updated", handleDeckUpdated);
       socket.off("host-disconnected", handleHostDisconnected);
+      socket.off("host-transferred", handleHostTransferred);
       socket.off("return-home", handleReturnHome);
+      socket.off("connect", resumeRoom);
     };
   }, [selectedPlayerId]);
 

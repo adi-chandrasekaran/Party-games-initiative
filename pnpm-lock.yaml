@@ -23,6 +23,9 @@ importers:
       eslint:
         specifier: 9.21.0
         version: 9.21.0(supports-color@10.2.2)
+      pg:
+        specifier: ^8.16.3
+        version: 8.23.0
       tsx:
         specifier: latest
         version: 4.23.12
@@ -153,10 +156,20 @@ importers:
         version: 8.2.1(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.12)
 
   apps/platform-server:
+    dependencies:
+      pg:
+        specifier: ^8.16.3
+        version: 8.23.0
+      socket.io:
+        specifier: ^4.7.5
+        version: 4.8.3(supports-color@10.2.2)
     devDependencies:
       '@types/node':
         specifier: ^20.11.30
         version: 20.19.43
+      '@types/pg':
+        specifier: ^8.15.6
+        version: 8.21.0
       tsx:
         specifier: ^4.7.1
         version: 4.23.12
@@ -1184,6 +1197,9 @@ packages:
 
   '@types/offscreencanvas@2019.7.3':
     resolution: {integrity: sha512-ieXiYmgSRXUDeOntE1InxjWyvEelZGP63M+cGuquuRLuIKKT1osnkXjxev9B7d1nXSug5vpunx+gNlbVxMlC9A==}
+
+  '@types/pg@8.21.0':
+    resolution: {integrity: sha512-AYdtudzabjLZgVgRZmAnU8bAnVUXzuJX2IYHeSIiIHm68olD+LgQYCGWdtcNYnP0uq9c4S4NibVG3Ni7VbKW7Q==}
 
   '@types/prop-types@15.7.15':
     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
@@ -3308,6 +3324,12 @@ snapshots:
       undici-types: 6.21.0
 
   '@types/offscreencanvas@2019.7.3': {}
+
+  '@types/pg@8.21.0':
+    dependencies:
+      '@types/node': 20.19.43
+      pg-protocol: 1.16.0
+      pg-types: 2.2.0
 
   '@types/prop-types@15.7.15': {}
 

@@ -242,6 +242,11 @@ function currentUserFromRequest(req, store) {
   return store.users.find((user) => user.id === userId) || null;
 }
 
+export async function realtimeUserFromCookie(cookie) {
+  const store = await readStore();
+  return sanitizeUser(currentUserFromRequest({ headers: { cookie: String(cookie || "") } }, store));
+}
+
 function normalizeEmail(email) {
   return String(email || "").trim().toLowerCase();
 }

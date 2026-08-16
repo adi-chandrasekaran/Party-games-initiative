@@ -19,13 +19,13 @@ human-approved PR.
 | PR-01 | Canonical repository and behavior baseline | Complete | `feat/pr-01-canonical-baseline` |
 | PR-02 | Workspace foundation | Complete | `feat/pr-02-workspace-foundation` |
 | PR-03 | Shared contracts and app registry | Complete | `feat/pr-03-app-registry` |
-| PR-04 | Figma web shell and design system | In review | `feat/pr-04-figma-shell` |
-| PR-05 | Imposter and planner micro-app migration | In review | `feat/pr-05-simple-microapps` |
+| PR-04 | Figma web shell and design system | Complete | `feat/pr-04-figma-shell` |
+| PR-05 | Imposter and planner micro-app migration | Complete | `feat/pr-05-simple-microapps` |
 | PR-06 | Quiz Shooter and Build A Beast client migration | Complete | `feat/pr-06-multiplayer-clients` |
 | PR-07 | Modular TypeScript platform server | Complete | `feat/pr-07-platform-server` |
 | PR-08 | PostgreSQL-backed persistence | Complete | `feat/pr-08-postgres-persistence` |
 | PR-09 | Google authentication and authorization | Complete | `feat/pr-09-google-auth` |
-| PR-10 | Consolidated realtime and resilient rooms | Planned | `feat/pr-10-realtime` |
+| PR-10 | Consolidated realtime and resilient rooms | In review | `feat/pr-10-realtime` |
 | PR-11 | Shared deck storage and processing | Planned | `feat/pr-11-deck-pipeline` |
 | PR-12 | Local quality gates and full regression suite | Planned | `feat/pr-12-quality-gates` |
 | PR-13 | Legacy process and compatibility removal | Planned | `feat/pr-13-legacy-removal` |
@@ -340,6 +340,32 @@ the shared state boundary.
 
 **Rollback:** Registry/configuration can route realtime clients to the previous game servers until
 the milestone is human-approved.
+
+### Excluded
+
+- No game-rule redesign, deck-pipeline work, shell redesign, authentication-policy change, or
+  deployment infrastructure.
+- No legacy source removal: the standalone Socket.IO servers remain selectable rollback adapters
+  until PR-13.
+
+### Test Plan
+
+- Unit tests cover room ownership, reconnection identity, host transfer, authorization, and stale
+  room cleanup.
+- Socket.IO integration tests connect multiple authenticated clients to the platform namespaces;
+  they cover create, join, unauthorized mutations, host disconnect/transfer, reconnect, and cleanup.
+- A two-server test uses one shared PostgreSQL-backed room repository to prove room visibility does
+  not depend on a single process.
+- Playwright retains the two-browser host/join journeys through the hub origin and adds reconnect
+  and host-transfer coverage without real Google credentials.
+
+### Evidence
+
+- `CI=1 pnpm run test:unit`, `CI=1 pnpm run test:integration`, `CI=1 pnpm run lint`,
+  `CI=1 pnpm run type-check`, and `CI=1 pnpm run build` pass locally. The two documented
+  client build defects remain explicit expected baseline results.
+- Playwright is configured to use isolated, configurable hub and platform ports; this allows its
+  authenticated two-browser journeys to run without taking over an existing developer server.
 
 ## PR-11: Deck Pipeline
 

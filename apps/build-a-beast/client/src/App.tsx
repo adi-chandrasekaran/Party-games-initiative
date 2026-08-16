@@ -7,8 +7,8 @@ import SimulationView from "./components/SimulationView";
 import { platformRequest } from "./platformApi";
 import type { BeastPart, Challenge, HostDashboard, LeaderboardEntry, Player, SimulationOutput } from "./types";
 
-const SERVER_URL = import.meta.env.VITE_BUILD_A_BEAST_SERVER_URL ?? "http://127.0.0.1:4100";
-const socket = io(SERVER_URL, { autoConnect: true });
+const SERVER_URL = import.meta.env.VITE_PLATFORM_API_URL ?? "http://localhost:8787";
+const socket = io(`${SERVER_URL}/build-a-beast`, { autoConnect: true, withCredentials: true, transports: ["websocket"] });
 
 type SharedDeck = {
   id: string;
@@ -119,7 +119,11 @@ export default function App() {
   const [simulation, setSimulation] = useState<SimulationOutput | null>(null);
   const [toast, setToast] = useState("");
   const roleRef = useRef<Role>(role);
+  const playerRef = useRef<Player | null>(player);
+  const roomIdRef = useRef(roomId);
   useEffect(() => { roleRef.current = role; }, [role]);
+  useEffect(() => { playerRef.current = player; }, [player]);
+  useEffect(() => { roomIdRef.current = roomId; }, [roomId]);
 
   useEffect(() => {
     platformRequest("/api/bootstrap")
@@ -155,8 +159,10 @@ export default function App() {
     function handleSimulationStarted(payload: { simulation: SimulationOutput }) { setSimulation(payload.simulation); setLeaderboard(payload.simulation.leaderboard); setMode("simulation"); window.setTimeout(() => setMode("podium"), 9000); }
     function handleReturnHome(payload: { reason?: string }) { resetHome(payload.reason ?? "Game ended."); }
     function handleHostDisconnected() { setToast("Host disconnected."); }
-    socket.on("host-dashboard", handleDashboard); socket.on("leaderboard", handleLeaderboard); socket.on("challenge-updated", handleChallengeUpdated); socket.on("build-started", handleBuildStarted); socket.on("all-builds-submitted", handleAllBuildsSubmitted); socket.on("simulation-started", handleSimulationStarted); socket.on("return-home", handleReturnHome); socket.on("host-disconnected", handleHostDisconnected);
-    return () => { socket.off("host-dashboard", handleDashboard); socket.off("leaderboard", handleLeaderboard); socket.off("challenge-updated", handleChallengeUpdated); socket.off("build-started", handleBuildStarted); socket.off("all-builds-submitted", handleAllBuildsSubmitted); socket.off("simulation-started", handleSimulationStarted); socket.off("return-home", handleReturnHome); socket.off("host-disconnected", handleHostDisconnected); };
+    function handleHostTransferred(payload: { playerId: string }) { if (playerRef.current?.id === payload.playerId) { setRole("host"); setMode("host-dashboard"); setToast("You are now the host."); } }
+    function resumeRoom() { if (!roomIdRef.current) return; socket.emit("resume-room", { roomId: roomIdRef.current }, (response: any) => { if (!response?.ok) return; if (response.player) setPlayer(response.player); setChallenge(response.challenge); setLeaderboard(response.leaderboard ?? []); setDashboard(response.dashboard ?? null); if (response.isHost) setRole("host"); }); }
+    socket.on("host-dashboard", handleDashboard); socket.on("leaderboard", handleLeaderboard); socket.on("challenge-updated", handleChallengeUpdated); socket.on("build-started", handleBuildStarted); socket.on("all-builds-submitted", handleAllBuildsSubmitted); socket.on("simulation-started", handleSimulationStarted); socket.on("return-home", handleReturnHome); socket.on("host-disconnected", handleHostDisconnected); socket.on("host-transferred", handleHostTransferred); socket.on("connect", resumeRoom);
+    return () => { socket.off("host-dashboard", handleDashboard); socket.off("leaderboard", handleLeaderboard); socket.off("challenge-updated", handleChallengeUpdated); socket.off("build-started", handleBuildStarted); socket.off("all-builds-submitted", handleAllBuildsSubmitted); socket.off("simulation-started", handleSimulationStarted); socket.off("return-home", handleReturnHome); socket.off("host-disconnected", handleHostDisconnected); socket.off("host-transferred", handleHostTransferred); socket.off("connect", resumeRoom); };
   }, []);
 
   async function createRoom() {
