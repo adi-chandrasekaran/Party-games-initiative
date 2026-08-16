@@ -28,7 +28,7 @@ human-approved PR.
 | PR-10 | Consolidated realtime and resilient rooms | Complete | `feat/pr-10-realtime` |
 | PR-11 | Shared deck storage and processing | In review | `feat/pr-11-deck-pipeline` |
 | PR-12 | Local quality gates and full regression suite | In review | `feat/pr-12-quality-gates` |
-| PR-13 | Legacy process and compatibility removal | Planned | `feat/pr-13-legacy-removal` |
+| PR-13 | Legacy process and compatibility removal | In review | `feat/pr-13-legacy-removal` |
 
 ## PR-01: Canonical Repository and Behavior Baseline
 
@@ -448,12 +448,44 @@ in this PR.
 Remove compatibility launchers, hardcoded ports, duplicated CSS, JSON stores, and obsolete app
 copies only after all replacement paths pass regression tests.
 
+### Scope
+
+- Remove legacy launch modes, fallback links, and standalone launcher origins from the registry,
+  clients, tests, and local-running documentation.
+- Serve the built hub and staged micro-app assets from the platform server so one browser origin
+  provides shell, API, and realtime behavior.
+- Move the remaining hub and platform-registry JSON stores to PostgreSQL and remove their files.
+- Keep the current canonical routes, authentication, authorization, shared decks, and realtime
+  room contracts unchanged while refreshing the Figma visual baselines for the supported runtime.
+
+### Excluded
+
+- No deployment, managed-database, backup, or hosting work.
+- No product redesign or new game behavior.
+
+### Test strategy
+
+- Unit tests reject compatibility fields and legacy launcher documentation.
+- Integration tests cover PostgreSQL-backed hub, auth, deck, platform, and realtime behavior.
+- Playwright launches all ten micro-apps and validates Figma baselines from the one platform
+  origin.
+
 **Acceptance gate:** Repository search and automated tests prove no launcher depends on legacy
 frontend ports, no production-intended path writes JSON/browser-only account state, all ten
 micro-apps pass Playwright, and the complete local exit gate below is satisfied.
 
 **Rollback:** This PR is not merged until a tagged pre-removal commit and restoration procedure
 are recorded. Reverting it restores compatibility code without reversing migrated data.
+
+### Evidence
+
+- `CI=1 pnpm run test:integration` passes the PostgreSQL, auth, deck, platform, and realtime
+  contracts.
+- `CI=1 PLAYWRIGHT_PLATFORM_PORT=8800 pnpm run test:e2e` passes all 28 browser tests, including
+  all ten micro-app launchers and the refreshed light/dark Figma baselines.
+- `CI=1 PLAYWRIGHT_PLATFORM_PORT=8800 pnpm run quality` passed workspace checks, lint,
+  type-check, build, and unit coverage; the final isolated integration and Playwright reruns above
+  provide the completion evidence after the test-row isolation correction.
 
 ## Local Refactor Exit Gate
 

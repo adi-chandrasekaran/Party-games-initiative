@@ -67,7 +67,7 @@ party-games/
   package.json
 ```
 
-## Current legacy startup
+## Local startup
 
 ```bash
 corepack enable
@@ -75,23 +75,8 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Then open:
-
-```txt
-http://localhost:5176
-```
-
-`pnpm dev` currently starts the hub and individual local apps. These separate ports are a
-temporary legacy constraint and will be removed by the monorepo migration.
-
-- Hub: `http://localhost:5176`
-- Imposter: `http://localhost:5181`
-- Quiz Shooter: `http://localhost:5173`
-- Build A Beast: `http://localhost:5174`
-- Habit Tracker: `http://localhost:5314`
-- To-do Board: `http://localhost:5315`
-- Timer: `http://localhost:5316`
-- Assignments: `http://localhost:5317`
+`pnpm dev` builds the hub and starts the platform server. Open the printed platform URL (port
+`8787` by default); every launcher, API route, and realtime namespace uses that single origin.
 
 ## Legacy migration notes
 

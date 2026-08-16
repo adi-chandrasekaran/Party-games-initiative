@@ -65,7 +65,7 @@ function parseDeckFile(raw: string): Question[] {
             const correctChoiceId =
               typeof entry.correctChoiceId === "string"
                 ? entry.correctChoiceId
-                : choices.find((choice) => String(entry.correctAnswer || "").trim().toLowerCase() === choice.text.toLowerCase())?.id ||
+                : choices.find((choice: { id: string; text: string }) => String(entry.correctAnswer || "").trim().toLowerCase() === choice.text.toLowerCase())?.id ||
                   choices[Math.max(0, Number(entry.correctIndex) || 0)]?.id ||
                   choices[0]?.id ||
                   "a";

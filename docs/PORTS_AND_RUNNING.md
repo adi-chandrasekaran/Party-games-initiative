@@ -1,32 +1,18 @@
-# Ports And Running
+# Local Platform Running
 
-> **Legacy runtime:** These ports describe the pre-refactor application only. They are not the
-> target architecture. See [`development/local-development.md`](development/local-development.md)
-> and [`architecture/target-architecture.md`](architecture/target-architecture.md).
+The supported local experience uses a **single platform origin**. The platform server serves the
+hub API, the hub client, and every registry-backed micro-app from that origin; launcher cards do
+not target independently started frontend processes.
 
-The launcher uses this default local setup:
-
-```txt
-Hub:              http://localhost:5176
-Imposter:         http://localhost:5181
-Quiz Shooter:     http://localhost:5173
-Build Beast:      http://localhost:5174
-Habit Tracker:    http://localhost:5314
-To-do Board:      http://localhost:5315
-Timer:            http://localhost:5316
-Assignments:      http://localhost:5317
-```
-
-Run everything from the project root:
+Run the platform from the repository root:
 
 ```bash
 pnpm dev
 ```
 
-The hub reads the game URLs from:
+`PLATFORM_SERVER_PORT` selects the local listening port when needed. `DATABASE_URL` is required
+for durable hub, account, deck, and platform-registry state. Copy `.env.example` and provide a
+local PostgreSQL URL before starting the platform.
 
-```txt
-apps/hub/.env.local
-```
-
-If a game runs on a different port, update `.env.local`.
+For the complete setup and test commands, see
+[`development/local-development.md`](development/local-development.md).

@@ -1,38 +1,30 @@
 # PR-01 Baseline Defects
 
-This register records observed legacy failures without changing their implementation. Each entry
-is verified by `pnpm run type-check` and `pnpm run build`; an unexpected pass fails that check so
-the entry must be deliberately updated or removed in the PR that fixes it.
+This register records baseline defects and the PR that resolved each one. The complete platform
+quality gate is `pnpm run quality`.
 
-## BD-001: Quiz Shooter client build
+## BD-001: Quiz Shooter client type-check failure
 
-- **Status:** Expected failure
-- **Command:** `pnpm --filter quiz-shooter-3d-client run build`
-- **Observed failure:** `DeckEditor.tsx` leaves the `choice` callback parameter implicitly typed.
-- **Scope:** PR-01 records the defect only. A later focused fix must add a regression test and
-  remove this expected-failure assertion.
+- **Status:** Resolved by PR-13.
+- **Resolution:** The deck editor now types its answer choices before finding a selected item.
+- **Regression coverage:** `pnpm run type-check` compiles every application package.
 
-## BD-002: Build A Beast client build
+## BD-002: Build A Beast client type-check failure
 
-- **Status:** Expected failure
-- **Command:** `pnpm --filter build-a-beast-client run build`
-- **Observed failure:** `App.tsx` tests a `void` expression for truthiness.
-- **Scope:** PR-01 records the defect only. A later focused fix must add a regression test and
-  remove this expected-failure assertion.
+- **Status:** Resolved by PR-13.
+- **Resolution:** The lobby renders the authenticated player's name instead of a void expression.
+- **Regression coverage:** `pnpm run type-check` compiles every application package.
 
 ## BD-003: External launcher click navigation
 
 - **Status:** Resolved by PR-03
 - **Command:** `pnpm run test:e2e`
-- **Regression coverage:** Playwright clicks all seven registry-backed external cards and asserts
-  the documented compatibility target. Manual steps are in
+- **Regression coverage:** Playwright clicks every registry-backed launcher and asserts its
+  same-origin destination. Manual steps are in
   [`../development/manual-testing.md`](../development/manual-testing.md).
 
 ## BD-004: Build A Beast shared-deck handoff
 
-- **Status:** Existing product gap; not changed by PR-06.
-- **Evidence:** The client sends `studyDeckId` when creating a room, but the legacy server's
-  `CreateRoomSchema` does not accept or retain that field, so no selected deck reaches gameplay.
-- **Scope:** PR-06 preserves the existing client and Socket.IO protocol. PR-11 must implement the
-  shared deck pipeline and add end-to-end deck-selection regression coverage before this entry can
-  be resolved.
+- **Status:** Resolved by PR-11.
+- **Regression coverage:** the multiplayer integration and Playwright suites verify host deck
+  handoff through the shared room state.

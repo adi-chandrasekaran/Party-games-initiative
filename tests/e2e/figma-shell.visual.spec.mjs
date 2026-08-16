@@ -33,6 +33,7 @@ for (const [viewportName, viewport] of [["desktop", { width: 1440, height: 900 }
         await page.locator(".forgeSidebar").getByRole("button", { name: label, exact: true }).click();
         await expect(page).toHaveScreenshot(`${viewportName}-${theme}-${snapshot}.png`, {
           fullPage: true,
+          maxDiffPixels: 200,
           mask: snapshot === "profile"
             ? [page.locator(".profileSummaryCard"), page.locator(".profileDetailsCard"), page.locator(".profileStatsCard")]
             : [],

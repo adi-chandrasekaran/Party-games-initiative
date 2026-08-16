@@ -8,5 +8,5 @@ test("hub staging copies only the five PR-05 source packages to same-origin entr
     assert.match(source, new RegExp(`"${route}"`));
   }
   assert.doesNotMatch(source, /quiz-shooter|build-a-beast/);
-  assert.match(source, /replaceAll\("http:\/\/localhost:5176\/\?workspace="/);
+  assert.doesNotMatch(source, /localhost/);
 });

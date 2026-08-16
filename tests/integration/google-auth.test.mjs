@@ -3,9 +3,8 @@ import assert from "node:assert/strict";
 import { Buffer } from "node:buffer";
 import http from "node:http";
 
-process.env.HUB_DATA_FILE = `/private/tmp/forge-google-auth-${process.pid}.json`;
+process.env.DATABASE_URL = "postgresql://forge:forge-local-password@127.0.0.1:5432/forge";
 process.env.GOOGLE_CLIENT_ID = "fixture-client";
-delete process.env.DATABASE_URL;
 const { createHubApiServer, setGoogleVerifierForTests, setSessionTtlForTests } = await import("../../apps/hub/server.js");
 
 function request(server, path, body, headers = {}) {
@@ -40,6 +39,9 @@ test("Google auth creates a server session for a verified member fixture", async
     const response = await request(server, "/api/auth/google", { credential: "fixture", role: "member" });
     assert.equal(response.status, 200); assert.equal(response.payload.user.email, "member@aischennai.org");
     assert.match(String(response.headers["set-cookie"]), /HttpOnly/);
+    const localPassword = await request(server, "/api/login", { email: "member@aischennai.org", password: "not-a-local-password" });
+    assert.equal(localPassword.status, 401);
+    assert.match(localPassword.payload.error, /Forgot password/);
     const cookie = String(response.headers["set-cookie"]).split(";")[0];
     const logout = await request(server, "/api/logout", {}, { Cookie: cookie });
     assert.equal(logout.status, 200);

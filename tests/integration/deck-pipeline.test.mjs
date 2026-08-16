@@ -3,8 +3,7 @@ import assert from "node:assert/strict";
 import { Buffer } from "node:buffer";
 import http from "node:http";
 
-process.env.HUB_DATA_FILE = `/private/tmp/forge-deck-pipeline-${process.pid}.json`;
-delete process.env.DATABASE_URL;
+process.env.DATABASE_URL = "postgresql://forge:forge-local-password@127.0.0.1:5432/forge";
 const { createHubApiServer } = await import("../../apps/hub/server.js");
 
 function request(server, method, path, body, headers = {}) {
@@ -20,7 +19,8 @@ function request(server, method, path, body, headers = {}) {
 test("deck API validates uploads, exposes structured metadata, and enforces delete ownership", async () => {
   const server = createHubApiServer(); await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   try {
-    const ownerLogin = await request(server, "POST", "/api/signup", { name: "Deck owner", username: "deck-owner", email: "deck-owner@aischennai.org", password: "safe-test-password" });
+    const suffix = `${process.pid}-${Date.now()}`;
+    const ownerLogin = await request(server, "POST", "/api/signup", { name: "Deck owner", username: `deck-owner-${suffix}`, email: `deck-owner-${suffix}@aischennai.org`, password: "safe-test-password" });
     const ownerCookie = String(ownerLogin.headers["set-cookie"]).split(";")[0];
     const invalid = await request(server, "POST", "/api/decks", { title: "Invalid", fileName: "bad.pdf", dataUrl: "data:application/pdf;base64,bm90LXBkZg==" }, { Cookie: ownerCookie });
     assert.equal(invalid.status, 400);
@@ -28,7 +28,7 @@ test("deck API validates uploads, exposes structured metadata, and enforces dele
     assert.equal(upload.status, 201);
     assert.equal(upload.payload.deck.sourceDataUrl, undefined);
     const deckId = upload.payload.deck.id;
-    const secondLogin = await request(server, "POST", "/api/signup", { name: "Deck second", username: "deck-second", email: "deck-second@aischennai.org", password: "safe-test-password" });
+    const secondLogin = await request(server, "POST", "/api/signup", { name: "Deck second", username: `deck-second-${suffix}`, email: `deck-second-${suffix}@aischennai.org`, password: "safe-test-password" });
     const secondCookie = String(secondLogin.headers["set-cookie"]).split(";")[0];
     const forbidden = await request(server, "DELETE", `/api/decks/${deckId}`, undefined, { Cookie: secondCookie });
     assert.equal(forbidden.status, 403);
