@@ -13,8 +13,8 @@ const legacyTarget = (environmentKey, defaultOrigin) => ({ environmentKey, defau
 
 export const appManifests = Object.freeze([
   { id: "imposter", title: "IMPOSTER", subtitle: "Find the secret player", area: "arcade", canonicalRoute: "/arcade/imposter", launchMode: "same-origin", sameOriginEntry: "/microapps/imposter/index.html", access: "public-host", deckCapability: "optional", color: "#ff2fa3", icon: "imposter", packageName: "imposter-game", apiContracts: ["platformGames", "gameAccess", "canHost"], legacyFallback: legacyTarget("VITE_IMPOSTER_ORIGIN", "http://localhost:5181") },
-  { id: "quiz-shooter", title: "QUIZ SHOOTER", subtitle: "Answer fast, shoot faster", area: "arcade", canonicalRoute: "/arcade/quiz-shooter", launchMode: "legacy-external", access: "public-host", deckCapability: "optional", color: "#18d8ff", icon: "quiz", packageName: "quiz-shooter-3d-client", serverPackageName: "quiz-shooter-3d-server", apiContracts: ["platformGames", "gameAccess", "canHost"], realtimeContract: "quizShooter", legacyTarget: legacyTarget("VITE_QUIZ_SHOOTER_ORIGIN", "http://localhost:5173") },
-  { id: "build-a-beast", title: "BUILD A BEAST", subtitle: "Create your monster", area: "arcade", canonicalRoute: "/arcade/build-a-beast", launchMode: "legacy-external", access: "public-host", deckCapability: "optional", color: "#7cff2f", icon: "beast", packageName: "build-a-beast-client", serverPackageName: "build-a-beast-server", apiContracts: ["platformGames", "gameAccess", "canHost"], realtimeContract: "buildABeast", legacyTarget: legacyTarget("VITE_BUILD_A_BEAST_ORIGIN", "http://localhost:5174") },
+  { id: "quiz-shooter", title: "QUIZ SHOOTER", subtitle: "Answer fast, shoot faster", area: "arcade", canonicalRoute: "/arcade/quiz-shooter", launchMode: "same-origin", sameOriginEntry: "/microapps/quiz-shooter/index.html", access: "public-host", deckCapability: "optional", color: "#18d8ff", icon: "quiz", packageName: "quiz-shooter-3d-client", serverPackageName: "quiz-shooter-3d-server", apiContracts: ["platformGames", "gameAccess", "canHost"], realtimeContract: "quizShooter", legacyFallback: legacyTarget("VITE_QUIZ_SHOOTER_ORIGIN", "http://localhost:5173") },
+  { id: "build-a-beast", title: "BUILD A BEAST", subtitle: "Create your monster", area: "arcade", canonicalRoute: "/arcade/build-a-beast", launchMode: "same-origin", sameOriginEntry: "/microapps/build-a-beast/index.html", access: "public-host", deckCapability: "optional", color: "#7cff2f", icon: "beast", packageName: "build-a-beast-client", serverPackageName: "build-a-beast-server", apiContracts: ["platformGames", "gameAccess", "canHost"], realtimeContract: "buildABeast", legacyFallback: legacyTarget("VITE_BUILD_A_BEAST_ORIGIN", "http://localhost:5174") },
   { id: "flashcards", title: "FLASHCARDS", subtitle: "Study term-definition pairs", area: "arcade", canonicalRoute: "/arcade/flashcards", launchMode: "embedded", access: "authenticated-member", deckCapability: "optional", color: "#8b5cf6", icon: "flashcards", apiContracts: [], },
   { id: "quiz-bowl", title: "QUIZ BOWL", subtitle: "Multiple choice challenge", area: "arcade", canonicalRoute: "/arcade/quiz-bowl", launchMode: "embedded", access: "authenticated-member", deckCapability: "optional", color: "#06b6d4", icon: "quizbowl", apiContracts: [], },
   { id: "word-match", title: "WORD MATCH", subtitle: "Match terms to definitions", area: "arcade", canonicalRoute: "/arcade/word-match", launchMode: "embedded", access: "authenticated-member", deckCapability: "optional", color: "#10b981", icon: "wordmatch", apiContracts: [], },
@@ -91,9 +91,10 @@ export function listLauncherCards(area, environment = {}) {
 }
 
 export function listPlatformGames(environment = {}) {
-  return appManifests.filter((manifest) => manifest.area === "arcade" && manifest.launchMode === "legacy-external").map((manifest) => {
+  return appManifests.filter((manifest) => manifest.area === "arcade" && manifest.apiContracts.includes("platformGames")).map((manifest) => {
     const card = toLauncherCard(manifest, environment);
-    return { id: card.id, title: card.title, route: card.legacyUrl, description: card.subtitle, isPublic: card.access === "public-host", status: "active", color: card.color, icon: card.icon };
+    const route = card.launchMode === "same-origin" ? card.canonicalRoute : card.legacyUrl;
+    return { id: card.id, title: card.title, route, description: card.subtitle, isPublic: card.access === "public-host", status: "active", color: card.color, icon: card.icon };
   });
 }
 

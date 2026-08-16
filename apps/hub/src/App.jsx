@@ -2818,7 +2818,7 @@ export default function App() {
     chats: { threads: [] },
     privateApps: { invites: [], memberships: [], all: [EMPTY_PRIVATE_APP], requestedIds: [] },
   });
-  const directMicroapp = ["imposter", "habit-tracker", "todo-board", "timer", "assignments"]
+  const directMicroapp = ["imposter", "quiz-shooter", "build-a-beast", "habit-tracker", "todo-board", "timer", "assignments"]
     .map((id) => getHubAppManifest(id))
     .find((app) => app?.canonicalRoute === window.location.pathname);
   const [activeView, setActiveView] = useState(() => {

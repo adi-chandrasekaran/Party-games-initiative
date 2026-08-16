@@ -27,3 +27,12 @@ the entry must be deliberately updated or removed in the PR that fixes it.
 - **Regression coverage:** Playwright clicks all seven registry-backed external cards and asserts
   the documented compatibility target. Manual steps are in
   [`../development/manual-testing.md`](../development/manual-testing.md).
+
+## BD-004: Build A Beast shared-deck handoff
+
+- **Status:** Existing product gap; not changed by PR-06.
+- **Evidence:** The client sends `studyDeckId` when creating a room, but the legacy server's
+  `CreateRoomSchema` does not accept or retain that field, so no selected deck reaches gameplay.
+- **Scope:** PR-06 preserves the existing client and Socket.IO protocol. PR-11 must implement the
+  shared deck pipeline and add end-to-end deck-selection regression coverage before this entry can
+  be resolved.

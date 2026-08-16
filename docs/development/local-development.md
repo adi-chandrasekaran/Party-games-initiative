@@ -22,9 +22,10 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The current launcher is `http://localhost:5176`. Additional frontend and backend ports are a
-documented legacy runtime constraint, not the target architecture. See `PORTS_AND_RUNNING.md`
-only when diagnosing the legacy runtime.
+The current launcher is `http://localhost:5176`. All migrated clients load under that one browser
+origin. Quiz Shooter and Build A Beast still use their unchanged local Socket.IO servers on ports
+4000 and 4100; those backend ports remain until the realtime consolidation work in PR-10. See
+`PORTS_AND_RUNNING.md` only when diagnosing the pre-refactor legacy runtime.
 
 ## Target Startup
 
@@ -36,8 +37,8 @@ pnpm dev
 ```
 
 The developer opens the hub at `http://localhost:5176`. PR-05 eliminates the separate frontend
-URLs for Imposter and the four planner tools; PR-06 will migrate the remaining Quiz Shooter and
-Build A Beast clients.
+URLs for Imposter and the four planner tools, and PR-06 does the same for Quiz Shooter and Build
+A Beast. The shell stages each client into its same-origin route during startup.
 
 ## Registry compatibility configuration
 

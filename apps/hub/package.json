@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "node ../../scripts/stage-simple-microapps.mjs && concurrently -n API,VITE -c yellow,cyan \"node server.js\" \"vite --host 0.0.0.0 --port 5176\"",
-    "build": "node ../../scripts/stage-simple-microapps.mjs && vite build",
+    "dev": "node ../../scripts/stage-simple-microapps.mjs && node ../../scripts/stage-multiplayer-microapps.mjs && concurrently -n API,VITE -c yellow,cyan \"node server.js\" \"vite --host 0.0.0.0 --port 5176\"",
+    "build": "node ../../scripts/stage-simple-microapps.mjs && node ../../scripts/stage-multiplayer-microapps.mjs && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 5176"
   },
   "dependencies": {

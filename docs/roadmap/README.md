@@ -21,7 +21,7 @@ human-approved PR.
 | PR-03 | Shared contracts and app registry | Complete | `feat/pr-03-app-registry` |
 | PR-04 | Figma web shell and design system | In review | `feat/pr-04-figma-shell` |
 | PR-05 | Imposter and planner micro-app migration | In review | `feat/pr-05-simple-microapps` |
-| PR-06 | Quiz Shooter and Build A Beast client migration | Planned | `feat/pr-06-multiplayer-clients` |
+| PR-06 | Quiz Shooter and Build A Beast client migration | In review | `feat/pr-06-multiplayer-clients` |
 | PR-07 | Modular TypeScript platform server | Planned | `feat/pr-07-platform-server` |
 | PR-08 | PostgreSQL-backed persistence | Planned | `feat/pr-08-postgres-persistence` |
 | PR-09 | Google authentication and authorization | Planned | `feat/pr-09-google-auth` |
@@ -202,6 +202,31 @@ gameplay contracts remain green.
 
 **Rollback:** Switch both registry entries back to their legacy client URLs. Existing realtime
 servers remain unchanged in this PR.
+
+### Excluded
+
+- No Socket.IO server consolidation, room-protocol redesign, authentication migration, or shared
+  persistence change; those remain PR-07 through PR-10 work.
+- No game-rule, deck-content, or visual redesign. Existing standalone clients remain temporary
+  fallbacks until same-origin client routes pass acceptance tests.
+- No removal of legacy client/server source or compatibility adapters; PR-13 owns removal.
+
+### Test Plan
+
+- Unit tests cover same-origin client manifest entries and compatibility fallback resolution.
+- Integration tests exercise the existing Quiz Shooter and Build A Beast server contracts for
+  invalid usernames, host/join, disconnect/reconnect, and deck-selection handoff.
+- Two-browser Playwright tests host and join a room in each migrated game through the hub origin.
+- Existing shell visual, launcher, unit, integration, lint, type-check, and build coverage remains
+  green, with BD-001 and BD-002 retained as explicit expected baseline results.
+
+### Evidence
+
+- `CI=1 pnpm run lint`, `CI=1 pnpm run type-check`, `CI=1 pnpm run build`, and
+  `CI=1 pnpm run test` pass locally; the final Playwright run covers 23 tests, including two
+  independent browser contexts hosting and joining each migrated game.
+- BD-001 and BD-002 remain confirmed expected build failures. BD-004 records the pre-existing
+  Build A Beast shared-deck handoff gap, deferred to PR-11 without a protocol change in this PR.
 
 ## PR-07: Platform Server
 

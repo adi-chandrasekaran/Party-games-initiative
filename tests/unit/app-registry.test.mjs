@@ -26,13 +26,33 @@ test("registry rejects duplicate IDs, routes, and invalid compatibility targets"
   assert.throws(() => validateAppRegistry(invalidOrigin), /Invalid legacy origin protocol/);
 });
 
-test("registry routes the five simple micro-apps through the hub and preserves fallbacks", () => {
+test("registry routes the seven migrated micro-apps through the hub and preserves fallbacks", () => {
   const sameOriginApps = appManifests.filter((manifest) => manifest.launchMode === "same-origin");
-  assert.deepEqual(sameOriginApps.map((manifest) => manifest.id), ["imposter", "habit-tracker", "todo-board", "timer", "assignments"]);
+  assert.deepEqual(sameOriginApps.map((manifest) => manifest.id), [
+    "imposter",
+    "quiz-shooter",
+    "build-a-beast",
+    "habit-tracker",
+    "todo-board",
+    "timer",
+    "assignments",
+  ]);
   assert.ok(sameOriginApps.every((manifest) => manifest.sameOriginEntry.startsWith("/microapps/")));
   assert.equal(resolveLegacyLaunch("imposter"), "http://localhost:5181");
+  assert.equal(resolveLegacyLaunch("quiz-shooter"), "http://localhost:5173");
+  assert.equal(resolveLegacyLaunch("build-a-beast"), "http://localhost:5174");
   assert.equal(resolveLegacyLaunch("imposter", { VITE_IMPOSTER_ORIGIN: "https://forge.example.test" }), "https://forge.example.test");
   assert.throws(() => resolveLegacyLaunch("imposter", { VITE_IMPOSTER_ORIGIN: "not a url" }), /Invalid legacy origin/);
+});
+
+test("platform game records retain public host access after a same-origin migration", async () => {
+  const { listPlatformGames } = await import("@forge/app-registry");
+  assert.deepEqual(listPlatformGames().map((game) => game.id), ["imposter", "quiz-shooter", "build-a-beast"]);
+  assert.deepEqual(listPlatformGames().map((game) => game.route), [
+    "/arcade/imposter",
+    "/arcade/quiz-shooter",
+    "/arcade/build-a-beast",
+  ]);
 });
 
 test("hub launcher source uses the registry instead of embedded legacy app origins", async () => {
