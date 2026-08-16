@@ -27,7 +27,7 @@ human-approved PR.
 | PR-09 | Google authentication and authorization | Complete | `feat/pr-09-google-auth` |
 | PR-10 | Consolidated realtime and resilient rooms | Complete | `feat/pr-10-realtime` |
 | PR-11 | Shared deck storage and processing | In review | `feat/pr-11-deck-pipeline` |
-| PR-12 | Local quality gates and full regression suite | Planned | `feat/pr-12-quality-gates` |
+| PR-12 | Local quality gates and full regression suite | In review | `feat/pr-12-quality-gates` |
 | PR-13 | Legacy process and compatibility removal | Planned | `feat/pr-13-legacy-removal` |
 
 ## PR-01: Canonical Repository and Behavior Baseline
@@ -424,6 +424,24 @@ recorded without provisioning production infrastructure.
 
 **Rollback:** CI configuration can be reverted independently; no product runtime changes belong
 in this PR.
+
+### Scope
+
+- Provide one deterministic root `pnpm run quality` command for workspace, static, build, unit,
+  integration, and Playwright checks.
+- Execute the exact command in GitHub Actions with an ephemeral PostgreSQL service.
+- Disable Playwright retries so a flaky test is visible rather than hidden by a later pass.
+- Record the local API/realtime performance baseline and keep deployment work excluded.
+
+### Excluded
+
+- No production deployment, hosting, observability service, load-test service, or performance
+  optimization work.
+
+### Evidence
+
+- `CI=1 PLAYWRIGHT_HUB_PORT=5190 PLAYWRIGHT_PLATFORM_PORT=8800 pnpm run quality` runs the
+  full local sequence with zero retries.
 
 ## PR-13: Legacy Removal
 

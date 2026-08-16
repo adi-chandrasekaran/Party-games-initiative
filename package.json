@@ -13,6 +13,7 @@
     "test:integration": "turbo run test:integration --filter='./apps/**' && node --test tests/integration/*.test.mjs",
     "test:e2e": "turbo run test:e2e --filter='./apps/**' && playwright test",
     "test": "pnpm run test:unit && pnpm run test:integration && pnpm run test:e2e",
+    "quality": "pnpm run workspace:check && pnpm run lint && pnpm run type-check && pnpm run build && pnpm run test",
     "workspace:check": "node --test tests/workspace/*.test.mjs"
   },
   "devDependencies": {
