@@ -23,6 +23,16 @@ export default defineConfig({
         HUB_DATA_FILE: smokeStore,
       },
     },
+    {
+      command: "pnpm --dir apps/platform-server run dev",
+      url: "http://localhost:8787/health",
+      timeout: 120_000,
+      reuseExistingServer: !process.env.CI,
+      env: {
+        ...process.env,
+        HUB_DATA_FILE: smokeStore,
+      },
+    },
     { command: "pnpm --dir apps/quiz-shooter/server run start", url: "http://localhost:4000/health", timeout: 120_000, reuseExistingServer: !process.env.CI },
     { command: "pnpm --dir apps/build-a-beast/server run start", url: "http://localhost:4100/health", timeout: 120_000, reuseExistingServer: !process.env.CI },
   ],

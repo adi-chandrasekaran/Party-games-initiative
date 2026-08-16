@@ -27,6 +27,10 @@ origin. Quiz Shooter and Build A Beast still use their unchanged local Socket.IO
 4000 and 4100; those backend ports remain until the realtime consolidation work in PR-10. See
 `PORTS_AND_RUNNING.md` only when diagnosing the pre-refactor legacy runtime.
 
+`pnpm dev` starts the default `platform` API mode on port 8787. For rollback verification only,
+run `pnpm --dir apps/hub run api:legacy` instead of the platform-server process; it preserves the
+same API port, cookie names, and JSON-store path.
+
 ## Target Startup
 
 The current workspace foundation uses:

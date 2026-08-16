@@ -19,7 +19,7 @@ importers:
         version: 1.55.0
       concurrently:
         specifier: latest
-        version: 10.0.4
+        version: 10.0.5
       eslint:
         specifier: 9.21.0
         version: 9.21.0(supports-color@10.2.2)
@@ -145,6 +145,18 @@ importers:
       vite:
         specifier: latest
         version: 8.2.1(@types/node@20.19.43)(esbuild@0.28.2)(tsx@4.23.12)
+
+  apps/platform-server:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.11.30
+        version: 20.19.43
+      tsx:
+        specifier: ^4.7.1
+        version: 4.23.12
+      typescript:
+        specifier: ^5.4.2
+        version: 5.9.3
 
   apps/quiz-shooter/client:
     dependencies:
@@ -1354,8 +1366,8 @@ packages:
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
 
-  concurrently@10.0.4:
-    resolution: {integrity: sha512-trZql+7l/0+WRAsAnEdctr4+iiOS6ZrViI6H8QWcCF9MFS/LT0dKpe8vluB1to6it+OxSI4VospFTIFMW8DJRw==}
+  concurrently@10.0.5:
+    resolution: {integrity: sha512-JaP/CoftUrCcAFW/g//RbgEGwlelnEae6cfBLgH6ZdO6s8jPkn6p9SB9u6pdVxYXoiSnFqseOlHfrEfF82TVOg==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -3353,7 +3365,7 @@ snapshots:
 
   concat-map@0.0.1: {}
 
-  concurrently@10.0.4:
+  concurrently@10.0.5:
     dependencies:
       chalk: 5.6.2
       rxjs: 7.8.2
