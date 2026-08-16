@@ -1,4 +1,4 @@
-const BASES = Array.from(new Set([(import.meta.env.VITE_PLATFORM_API_URL as string | undefined) || "http://localhost:8787", "http://localhost:8787"].filter(Boolean)));
+const BASES = [(import.meta.env.VITE_PLATFORM_API_URL as string | undefined) || window.location.origin];
 
 export async function platformRequest(pathname: string, { method = "GET", body }: { method?: string; body?: unknown } = {}) {
   let lastError: unknown = null;

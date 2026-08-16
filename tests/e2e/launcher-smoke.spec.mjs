@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test";
 
 const sameOriginLaunchers = [
-  ["arcade", "IMPOSTER", "/arcade/imposter", "Imposter Who", "http://localhost:5181"],
-  ["arcade", "QUIZ SHOOTER", "/arcade/quiz-shooter", "Quiz Shooter 3D", "http://localhost:5173"],
-  ["arcade", "BUILD A BEAST", "/arcade/build-a-beast", "Build-a-Beast", "http://localhost:5174"],
-  ["planner", "HABIT TRACKER", "/planner/habit-tracker", "Habit Tracker", "http://localhost:5314"],
-  ["planner", "TO-DO BOARD", "/planner/todo-board", "To-Do Board", "http://localhost:5315"],
-  ["planner", "TIMER", "/planner/timer", "Timer", "http://localhost:5316"],
-  ["planner", "ASSIGNMENTS", "/planner/assignments", "Assignments", "http://localhost:5317"],
+  ["arcade", "IMPOSTER", "/arcade/imposter", "Imposter Who"],
+  ["arcade", "QUIZ SHOOTER", "/arcade/quiz-shooter", "Quiz Shooter 3D"],
+  ["arcade", "BUILD A BEAST", "/arcade/build-a-beast", "Build-a-Beast"],
+  ["planner", "HABIT TRACKER", "/planner/habit-tracker", "Habit Tracker"],
+  ["planner", "TO-DO BOARD", "/planner/todo-board", "To-Do Board"],
+  ["planner", "TIMER", "/planner/timer", "Timer"],
+  ["planner", "ASSIGNMENTS", "/planner/assignments", "Assignments"],
 ];
 
 const internalArcadeLaunchers = ["FLASHCARDS", "QUIZ BOWL", "WORD MATCH"];
@@ -32,14 +32,14 @@ test("hub loads its local authentication gate", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Need a new account? Sign up" })).toBeVisible();
 });
 
-for (const [workspace, title, route, frameHeading, fallbackUrl] of sameOriginLaunchers) {
+for (const [workspace, title, route, frameHeading] of sameOriginLaunchers) {
   test(`${title} opens through its same-origin shell route`, async ({ page }) => {
     await signUpForSmokeTest(page, workspace);
     await page.getByRole("button", { name: title }).click();
     await expect(page).toHaveURL(new RegExp(`${route}$`));
     await expect(page.locator(".sameOriginMicroappFrame")).toHaveAttribute("src", /\/microapps\//);
     await expect(page.frameLocator(".sameOriginMicroappFrame").getByRole("heading", { name: frameHeading, exact: true })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Open legacy fallback" })).toHaveAttribute("href", fallbackUrl);
+    await expect(page.getByRole("link", { name: "Open legacy fallback" })).toHaveCount(0);
   });
 }
 

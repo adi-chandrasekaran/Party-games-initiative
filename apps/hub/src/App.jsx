@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import AdminPage from "./AdminPage";
-import { ARCADE_APPS, PLANNER_APPS, getHubAppManifest, resolveHubLaunch } from "./appRegistry";
+import { ARCADE_APPS, PLANNER_APPS, getHubAppManifest } from "./appRegistry";
 import "./index.css";
 
 const NAV_ITEMS = [
@@ -60,7 +60,7 @@ const FORGE_UPDATES_MESSAGE = "updates will appear here!";
 
 const SCHOOL_DOMAIN = "@aischennai.org";
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
-const API_BASES = Array.from(new Set([(import.meta.env.VITE_HUB_API_URL || "http://localhost:8787"), (import.meta.env.VITE_PLATFORM_API_URL || "http://localhost:8787")].filter(Boolean)));
+const API_BASES = Array.from(new Set([(import.meta.env.VITE_HUB_API_URL || window.location.origin), (import.meta.env.VITE_PLATFORM_API_URL || window.location.origin)].filter(Boolean)));
 const EMPTY_PRIVATE_APP = {
   id: "sample-private-app",
   title: "Sample Private App",
@@ -320,9 +320,6 @@ function SameOriginMicroapp({ app, onBack }) {
         <button type="button" className="workspaceBackButton" onClick={onBack}>
           Back to {app.area === "planner" ? "Planner" : "Arcade"}
         </button>
-        <a className="sameOriginFallbackLink" href={app.legacyUrl}>
-          Open legacy fallback
-        </a>
       </div>
       <iframe className="sameOriginMicroappFrame" title={app.title} src={app.sameOriginEntry} />
     </section>
@@ -1377,7 +1374,6 @@ function ForgeShell({
       items={arcadeGames}
       theme={theme}
       onLaunchItem={(item) => {
-        if (item.launchMode === "legacy-external") return onGameClick(item);
         if (item.launchMode === "same-origin") return openSameOriginMicroapp(item);
         setActiveArcadeGame(item.id);
         return onRecordGamePlay?.(item.title);
@@ -2926,7 +2922,7 @@ export default function App() {
   };
 
   const recordGame = async (game) => {
-    const target = new URL(resolveHubLaunch(game));
+    const target = new URL(game.canonicalRoute, window.location.origin);
     const selectedDeck = dashboard.decks?.find((deck) => deck.id === selectedDeckId);
     if (selectedDeck) {
       target.searchParams.set("deckId", selectedDeck.id);

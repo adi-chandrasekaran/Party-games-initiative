@@ -1,6 +1,4 @@
-const PLATFORM_API_BASES = Array.from(
-  new Set([import.meta.env.VITE_PLATFORM_API_URL || "http://localhost:8787", "http://localhost:8787"].filter(Boolean)),
-);
+const PLATFORM_API_BASES = [import.meta.env.VITE_PLATFORM_API_URL || window.location.origin];
 
 export async function platformRequest(pathname, { method = "GET", body, code } = {}) {
   let lastError = null;

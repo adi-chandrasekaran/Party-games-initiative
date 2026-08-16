@@ -388,7 +388,7 @@ function show(id) {
 // =========================
 
 function loadSharedDecks() {
-  fetch("http://localhost:8787/api/decks", {
+  fetch("/api/decks", {
     credentials: "include",
   })
     .then((response) => response.json())

@@ -1,8 +1,8 @@
 import http from "node:http";
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import crypto from "node:crypto";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { readFile } from "node:fs/promises";
 import {
   addOrUpdateUser,
   canUserHostGame,
@@ -15,15 +15,10 @@ import {
   updateHostAssignments,
   syncPlatformDefaults,
 } from "./platform-data.js";
-import { readPostgresStore, usesPostgres, writePostgresStore } from "./postgres-store.js";
+import { readPostgresStore, writePostgresStore } from "./postgres-store.js";
 import { createGoogleVerifier } from "./google-verifier.js";
 import { deckForGame, deckSummary, extractDeckItems, validatePdfDeck } from "./deck-pipeline.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-// The default keeps the legacy runtime unchanged. Tests can supply disposable state so they do
-// not create accounts or sessions in a contributor's local store.
-const STORE_PATH = process.env.HUB_DATA_FILE || path.join(__dirname, "data", "store.json");
 const OWNER_ADMIN_CODE = process.env.OWNER_ADMIN_CODE || "aisc-admin";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const PORT = Number(process.env.PLATFORM_SERVER_PORT || process.env.PORT || 8787);
@@ -32,6 +27,7 @@ const SCHOOL_DOMAIN = "@aischennai.org";
 const ADMIN_HEADER = "x-owner-admin-code";
 const AUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 const AUTH_RATE_LIMIT_MAX_ATTEMPTS = 10;
+const __filename = fileURLToPath(import.meta.url);
 const googleAuthAttempts = new Map();
 let sessionTtlMs = Number(process.env.SESSION_TTL_MS || 8 * 60 * 60 * 1000);
 
@@ -76,25 +72,12 @@ const defaultStore = {
   },
 };
 
-async function ensureStore() {
-  try {
-    await fs.access(STORE_PATH);
-  } catch {
-    await fs.mkdir(path.dirname(STORE_PATH), { recursive: true });
-    await fs.writeFile(STORE_PATH, JSON.stringify(defaultStore, null, 2));
-  }
-}
-
 async function readStore() {
-  if (usesPostgres()) return readPostgresStore(defaultStore);
-  await ensureStore();
-  const raw = await fs.readFile(STORE_PATH, "utf8");
-  return JSON.parse(raw);
+  return readPostgresStore(defaultStore);
 }
 
 async function writeStore(store) {
-  if (usesPostgres()) return writePostgresStore(store);
-  await fs.writeFile(STORE_PATH, JSON.stringify(store, null, 2));
+  return writePostgresStore(store);
 }
 
 function json(res, status, payload, extraHeaders = {}) {
@@ -974,7 +957,47 @@ async function handlePlatformAdminGameHosts(req, res, gameId) {
   return json(res, 200, { game });
 }
 
-export function createHubApiServer() {
+const STATIC_CONTENT_TYPES = {
+  ".css": "text/css; charset=utf-8",
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".map": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".woff2": "font/woff2",
+};
+
+async function serveHubAsset(req, res, staticRoot, routePath) {
+  if (!staticRoot || !["GET", "HEAD"].includes(req.method || "")) return false;
+  const requestedPath = decodeURIComponent(routePath);
+  const relativePath = requestedPath === "/" ? "index.html" : requestedPath.replace(/^\/+/, "");
+  const root = path.resolve(staticRoot);
+  const target = path.resolve(root, relativePath);
+  if (!target.startsWith(`${root}${path.sep}`) && target !== root) return false;
+
+  try {
+    const body = await readFile(target);
+    res.writeHead(200, { "Content-Type": STATIC_CONTENT_TYPES[path.extname(target)] || "application/octet-stream" });
+    if (req.method === "HEAD") res.end(); else res.end(body);
+    return true;
+  } catch {
+    if (path.extname(relativePath)) return false;
+    try {
+      const body = await readFile(path.join(root, "index.html"));
+      res.writeHead(200, { "Content-Type": STATIC_CONTENT_TYPES[".html"] });
+      if (req.method === "HEAD") res.end(); else res.end(body);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
+export function createHubApiServer({ staticRoot } = {}) {
   return http.createServer(async (req, res) => {
   setCorsHeaders(req, res);
   const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
@@ -1040,6 +1063,7 @@ export function createHubApiServer() {
       return await handlePlatformGameAccess(req, res, gameId);
     }
     if (req.method === "GET" && routePath === "/health") return json(res, 200, { ok: true });
+    if (await serveHubAsset(req, res, staticRoot, url.pathname)) return;
 
     return json(res, 404, { error: "Not found" });
   } catch (error) {
@@ -1049,9 +1073,9 @@ export function createHubApiServer() {
   });
 }
 
-export async function startHubApiServer({ port = PORT } = {}) {
+export async function startHubApiServer({ port = PORT, staticRoot } = {}) {
   await syncPlatformDefaults().catch(() => null);
-  const server = createHubApiServer();
+  const server = createHubApiServer({ staticRoot });
   await new Promise((resolve) => server.listen(port, "127.0.0.1", resolve));
   console.log(`Hub API listening on http://127.0.0.1:${port}`);
   return server;

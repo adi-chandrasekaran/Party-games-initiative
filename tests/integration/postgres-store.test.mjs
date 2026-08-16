@@ -7,10 +7,11 @@ const { closePostgresStore, migratePostgresStore, readPostgresStore, writePostgr
 const defaultStore = { users: [], sessions: {}, games: { counts: {}, history: [], userPlays: {}, ratings: [] }, decks: [], chats: { threads: [] }, privateApps: { all: [], invites: {}, memberships: {}, requests: {} } };
 
 test("PostgreSQL migration persists and restores platform state", async () => {
-  await migratePostgresStore(defaultStore);
-  const original = await readPostgresStore(defaultStore);
+  const storeId = `postgres-store-test-${process.pid}-${Date.now()}`;
+  await migratePostgresStore(defaultStore, storeId);
+  const original = await readPostgresStore(defaultStore, storeId);
   const next = { ...original, users: [{ id: `postgres-${Date.now()}` }] };
-  await writePostgresStore(next);
-  assert.deepEqual((await readPostgresStore(defaultStore)).users, next.users);
+  await writePostgresStore(next, storeId);
+  assert.deepEqual((await readPostgresStore(defaultStore, storeId)).users, next.users);
   await closePostgresStore();
 });

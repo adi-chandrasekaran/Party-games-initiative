@@ -7,7 +7,7 @@ import SimulationView from "./components/SimulationView";
 import { platformRequest } from "./platformApi";
 import type { BeastPart, Challenge, HostDashboard, LeaderboardEntry, Player, SimulationOutput } from "./types";
 
-const SERVER_URL = import.meta.env.VITE_PLATFORM_API_URL ?? "http://localhost:8787";
+const SERVER_URL = import.meta.env.VITE_PLATFORM_API_URL ?? window.location.origin;
 const socket = io(`${SERVER_URL}/build-a-beast`, { autoConnect: true, withCredentials: true, transports: ["websocket"] });
 
 type SharedDeck = {
@@ -212,7 +212,7 @@ export default function App() {
   }
 
   if (mode === "host-lobby" || mode === "host-dashboard") return <HostDashboardView roomId={roomId} dashboard={dashboard} onStart={startBuildPhase} onRunSimulation={runSimulationNow} onRestart={restartGame} onEnd={endGame} selectedChallengeId={selectedChallengeId} setSelectedChallengeId={setSelectedChallengeId} onSetChallenge={setHostChallenge} />;
-  if (mode === "player-lobby") return <div className="app-shell"><section className="single-card"><p className="badge">Room {roomId}</p><h1>Waiting for host...</h1><p className="muted">You joined as <strong>{name || "Player"}</strong>. The host will start the build phase.</p>{challenge && <div className="challenge-preview"><h2>{challenge.title}</h2><p>{challenge.description}</p><div className="badge-row"><span className="badge">{challenge.subject}</span><span className="badge">{challenge.minParts}-{challenge.maxParts} parts</span></div></div>}<Leaderboard entries={leaderboard} /></section></div>;
+  if (mode === "player-lobby") return <div className="app-shell"><section className="single-card"><p className="badge">Room {roomId}</p><h1>Waiting for host...</h1><p className="muted">You joined as <strong>{player?.name || "Player"}</strong>. The host will start the build phase.</p>{challenge && <div className="challenge-preview"><h2>{challenge.title}</h2><p>{challenge.description}</p><div className="badge-row"><span className="badge">{challenge.subject}</span><span className="badge">{challenge.minParts}-{challenge.maxParts} parts</span></div></div>}<Leaderboard entries={leaderboard} /></section></div>;
   if (mode === "player-build" && challenge) { const maxReached = selectedParts.length >= challenge.maxParts; return <div className="build-screen"><section className="build-hud"><div><p className="badge">{challenge.subject}</p><h1>{challenge.title}</h1><p className="muted">{challenge.description}</p></div><div className="beast-submit-card"><input className="input" placeholder="Name your beast" value={beastName} onChange={(event) => setBeastName(event.target.value)} /><p className="muted">Selected {selectedParts.length}/{challenge.maxParts}. Minimum {challenge.minParts}.</p><button className="primary-btn" onClick={submitBuild} disabled={selectedParts.length < challenge.minParts}>Submit Beast</button></div></section><section className="part-grid">{challenge.parts.map((part) => <PartCard key={part.id} part={part} selected={selectedParts.includes(part.id)} disabled={maxReached} onClick={() => togglePart(part.id)} />)}</section>{toast && <div className="event-toast">{toast}</div>}</div>; }
   if (mode === "waiting") return <WaitingRoom leaderboard={leaderboard} dashboard={dashboard} />;
   if (mode === "simulation" && simulation) return <SimulationView simulation={simulation} playerId={role === "player" ? player?.id : null} onSkipToPodium={() => setMode("podium")} />;

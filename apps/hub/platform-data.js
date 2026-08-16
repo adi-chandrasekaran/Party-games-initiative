@@ -1,12 +1,7 @@
-import { promises as fs } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { listPlatformGames } from "@forge/app-registry";
+import { readPostgresStore, writePostgresStore } from "./postgres-store.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-export const PLATFORM_DATA_PATH = path.join(__dirname, "data", "platform-data.json");
+const PLATFORM_DATA_STORE_ID = "platform-registry";
 
 const GAME_SEED = listPlatformGames(process.env).map((game) => ({ ...game, hostUserIds: ["aditi"] }));
 
@@ -34,19 +29,8 @@ function defaultPlatformData() {
   };
 }
 
-async function ensurePlatformData() {
-  try {
-    await fs.access(PLATFORM_DATA_PATH);
-  } catch {
-    await fs.mkdir(path.dirname(PLATFORM_DATA_PATH), { recursive: true });
-    await fs.writeFile(PLATFORM_DATA_PATH, JSON.stringify(defaultPlatformData(), null, 2));
-  }
-}
-
 export async function readPlatformData() {
-  await ensurePlatformData();
-  const raw = await fs.readFile(PLATFORM_DATA_PATH, "utf8");
-  const data = JSON.parse(raw);
+  const data = await readPostgresStore(defaultPlatformData(), PLATFORM_DATA_STORE_ID);
   return {
     users: Array.isArray(data.users) ? data.users : [],
     gameConfigs: Array.isArray(data.gameConfigs) ? data.gameConfigs : [],
@@ -54,7 +38,7 @@ export async function readPlatformData() {
 }
 
 export async function writePlatformData(data) {
-  await fs.writeFile(PLATFORM_DATA_PATH, JSON.stringify(data, null, 2));
+  await writePostgresStore(data, PLATFORM_DATA_STORE_ID);
 }
 
 function normalizeLookup(value) {

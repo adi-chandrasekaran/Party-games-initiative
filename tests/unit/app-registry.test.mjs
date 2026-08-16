@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { appManifests, resolveLegacyLaunch, validateAppRegistry } from "@forge/app-registry";
+import { appManifests, validateAppRegistry } from "@forge/app-registry";
 
 test("registry declares every current arcade and planner product app", () => {
   assert.deepEqual(appManifests.map((manifest) => manifest.id), [
@@ -12,7 +12,7 @@ test("registry declares every current arcade and planner product app", () => {
   assert.equal(appManifests.filter((manifest) => manifest.area === "planner").length, 4);
 });
 
-test("registry rejects duplicate IDs, routes, and invalid compatibility targets", () => {
+test("registry rejects duplicate IDs, routes, and compatibility fields", () => {
   const duplicateId = appManifests.map((manifest) => ({ ...manifest }));
   duplicateId[1].id = duplicateId[0].id;
   assert.throws(() => validateAppRegistry(duplicateId), /Duplicate app ID/);
@@ -21,12 +21,12 @@ test("registry rejects duplicate IDs, routes, and invalid compatibility targets"
   duplicateRoute[1].canonicalRoute = duplicateRoute[0].canonicalRoute;
   assert.throws(() => validateAppRegistry(duplicateRoute), /Duplicate canonical route/);
 
-  const invalidOrigin = appManifests.map((manifest) => ({ ...manifest, legacyFallback: manifest.legacyFallback && { ...manifest.legacyFallback } }));
-  invalidOrigin[0].legacyFallback.defaultOrigin = "file:///not-a-launcher";
-  assert.throws(() => validateAppRegistry(invalidOrigin), /Invalid legacy origin protocol/);
+  const compatibilityField = appManifests.map((manifest) => ({ ...manifest }));
+  compatibilityField[0].legacyFallback = { environmentKey: "VITE_OLD", defaultOrigin: "http://localhost:1" };
+  assert.throws(() => validateAppRegistry(compatibilityField), /cannot declare a compatibility target/);
 });
 
-test("registry routes the seven migrated micro-apps through the hub and preserves fallbacks", () => {
+test("registry routes the seven migrated micro-apps through the hub", () => {
   const sameOriginApps = appManifests.filter((manifest) => manifest.launchMode === "same-origin");
   assert.deepEqual(sameOriginApps.map((manifest) => manifest.id), [
     "imposter",
@@ -38,11 +38,7 @@ test("registry routes the seven migrated micro-apps through the hub and preserve
     "assignments",
   ]);
   assert.ok(sameOriginApps.every((manifest) => manifest.sameOriginEntry.startsWith("/microapps/")));
-  assert.equal(resolveLegacyLaunch("imposter"), "http://localhost:5181");
-  assert.equal(resolveLegacyLaunch("quiz-shooter"), "http://localhost:5173");
-  assert.equal(resolveLegacyLaunch("build-a-beast"), "http://localhost:5174");
-  assert.equal(resolveLegacyLaunch("imposter", { VITE_IMPOSTER_ORIGIN: "https://forge.example.test" }), "https://forge.example.test");
-  assert.throws(() => resolveLegacyLaunch("imposter", { VITE_IMPOSTER_ORIGIN: "not a url" }), /Invalid legacy origin/);
+  assert.ok(sameOriginApps.every((manifest) => !manifest.legacyFallback));
 });
 
 test("platform game records retain public host access after a same-origin migration", async () => {

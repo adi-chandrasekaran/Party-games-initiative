@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "vite --host 127.0.0.1 --port 5181 --strictPort",
+    "dev": "vite --host 127.0.0.1",
     "build": "vite build"
   },
   "devDependencies": {

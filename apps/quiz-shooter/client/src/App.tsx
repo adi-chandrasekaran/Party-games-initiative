@@ -14,7 +14,7 @@ import type {
   Question
 } from "./types";
 
-const SERVER_URL = import.meta.env.VITE_PLATFORM_API_URL ?? "http://localhost:8787";
+const SERVER_URL = import.meta.env.VITE_PLATFORM_API_URL ?? window.location.origin;
 
 const socket = io(`${SERVER_URL}/quiz-shooter`, {
   autoConnect: true,

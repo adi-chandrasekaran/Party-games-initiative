@@ -12,7 +12,7 @@ test -f "$(git rev-parse --show-toplevel)/AGENTS.md"
 
 Do not infer the canonical repository from a folder name or an absolute filesystem path.
 
-## Current Workspace Startup
+## Platform Startup
 
 Use the pinned package manager and lockfile:
 
@@ -22,41 +22,16 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The current launcher is `http://localhost:5176`. All migrated clients load under that one browser
-origin. Quiz Shooter and Build A Beast still use their unchanged local Socket.IO servers on ports
-4000 and 4100; those backend ports remain until the realtime consolidation work in PR-10. See
-`PORTS_AND_RUNNING.md` only when diagnosing the pre-refactor legacy runtime.
-
-`pnpm dev` starts the default `platform` API mode on port 8787. For rollback verification only,
-run `pnpm --dir apps/hub run api:legacy` instead of the platform-server process; it preserves the
-same API port, cookie names, and JSON-store path.
-
-## Target Startup
-
-The current workspace foundation uses:
-
-```bash
-pnpm install --frozen-lockfile
-pnpm dev
-```
-
-The developer opens the hub at `http://localhost:5176`. PR-05 eliminates the separate frontend
-URLs for Imposter and the four planner tools, and PR-06 does the same for Quiz Shooter and Build
-A Beast. The shell stages each client into its same-origin route during startup.
-
-## Registry compatibility configuration
-
-PR-03 resolves launcher destinations through `@forge/app-registry`. The documented legacy
-origins are the defaults. A local override may use the corresponding `VITE_*_ORIGIN` value, such
-as `VITE_IMPOSTER_ORIGIN`; it must be a complete `http` or `https` origin with no path. Do not
-add app URLs directly to the hub.
+`pnpm dev` stages and builds the hub, then starts the one platform server. Open the URL printed by
+that server (port `8787` by default). The hub, API, realtime namespaces, and all micro-app routes
+are served from that same origin.
 
 ## Environment Files
 
 - Commit `.env.example` with safe placeholders.
 - Never commit Google client secrets, database credentials, session secrets, or real tokens.
 - Tests use isolated local values and disposable data.
-- PR-08 uses a local PostgreSQL `DATABASE_URL` when supplied. The documented test container is
+- PostgreSQL persistence is required. The documented local test database URL is
   `postgresql://forge:forge-local-password@127.0.0.1:5432/forge`; do not use this example for a
   shared or production database.
 - PR-09 uses `GOOGLE_CLIENT_ID` to verify Google ID tokens. Set `TRUSTED_ORIGINS` to the comma-

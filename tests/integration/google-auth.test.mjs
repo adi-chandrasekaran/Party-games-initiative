@@ -3,9 +3,8 @@ import assert from "node:assert/strict";
 import { Buffer } from "node:buffer";
 import http from "node:http";
 
-process.env.HUB_DATA_FILE = `/private/tmp/forge-google-auth-${process.pid}.json`;
+process.env.DATABASE_URL = "postgresql://forge:forge-local-password@127.0.0.1:5432/forge";
 process.env.GOOGLE_CLIENT_ID = "fixture-client";
-delete process.env.DATABASE_URL;
 const { createHubApiServer, setGoogleVerifierForTests, setSessionTtlForTests } = await import("../../apps/hub/server.js");
 
 function request(server, path, body, headers = {}) {
