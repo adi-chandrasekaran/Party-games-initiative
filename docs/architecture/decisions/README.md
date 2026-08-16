@@ -9,6 +9,7 @@ without evidence.
 - [`ADR-0002-modular-monorepo.md`](ADR-0002-modular-monorepo.md)
 - [`ADR-0003-figma-design-source.md`](ADR-0003-figma-design-source.md)
 - [`ADR-0004-local-first-refactor.md`](ADR-0004-local-first-refactor.md)
+- [`ADR-0005-platform-realtime-namespaces.md`](ADR-0005-platform-realtime-namespaces.md)
 
 ## Format
 

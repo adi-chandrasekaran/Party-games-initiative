@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { createServer } from "http";
-import { Server } from "socket.io";
+import { Namespace, Server } from "socket.io";
 import { z } from "zod";
 
 type Choice = {
@@ -23,6 +23,7 @@ type RoomPhase = "lobby" | "countdown" | "playing" | "podium";
 type Player = {
   id: string;
   socketId: string;
+  userId: string;
   name: string;
   mapId: MapId;
   score: number;
@@ -36,7 +37,7 @@ type Player = {
 
 type Room = {
   id: string;
-  hostSocketId: string;
+  hostUserId: string;
   deck: Question[];
   players: Record<string, Player>;
   phase: RoomPhase;
@@ -47,6 +48,9 @@ type Room = {
 
 const rooms: Record<string, Room> = {};
 const countdownTimers: Record<string, NodeJS.Timeout> = {};
+type RealtimeTransport = Server | Namespace;
+type RoomStore = { save(room: { gameId: string; roomId: string; payload: unknown; expiresAt: Date }): Promise<void>; load(gameId: string, roomId: string): Promise<{ payload: unknown } | null>; delete?(gameId: string, roomId: string): Promise<void> };
+let io: RealtimeTransport;
 
 const COUNTDOWN_MS = 4000;
 
@@ -255,22 +259,17 @@ const AnswerResultSchema = z.object({
   responseMs: z.number().min(0).max(120000).default(10000)
 });
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-app.get("/health", (_, res) => {
-  res.json({ ok: true, rooms: Object.keys(rooms).length });
-});
-
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*"
-  }
-});
-
-io.on("connection", (socket) => {
+export function registerQuizShooterRealtime(ioServer: RealtimeTransport, options: { roomStore?: RoomStore | null } = {}) {
+  io = ioServer;
+  io.on("connection", (socket) => {
+  const userId = String(socket.data.user?.id ?? socket.id);
+  const persist = (room: Room) => options.roomStore?.save({ gameId: "quiz-shooter", roomId: room.id, payload: room, expiresAt: new Date(Date.now() + 30 * 60_000) }).catch(() => null);
+  socket.use((packet, next) => {
+    const roomId = packet[1]?.roomId;
+    if (!roomId || rooms[roomId] || !options.roomStore) return next();
+    options.roomStore.load("quiz-shooter", roomId).then((saved) => { if (saved?.payload && typeof saved.payload === "object") rooms[roomId] = saved.payload as Room; next(); }).catch(next);
+  });
+  socket.onAny(() => queueMicrotask(() => Object.values(rooms).forEach(persist)));
   socket.on("create-room", (payload, callback) => {
     try {
       const parsed = CreateRoomSchema.parse(payload ?? {});
@@ -279,7 +278,7 @@ io.on("connection", (socket) => {
 
       const room: Room = {
         id: roomId,
-        hostSocketId: socket.id,
+        hostUserId: userId,
         deck: parsed.deck?.length ? parsed.deck : defaultDeck,
         players: {},
         phase: "lobby",
@@ -306,7 +305,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (room.hostSocketId !== socket.id) {
+    if (room.hostUserId !== userId) {
       callback?.({ ok: false, error: "Only the host can update the deck." });
       return;
     }
@@ -337,10 +336,20 @@ io.on("connection", (socket) => {
         return;
       }
 
+      const existing = Object.values(room.players).find((player) => player.userId === userId);
+      if (existing) {
+        existing.socketId = socket.id;
+        socket.join(room.id);
+        callback?.({ ok: true, room: publicRoom(room), player: existing, deck: room.deck, leaderboard: leaderboard(room), dashboard: hostDashboard(room), reconnected: true });
+        emitRoomState(room);
+        return;
+      }
+
       const playerId = makeId("player");
       const player: Player = {
         id: playerId,
         socketId: socket.id,
+        userId,
         name: parsed.name,
         mapId: parsed.mapId,
         score: 0,
@@ -378,7 +387,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (room.hostSocketId !== socket.id) {
+    if (room.hostUserId !== userId) {
       callback?.({ ok: false, error: "Only the host can start the game." });
       return;
     }
@@ -401,7 +410,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (room.hostSocketId !== socket.id) {
+    if (room.hostUserId !== userId) {
       callback?.({ ok: false, error: "Only the host can restart the game." });
       return;
     }
@@ -424,7 +433,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    if (room.hostSocketId !== socket.id) {
+    if (room.hostUserId !== userId) {
       callback?.({ ok: false, error: "Only the host can end the game." });
       return;
     }
@@ -439,6 +448,7 @@ io.on("connection", (socket) => {
     });
 
     delete rooms[room.id];
+    void options.roomStore?.delete?.("quiz-shooter", room.id);
     callback?.({ ok: true });
   });
 
@@ -453,7 +463,7 @@ io.on("connection", (socket) => {
       }
 
       const player = room.players[parsed.playerId];
-      if (!player || player.socketId !== socket.id) {
+      if (!player || player.userId !== userId) {
         callback?.({ ok: false, error: "Player not found." });
         return;
       }
@@ -499,17 +509,33 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("resume-room", (payload, callback) => {
+    const room = rooms[payload?.roomId];
+    const player = room && Object.values(room.players).find((candidate) => candidate.userId === userId);
+    if (!room || (!player && room.hostUserId !== userId)) return callback?.({ ok: false, error: "Room membership not found." });
+    if (player) player.socketId = socket.id;
+    socket.join(room.id);
+    callback?.({ ok: true, room: publicRoom(room), player, deck: room.deck, leaderboard: leaderboard(room), dashboard: hostDashboard(room), isHost: room.hostUserId === userId });
+    emitRoomState(room);
+  });
+
   socket.on("disconnect", () => {
     for (const room of Object.values(rooms)) {
       for (const player of Object.values(room.players)) {
         if (player.socketId === socket.id) {
-          delete room.players[player.id];
+          player.socketId = "";
           emitRoomState(room);
         }
       }
 
-      if (room.hostSocketId === socket.id) {
-        io.to(room.id).emit("host-disconnected");
+      if (room.hostUserId === userId) {
+        const successor = Object.values(room.players).sort((a, b) => a.id.localeCompare(b.id))[0];
+        if (successor) {
+          room.hostUserId = successor.userId;
+          io.to(room.id).emit("host-transferred", { userId: successor.userId, playerId: successor.id });
+        } else {
+          io.to(room.id).emit("host-disconnected");
+        }
       }
 
       if (room.phase === "playing" || room.phase === "countdown") {
@@ -517,10 +543,17 @@ io.on("connection", (socket) => {
       }
     }
   });
-});
+  });
+}
 
-const PORT = process.env.PORT || 4000;
-
-httpServer.listen(PORT, () => {
-  console.log(`Quiz Shooter server running on http://localhost:${PORT}`);
-});
+if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
+  app.get("/health", (_, res) => res.json({ ok: true, rooms: Object.keys(rooms).length }));
+  const httpServer = createServer(app);
+  const standaloneIo = new Server(httpServer, { cors: { origin: "*" } });
+  registerQuizShooterRealtime(standaloneIo);
+  const port = process.env.PORT || 4000;
+  httpServer.listen(port, () => console.log(`Quiz Shooter server running on http://localhost:${port}`));
+}

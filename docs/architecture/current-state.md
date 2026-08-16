@@ -33,10 +33,12 @@ Status: **Legacy system to be incrementally migrated**
 - PR-07 runs the custom HTTP API through the `apps/platform-server` TypeScript lifecycle package;
   `apps/hub/server.js` remains the selectable legacy compatibility adapter until its route modules
   are migrated in later milestones.
-- Accounts, sessions, chats, decks, statistics, and platform data use JSON-file persistence.
-- Quiz Shooter and Build A Beast each run a separate Socket.IO server.
-- Multiplayer room state is process-local, and socket IDs are used for important host state.
-- Realtime CORS and authentication need hardening before production use.
+- PR-08 moves accounts, sessions, chats, decks, statistics, and platform data to PostgreSQL through
+  the compatibility store; the JSON adapter remains an explicit rollback path until PR-13.
+- PR-09 verifies AISC Google identities server-side and provides expiring server sessions. PR-10
+  will apply that authenticated identity to realtime namespaces.
+- Quiz Shooter and Build A Beast each still run a separate Socket.IO server with process-local
+  rooms and socket-ID host ownership; PR-10 is the active consolidation milestone.
 
 ## Testing
 
