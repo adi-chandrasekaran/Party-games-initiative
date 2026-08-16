@@ -1,5 +1,5 @@
 import { defineConfig } from "@playwright/test";
-const postgresUrl = "postgresql://forge:forge-local-password@127.0.0.1:5432/forge";
+const postgresUrl = process.env.DATABASE_URL || "postgresql://forge:forge-local-password@127.0.0.1:5432/forge";
 const platformPort = Number(process.env.PLAYWRIGHT_PLATFORM_PORT || 8787);
 const platformUrl = `http://localhost:${platformPort}`;
 
