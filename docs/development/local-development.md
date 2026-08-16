@@ -59,6 +59,9 @@ add app URLs directly to the hub.
 - PR-08 uses a local PostgreSQL `DATABASE_URL` when supplied. The documented test container is
   `postgresql://forge:forge-local-password@127.0.0.1:5432/forge`; do not use this example for a
   shared or production database.
+- PR-09 uses `GOOGLE_CLIENT_ID` to verify Google ID tokens. Set `TRUSTED_ORIGINS` to the comma-
+  separated browser origins that may make authenticated mutations in production. Never configure
+  `AUTH_TEST_GOOGLE_FIXTURES` outside automated tests; it is ignored unless `NODE_ENV=test`.
 
 ## Deployment Constraint
 

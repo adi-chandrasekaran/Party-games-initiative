@@ -21,6 +21,15 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       env: {
         ...process.env,
+        NODE_ENV: "test",
+        GOOGLE_CLIENT_ID: "forge-playwright-client",
+        AUTH_TEST_GOOGLE_FIXTURES: JSON.stringify({
+          member: { email: "member@aischennai.org", name: "Playwright Member", picture: "", googleSub: "member-fixture" },
+          owner: { email: "caditi28@aischennai.org", name: "Playwright Owner", picture: "", googleSub: "owner-fixture" },
+          expired: { error: "Google sign-in credential has expired." },
+          rejectedDomain: { error: "Only @aischennai.org accounts can access The Forge." },
+          expiredSession: { email: "expired-session@aischennai.org", name: "Expired Session", picture: "", googleSub: "expired-session-fixture", sessionTtlMs: 0 },
+        }),
         HUB_DATA_FILE: smokeStore,
         DATABASE_URL: postgresUrl,
       },
@@ -32,6 +41,15 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       env: {
         ...process.env,
+        NODE_ENV: "test",
+        GOOGLE_CLIENT_ID: "forge-playwright-client",
+        AUTH_TEST_GOOGLE_FIXTURES: JSON.stringify({
+          member: { email: "member@aischennai.org", name: "Playwright Member", picture: "", googleSub: "member-fixture" },
+          owner: { email: "caditi28@aischennai.org", name: "Playwright Owner", picture: "", googleSub: "owner-fixture" },
+          expired: { error: "Google sign-in credential has expired." },
+          rejectedDomain: { error: "Only @aischennai.org accounts can access The Forge." },
+          expiredSession: { email: "expired-session@aischennai.org", name: "Expired Session", picture: "", googleSub: "expired-session-fixture", sessionTtlMs: 0 },
+        }),
         HUB_DATA_FILE: smokeStore,
         DATABASE_URL: postgresUrl,
       },

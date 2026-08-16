@@ -36,3 +36,12 @@ the entry must be deliberately updated or removed in the PR that fixes it.
 - **Scope:** PR-06 preserves the existing client and Socket.IO protocol. PR-11 must implement the
   shared deck pipeline and add end-to-end deck-selection regression coverage before this entry can
   be resolved.
+
+## BD-005: Narrow light Profile visual mask boundary
+
+- **Status:** Expected visual-baseline failure; not changed by PR-09.
+- **Command:** `CI=1 pnpm exec playwright test tests/e2e/figma-shell.visual.spec.mjs -g "Figma shell narrow light"`
+- **Observed failure:** `narrow-light-profile.png` differs by 858 pixels (0.01%), at the boundaries
+  of the three intentionally masked profile cards. The shell’s unmasked content is unchanged.
+- **Scope:** A focused shell-visual follow-up must make the masked Profile screenshot deterministic
+  without weakening its visual coverage, then remove this entry.

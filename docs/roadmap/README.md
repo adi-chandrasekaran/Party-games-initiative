@@ -23,8 +23,8 @@ human-approved PR.
 | PR-05 | Imposter and planner micro-app migration | In review | `feat/pr-05-simple-microapps` |
 | PR-06 | Quiz Shooter and Build A Beast client migration | Complete | `feat/pr-06-multiplayer-clients` |
 | PR-07 | Modular TypeScript platform server | Complete | `feat/pr-07-platform-server` |
-| PR-08 | PostgreSQL-backed persistence | In review | `feat/pr-08-postgres-persistence` |
-| PR-09 | Google authentication and authorization | Planned | `feat/pr-09-google-auth` |
+| PR-08 | PostgreSQL-backed persistence | Complete | `feat/pr-08-postgres-persistence` |
+| PR-09 | Google authentication and authorization | Complete | `feat/pr-09-google-auth` |
 | PR-10 | Consolidated realtime and resilient rooms | Planned | `feat/pr-10-realtime` |
 | PR-11 | Shared deck storage and processing | Planned | `feat/pr-11-deck-pipeline` |
 | PR-12 | Local quality gates and full regression suite | Planned | `feat/pr-12-quality-gates` |
@@ -306,6 +306,28 @@ expired-session, and logout flows; no real credentials are required by automated
 
 **Rollback:** Authentication provider selection can return to the tested legacy adapter locally
 without altering migrated user identities.
+
+### Excluded
+
+- No persistence schema redesign, realtime migration, UI redesign, or production deployment.
+- No acceptance of unverified local passwords as a production authentication path.
+
+### Test Plan
+
+- Unit tests inject verified, expired, wrong-audience, wrong-issuer, and non-AISC Google identity
+  claims into the server verifier boundary.
+- Integration tests verify server-issued sessions, owner/member roles, logout, and rejection of
+  invalid credentials without Google network access.
+- Playwright uses isolated signed-in fixture identities; no Google credential is required.
+
+### Evidence
+
+- `CI=1 pnpm run lint`, `CI=1 pnpm run type-check`, `CI=1 pnpm run build`, unit tests, and
+  integration tests pass. BD-001 and BD-002 remain confirmed expected build defects.
+- The focused Google authentication Playwright suite passes all five member, owner, rejected-domain,
+  expired-credential, expired-session, and logout workflows without real credentials.
+- The full Playwright suite passes 27 workflows and has one pre-existing, documented BD-005
+  narrow/light Profile visual-mask mismatch. No product visual behavior was changed in PR-09.
 
 ## PR-10: Consolidated Realtime
 
