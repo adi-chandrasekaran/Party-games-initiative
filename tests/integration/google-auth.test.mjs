@@ -39,6 +39,9 @@ test("Google auth creates a server session for a verified member fixture", async
     const response = await request(server, "/api/auth/google", { credential: "fixture", role: "member" });
     assert.equal(response.status, 200); assert.equal(response.payload.user.email, "member@aischennai.org");
     assert.match(String(response.headers["set-cookie"]), /HttpOnly/);
+    const localPassword = await request(server, "/api/login", { email: "member@aischennai.org", password: "not-a-local-password" });
+    assert.equal(localPassword.status, 401);
+    assert.match(localPassword.payload.error, /Forgot password/);
     const cookie = String(response.headers["set-cookie"]).split(";")[0];
     const logout = await request(server, "/api/logout", {}, { Cookie: cookie });
     assert.equal(logout.status, 200);

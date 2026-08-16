@@ -205,6 +205,7 @@ function hashPassword(password, salt = crypto.randomBytes(16).toString("hex")) {
 }
 
 function verifyPassword(password, salt, hash) {
+  if (typeof salt !== "string" || typeof hash !== "string" || !salt || !hash) return false;
   const attempted = crypto.scryptSync(password, salt, 64);
   const expected = Buffer.from(hash, "hex");
   return attempted.length === expected.length && crypto.timingSafeEqual(attempted, expected);
@@ -430,6 +431,10 @@ async function handleLogin(req, res) {
   const user = store.users.find((entry) => entry.email === email);
   if (!user) {
     return sendJsonError(res, 401, "No account found for that email.");
+  }
+
+  if (!user.passwordSalt || !user.passwordHash) {
+    return sendJsonError(res, 401, "This account has no local password. Use Forgot password? to set one, or sign in with Google.");
   }
 
   if (!verifyPassword(password, user.passwordSalt, user.passwordHash)) {
