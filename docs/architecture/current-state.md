@@ -30,7 +30,9 @@ Status: **Legacy system to be incrementally migrated**
 
 ## Backend
 
-- The hub starts a custom Node HTTP server separately from the frontend.
+- PR-07 runs the custom HTTP API through the `apps/platform-server` TypeScript lifecycle package;
+  `apps/hub/server.js` remains the selectable legacy compatibility adapter until its route modules
+  are migrated in later milestones.
 - Accounts, sessions, chats, decks, statistics, and platform data use JSON-file persistence.
 - Quiz Shooter and Build A Beast each run a separate Socket.IO server.
 - Multiplayer room state is process-local, and socket IDs are used for important host state.

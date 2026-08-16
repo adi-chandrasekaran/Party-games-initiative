@@ -23,7 +23,7 @@ const __dirname = path.dirname(__filename);
 const STORE_PATH = process.env.HUB_DATA_FILE || path.join(__dirname, "data", "store.json");
 const OWNER_ADMIN_CODE = process.env.OWNER_ADMIN_CODE || "aisc-admin";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
-const PORT = 8787;
+const PORT = Number(process.env.PLATFORM_SERVER_PORT || process.env.PORT || 8787);
 const COOKIE_NAME = "party_games_session";
 const SCHOOL_DOMAIN = "@aischennai.org";
 const ADMIN_HEADER = "x-owner-admin-code";
@@ -907,7 +907,8 @@ async function handlePlatformAdminGameHosts(req, res, gameId) {
   return json(res, 200, { game });
 }
 
-const server = http.createServer(async (req, res) => {
+export function createHubApiServer() {
+  return http.createServer(async (req, res) => {
   setCorsHeaders(req, res);
   const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
   const routePath = url.pathname.startsWith("/api/") ? url.pathname.slice(4) : url.pathname;
@@ -974,10 +975,17 @@ const server = http.createServer(async (req, res) => {
     console.error(error);
     return sendJsonError(res, 500, error?.message || "Server error");
   }
-});
+  });
+}
 
-await syncPlatformDefaults().catch(() => null);
+export async function startHubApiServer({ port = PORT } = {}) {
+  await syncPlatformDefaults().catch(() => null);
+  const server = createHubApiServer();
+  await new Promise((resolve) => server.listen(port, "127.0.0.1", resolve));
+  console.log(`Hub API listening on http://127.0.0.1:${port}`);
+  return server;
+}
 
-server.listen(PORT, "127.0.0.1", () => {
-  console.log(`Hub API listening on http://127.0.0.1:${PORT}`);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  await startHubApiServer();
+}

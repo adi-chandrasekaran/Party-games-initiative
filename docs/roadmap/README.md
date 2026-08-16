@@ -21,8 +21,8 @@ human-approved PR.
 | PR-03 | Shared contracts and app registry | Complete | `feat/pr-03-app-registry` |
 | PR-04 | Figma web shell and design system | In review | `feat/pr-04-figma-shell` |
 | PR-05 | Imposter and planner micro-app migration | In review | `feat/pr-05-simple-microapps` |
-| PR-06 | Quiz Shooter and Build A Beast client migration | In review | `feat/pr-06-multiplayer-clients` |
-| PR-07 | Modular TypeScript platform server | Planned | `feat/pr-07-platform-server` |
+| PR-06 | Quiz Shooter and Build A Beast client migration | Complete | `feat/pr-06-multiplayer-clients` |
+| PR-07 | Modular TypeScript platform server | In review | `feat/pr-07-platform-server` |
 | PR-08 | PostgreSQL-backed persistence | Planned | `feat/pr-08-postgres-persistence` |
 | PR-09 | Google authentication and authorization | Planned | `feat/pr-09-google-auth` |
 | PR-10 | Consolidated realtime and resilient rooms | Planned | `feat/pr-10-realtime` |
@@ -239,6 +239,30 @@ one configuration selects the legacy server during rollback.
 
 **Rollback:** Restore the legacy server entry point. Persistence formats remain unchanged until
 PR-08.
+
+### Excluded
+
+- No PostgreSQL migration, schema change, or JSON-store removal; PR-08 owns persistence.
+- No Google-authentication policy change, Socket.IO consolidation, game-rule change, or shell
+  redesign; those remain PR-09, PR-10, and later work.
+- No public endpoint, response-shape, cookie-name, default data-path, or API-port change.
+
+### Test Plan
+
+- Unit tests cover server-mode configuration and route registration.
+- Contract tests run the supported authentication, profile, deck, social, private-app, and
+  platform-game requests against both the legacy and TypeScript server modes and compare status
+  codes and response shapes.
+- Existing Playwright shell, launcher, simple-microapp, and multiplayer workflows run through the
+  TypeScript server mode; a focused legacy-mode smoke check proves rollback remains selectable.
+- Root lint, type-check, build, unit, integration, and Playwright commands remain green with
+  existing baseline defects BD-001 through BD-004 unchanged.
+
+### Evidence
+
+- `CI=1 pnpm run lint`, `CI=1 pnpm run type-check`, and `CI=1 pnpm run build` pass locally;
+  focused root unit and integration suites pass, and the default platform-server mode passes all
+  23 Playwright workflows without changing the API port, response contracts, or data path.
 
 ## PR-08: PostgreSQL Persistence
 

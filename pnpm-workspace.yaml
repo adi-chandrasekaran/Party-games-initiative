@@ -3,6 +3,7 @@ packages:
   - packages/app-registry
   - packages/design-tokens
   - apps/hub
+  - apps/platform-server
   - apps/imposter
   - apps/planner-assignments
   - apps/planner-habit
