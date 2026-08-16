@@ -16,6 +16,7 @@ import {
   syncPlatformDefaults,
 } from "./platform-data.js";
 import { readPostgresStore, usesPostgres, writePostgresStore } from "./postgres-store.js";
+import { createGoogleVerifier } from "./google-verifier.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,6 +29,22 @@ const PORT = Number(process.env.PLATFORM_SERVER_PORT || process.env.PORT || 8787
 const COOKIE_NAME = "party_games_session";
 const SCHOOL_DOMAIN = "@aischennai.org";
 const ADMIN_HEADER = "x-owner-admin-code";
+const AUTH_RATE_LIMIT_WINDOW_MS = 60_000;
+const AUTH_RATE_LIMIT_MAX_ATTEMPTS = 10;
+const googleAuthAttempts = new Map();
+let sessionTtlMs = Number(process.env.SESSION_TTL_MS || 8 * 60 * 60 * 1000);
+
+function loadTestGoogleFixtures() {
+  if (process.env.NODE_ENV !== "test" || !process.env.AUTH_TEST_GOOGLE_FIXTURES) return {};
+  try {
+    const fixtures = JSON.parse(process.env.AUTH_TEST_GOOGLE_FIXTURES);
+    return fixtures && typeof fixtures === "object" ? fixtures : {};
+  } catch {
+    throw new Error("AUTH_TEST_GOOGLE_FIXTURES must contain a JSON object.");
+  }
+}
+
+const testGoogleFixtures = loadTestGoogleFixtures();
 
 const defaultStore = {
   users: [],
@@ -107,11 +124,35 @@ function parseCookies(req) {
 }
 
 function setCookie(res, name, value) {
-  res.setHeader("Set-Cookie", `${encodeURIComponent(name)}=${encodeURIComponent(value)}; HttpOnly; Path=/; SameSite=Lax`);
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  res.setHeader("Set-Cookie", `${encodeURIComponent(name)}=${encodeURIComponent(value)}; HttpOnly; Path=/; Max-Age=${Math.floor(sessionTtlMs / 1000)}; SameSite=Lax${secure}`);
 }
 
 function clearCookie(res, name) {
-  res.setHeader("Set-Cookie", `${encodeURIComponent(name)}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax`);
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+  res.setHeader("Set-Cookie", `${encodeURIComponent(name)}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax${secure}`);
+}
+
+function isTrustedMutationOrigin(req) {
+  const origin = String(req.headers.origin || "");
+  if (!origin) return true;
+  const configuredOrigins = String(process.env.TRUSTED_ORIGINS || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin) || configuredOrigins.includes(origin);
+}
+
+function consumeGoogleAuthAttempt(req) {
+  const now = Date.now();
+  const key = req.socket.remoteAddress || "unknown";
+  const attempts = (googleAuthAttempts.get(key) || []).filter((at) => now - at < AUTH_RATE_LIMIT_WINDOW_MS);
+  if (attempts.length >= AUTH_RATE_LIMIT_MAX_ATTEMPTS) {
+    return Math.ceil((AUTH_RATE_LIMIT_WINDOW_MS - (now - attempts[0])) / 1000);
+  }
+  attempts.push(now);
+  googleAuthAttempts.set(key, attempts);
+  return 0;
 }
 
 function readBody(req) {
@@ -194,7 +235,9 @@ function sanitizeUser(user) {
 function currentUserFromRequest(req, store) {
   const cookies = parseCookies(req);
   const sessionId = cookies[COOKIE_NAME];
-  const userId = sessionId ? store.sessions[sessionId] : null;
+  const session = sessionId ? store.sessions[sessionId] : null;
+  const userId = typeof session === "string" ? session : session?.userId;
+  if (session && typeof session === "object" && Date.parse(session.expiresAt || "") <= Date.now()) return null;
   if (!userId) return null;
   return store.users.find((user) => user.id === userId) || null;
 }
@@ -221,34 +264,32 @@ function getOwnerLoginEmail() {
   return "caditi28@aischennai.org";
 }
 
-async function verifyGoogleIdToken(credential) {
-  const token = String(credential || "").trim();
-  if (!token) {
-    throw new Error("Google sign-in credential is required.");
+function legacyPasswordAuthDisabled() {
+  return process.env.NODE_ENV === "production" && process.env.ALLOW_LEGACY_PASSWORD_AUTH !== "true";
+}
+
+function requireLegacyPasswordAuth(res) {
+  if (!legacyPasswordAuthDisabled()) return false;
+  sendJsonError(res, 403, "Password authentication is disabled. Sign in with Google.");
+  return true;
+}
+
+const productionGoogleVerifier = createGoogleVerifier({ clientId: GOOGLE_CLIENT_ID });
+let verifyGoogleIdToken = async (credential) => {
+  const fixture = testGoogleFixtures[String(credential || "")];
+  if (fixture) {
+    if (fixture.error) throw new Error(fixture.error);
+    return fixture;
   }
+  return productionGoogleVerifier(credential);
+};
 
-  const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(token)}`);
-  const payload = await response.json().catch(() => ({}));
+export function setGoogleVerifierForTests(verifier) {
+  verifyGoogleIdToken = verifier;
+}
 
-  if (!response.ok) {
-    throw new Error(payload.error_description || payload.error || "Unable to verify Google sign-in.");
-  }
-
-  if (GOOGLE_CLIENT_ID && payload.aud !== GOOGLE_CLIENT_ID) {
-    throw new Error("Google sign-in was issued for a different client.");
-  }
-
-  const email = normalizeEmail(payload.email);
-  if (!schoolEmail(email)) {
-    throw new Error("Only @aischennai.org accounts can access The Forge.");
-  }
-
-  return {
-    email,
-    name: String(payload.name || payload.given_name || email.split("@")[0] || "AISC User").trim(),
-    picture: String(payload.picture || "").trim(),
-    googleSub: String(payload.sub || "").trim(),
-  };
+export function setSessionTtlForTests(ttlMs) {
+  sessionTtlMs = ttlMs;
 }
 
 function topEntryFromCounts(counts) {
@@ -308,9 +349,9 @@ async function bootstrapPayload(store, user) {
   };
 }
 
-function createSession(store, userId) {
+function createSession(store, userId, ttlMs = sessionTtlMs) {
   const sessionId = crypto.randomUUID();
-  store.sessions[sessionId] = userId;
+  store.sessions[sessionId] = { userId, expiresAt: new Date(Date.now() + ttlMs).toISOString() };
   return sessionId;
 }
 
@@ -343,6 +384,7 @@ function requireAdminCode(req, body) {
 }
 
 async function handleSignup(req, res) {
+  if (requireLegacyPasswordAuth(res)) return;
   const store = await readStore();
   const body = await readBody(req);
   const email = normalizeEmail(body.email);
@@ -382,6 +424,7 @@ async function handleSignup(req, res) {
 }
 
 async function handleLogin(req, res) {
+  if (requireLegacyPasswordAuth(res)) return;
   const store = await readStore();
   const body = await readBody(req);
   const email = normalizeEmail(body.email);
@@ -411,6 +454,8 @@ async function handleLogin(req, res) {
 }
 
 async function handleGoogleAuth(req, res) {
+  const retryAfter = consumeGoogleAuthAttempt(req);
+  if (retryAfter) return json(res, 429, { error: "Too many Google sign-in attempts. Try again shortly." }, { "Retry-After": String(retryAfter) });
   const store = await readStore();
   const body = await readBody(req);
   const selectedRole = String(body.role || "member").trim().toLowerCase();
@@ -461,13 +506,14 @@ async function handleGoogleAuth(req, res) {
     user.role = "owner";
   }
 
-  const sessionId = createSession(store, user.id);
+  const sessionId = createSession(store, user.id, Number.isFinite(profile.sessionTtlMs) ? profile.sessionTtlMs : sessionTtlMs);
   await writeStore(store);
   setCookie(res, COOKIE_NAME, sessionId);
   json(res, 200, await bootstrapPayload(store, user));
 }
 
 async function handleResetPassword(req, res) {
+  if (requireLegacyPasswordAuth(res)) return;
   const store = await readStore();
   const body = await readBody(req);
   const email = normalizeEmail(body.email);
@@ -924,6 +970,10 @@ export function createHubApiServer() {
       });
       res.end();
       return;
+    }
+
+    if (["POST", "PATCH", "PUT", "DELETE"].includes(req.method || "") && !isTrustedMutationOrigin(req)) {
+      return sendJsonError(res, 403, "Request origin is not allowed.");
     }
 
     if (req.method === "GET" && routePath === "/bootstrap") return await handleBootstrap(req, res);
