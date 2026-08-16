@@ -56,6 +56,9 @@ add app URLs directly to the hub.
 - Commit `.env.example` with safe placeholders.
 - Never commit Google client secrets, database credentials, session secrets, or real tokens.
 - Tests use isolated local values and disposable data.
+- PR-08 uses a local PostgreSQL `DATABASE_URL` when supplied. The documented test container is
+  `postgresql://forge:forge-local-password@127.0.0.1:5432/forge`; do not use this example for a
+  shared or production database.
 
 ## Deployment Constraint
 

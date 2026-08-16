@@ -15,6 +15,7 @@ import {
   updateHostAssignments,
   syncPlatformDefaults,
 } from "./platform-data.js";
+import { readPostgresStore, usesPostgres, writePostgresStore } from "./postgres-store.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,12 +68,14 @@ async function ensureStore() {
 }
 
 async function readStore() {
+  if (usesPostgres()) return readPostgresStore(defaultStore);
   await ensureStore();
   const raw = await fs.readFile(STORE_PATH, "utf8");
   return JSON.parse(raw);
 }
 
 async function writeStore(store) {
+  if (usesPostgres()) return writePostgresStore(store);
   await fs.writeFile(STORE_PATH, JSON.stringify(store, null, 2));
 }
 

@@ -16,7 +16,8 @@
     "vite": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "pdfjs-dist": "5.6.205"
+    "pdfjs-dist": "5.6.205",
+    "pg": "^8.16.3"
   },
   "devDependencies": {}
 }
