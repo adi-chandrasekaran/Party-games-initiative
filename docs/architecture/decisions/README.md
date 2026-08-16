@@ -10,6 +10,7 @@ without evidence.
 - [`ADR-0003-figma-design-source.md`](ADR-0003-figma-design-source.md)
 - [`ADR-0004-local-first-refactor.md`](ADR-0004-local-first-refactor.md)
 - [`ADR-0005-platform-realtime-namespaces.md`](ADR-0005-platform-realtime-namespaces.md)
+- [`ADR-0006-deck-pipeline-storage.md`](ADR-0006-deck-pipeline-storage.md)
 
 ## Format
 

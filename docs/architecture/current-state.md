@@ -36,9 +36,9 @@ Status: **Legacy system to be incrementally migrated**
 - PR-08 moves accounts, sessions, chats, decks, statistics, and platform data to PostgreSQL through
   the compatibility store; the JSON adapter remains an explicit rollback path until PR-13.
 - PR-09 verifies AISC Google identities server-side and provides expiring server sessions. PR-10
-  will apply that authenticated identity to realtime namespaces.
-- Quiz Shooter and Build A Beast each still run a separate Socket.IO server with process-local
-  rooms and socket-ID host ownership; PR-10 is the active consolidation milestone.
+  applies that authenticated identity to the platform realtime namespaces.
+- PR-11 is replacing the legacy deck text-only records with validated source metadata and structured
+  study items, while retaining a compatibility view for current clients.
 
 ## Testing
 
