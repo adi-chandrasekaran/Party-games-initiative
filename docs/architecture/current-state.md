@@ -46,7 +46,8 @@ Status: **Legacy system to be incrementally migrated**
   coverage to shell visuals, same-origin launcher routes, and the five simple micro-app workflows.
 - PR-04 maintains committed Figma shell screenshots at the approved desktop and narrow viewports
   in light and dark themes.
-- There is no CI gate or documented definition of done.
+- PR-12 provides a single root quality command and a matching GitHub Actions gate with isolated
+  PostgreSQL integration coverage and zero Playwright retries.
 - The Quiz Shooter client build currently fails because `DeckEditor.tsx` has an implicitly typed
   `choice` parameter.
 - The Build A Beast client build currently fails because `App.tsx` tests a `void` expression for
