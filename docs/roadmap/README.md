@@ -25,8 +25,8 @@ human-approved PR.
 | PR-07 | Modular TypeScript platform server | Complete | `feat/pr-07-platform-server` |
 | PR-08 | PostgreSQL-backed persistence | Complete | `feat/pr-08-postgres-persistence` |
 | PR-09 | Google authentication and authorization | Complete | `feat/pr-09-google-auth` |
-| PR-10 | Consolidated realtime and resilient rooms | In review | `feat/pr-10-realtime` |
-| PR-11 | Shared deck storage and processing | Planned | `feat/pr-11-deck-pipeline` |
+| PR-10 | Consolidated realtime and resilient rooms | Complete | `feat/pr-10-realtime` |
+| PR-11 | Shared deck storage and processing | In review | `feat/pr-11-deck-pipeline` |
 | PR-12 | Local quality gates and full regression suite | Planned | `feat/pr-12-quality-gates` |
 | PR-13 | Legacy process and compatibility removal | Planned | `feat/pr-13-legacy-removal` |
 
@@ -378,6 +378,39 @@ compatible game; Imposter receives one hidden randomized word rather than the en
 
 **Rollback:** The storage interface supports the previous local implementation while retaining
 new metadata. Destructive migration is excluded.
+
+### Scope
+
+- Validate uploaded PDF bytes, size, name, and user-supplied title at the platform boundary.
+- Persist deck metadata, ownership, source bytes, extraction status, and structured study items
+  through a storage abstraction with the local PostgreSQL compatibility store as the initial
+  implementation.
+- Extract PDFs synchronously in the local workflow and expose only compatible structured items to
+  each game. Quiz games receive question/answer candidates; Imposter receives candidate terms.
+- Enforce owner-only source retrieval and deletion, while allowing authenticated users to discover
+  usable shared deck metadata.
+- Pass compatible selected deck material to Imposter, Quiz Shooter, Build A Beast, Flashcards,
+  Quiz Bowl, and Word Match without a second upload.
+
+### Excluded
+
+- No object-storage provider, asynchronous worker deployment, deck OCR, game-rule redesign, or
+  legacy source removal.
+- No migration that deletes existing deck records or PDF data.
+
+### Test Plan
+
+- Unit tests cover PDF signature/size checks, extraction-to-item normalization, compatibility, and
+  owner authorization.
+- Integration tests cover accepted/rejected uploads, metadata persistence, owner-only read/delete,
+  extraction results, and cleanup.
+- Playwright uploads one PDF and selects it through the compatible arcade game workflows.
+
+### Evidence
+
+- `CI=1 pnpm run test:unit`, `CI=1 pnpm run test:integration`, `CI=1 pnpm run lint`,
+  `CI=1 pnpm run type-check`, and `CI=1 pnpm run build` pass locally. The existing two
+  documented client build defects remain explicit expected baseline results.
 
 ## PR-12: Local Quality Gates
 

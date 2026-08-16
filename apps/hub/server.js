@@ -17,6 +17,7 @@ import {
 } from "./platform-data.js";
 import { readPostgresStore, usesPostgres, writePostgresStore } from "./postgres-store.js";
 import { createGoogleVerifier } from "./google-verifier.js";
+import { deckForGame, deckSummary, extractDeckItems, validatePdfDeck } from "./deck-pipeline.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -755,7 +756,7 @@ async function handleDecks(req, res) {
 
   if (req.method === "GET") {
     if (!user) return sendJsonError(res, 401, "Not signed in.");
-    return json(res, 200, { decks: store.decks || [] });
+    return json(res, 200, { decks: (store.decks || []).map(deckSummary) });
   }
 
   if (req.method === "POST") {
@@ -767,17 +768,24 @@ async function handleDecks(req, res) {
     const dataUrl = String(body.dataUrl || "").trim();
     const decoded = decodeDataUrl(dataUrl);
 
-    if (!title) return sendJsonError(res, 400, "Deck name is required.");
-    if (!decoded) return sendJsonError(res, 400, "A PDF file is required.");
-    if (decoded.mimeType !== "application/pdf") return sendJsonError(res, 400, "Only PDF decks are supported.");
+    let validated;
+    try {
+      validated = validatePdfDeck({ title, fileName: fileName || `${title}.pdf`, decoded });
+    } catch (error) {
+      return sendJsonError(res, 400, error.message);
+    }
 
     const text = await extractPdfText(decoded.buffer).catch(() => "");
+    const items = extractDeckItems(text);
     const deck = {
       id: crypto.randomUUID(),
-      title,
-      fileName: fileName || `${title}.pdf`,
+      title: validated.title,
+      fileName: validated.fileName,
       mimeType: decoded.mimeType,
       text,
+      items,
+      extraction: { status: "complete", itemCount: items.length, completedAt: new Date().toISOString() },
+      sourceDataUrl: dataUrl,
       uploadedByUserId: user.id,
       uploadedByName: user.name,
       createdAt: new Date().toISOString(),
@@ -785,7 +793,7 @@ async function handleDecks(req, res) {
 
     store.decks = [deck, ...(store.decks || [])];
     await writeStore(store);
-    return json(res, 201, { deck, decks: store.decks });
+    return json(res, 201, { deck: deckSummary(deck), decks: store.decks.map(deckSummary) });
   }
 
   return sendJsonError(res, 405, "Method not allowed.");
@@ -799,14 +807,19 @@ async function handleDeckById(req, res, deckId) {
   const index = (store.decks || []).findIndex((deck) => deck.id === deckId);
   if (index < 0) return sendJsonError(res, 404, "Deck not found.");
 
+  const deck = store.decks[index];
+  const isOwner = deck.uploadedByUserId === user.id;
   if (req.method === "GET") {
-    return json(res, 200, { deck: store.decks[index] });
+    const gameId = new URL(req.url || "", "http://localhost").searchParams.get("gameId");
+    if (gameId) return json(res, 200, { deck: deckForGame(deck, gameId) });
+    return json(res, 200, { deck: deckSummary(deck) });
   }
 
   if (req.method === "DELETE") {
+    if (!isOwner) return sendJsonError(res, 403, "Only the deck owner can delete this deck.");
     const [removed] = store.decks.splice(index, 1);
     await writeStore(store);
-    return json(res, 200, { deck: removed, decks: store.decks });
+    return json(res, 200, { deck: deckSummary(removed), decks: store.decks.map(deckSummary) });
   }
 
   return sendJsonError(res, 405, "Method not allowed.");

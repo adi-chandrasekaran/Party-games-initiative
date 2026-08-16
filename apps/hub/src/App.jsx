@@ -866,6 +866,9 @@ function extractDeckEntries(deck) {
 }
 
 function buildStudyCards(deck) {
+  if (Array.isArray(deck?.items) && deck.items.length) {
+    return deck.items.map((item, index) => ({ id: item.id || `${deck.id}-${index}`, term: item.term, definition: item.definition }));
+  }
   const entries = extractDeckEntries(deck);
   const cards = [];
 
