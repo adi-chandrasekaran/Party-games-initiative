@@ -5,7 +5,7 @@ import http from "node:http";
 
 process.env.DATABASE_URL = "postgresql://forge:forge-local-password@127.0.0.1:5432/forge";
 process.env.GOOGLE_CLIENT_ID = "fixture-client";
-const { createHubApiServer, setGoogleVerifierForTests, setSessionTtlForTests } = await import("../../apps/hub/server.js");
+const { createHubApiServer, setGoogleVerifierForTests, setSessionTtlForTests, setSupabaseVerifierForTests, resetAuthRateLimitForTests } = await import("../../apps/hub/server.js");
 
 function request(server, path, body, headers = {}) {
   const { port } = server.address();
@@ -90,4 +90,23 @@ test("Google auth rate-limits repeated credential attempts", async () => {
     const limited = await request(server, "/api/auth/google", { credential: "limited" });
     assert.equal(limited.status, 429); assert.match(String(limited.headers["retry-after"]), /^\d+$/);
   } finally { await new Promise((resolve) => server.close(resolve)); }
+});
+
+test("Supabase Google identity creates a stable Forge session without a role supplied by the browser", async () => {
+  resetAuthRateLimitForTests();
+  setSupabaseVerifierForTests(async (token) => {
+    assert.equal(token, "supabase-fixture-token");
+    return { id: "b5c36e72-1e09-4cef-8a91-e2c65c9bc728", email: "supabase-member@aischennai.org", name: "Supabase Member", picture: "" };
+  });
+  const server = createHubApiServer(); await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const first = await request(server, "/api/auth/supabase", { accessToken: "supabase-fixture-token", role: "owner" });
+    assert.equal(first.status, 200); assert.equal(first.payload.user.email, "supabase-member@aischennai.org");
+    assert.equal(first.payload.user.role, "member");
+    const second = await request(server, "/api/auth/supabase", { accessToken: "supabase-fixture-token" });
+    assert.equal(second.status, 200); assert.equal(second.payload.user.id, first.payload.user.id);
+  } finally {
+    setSupabaseVerifierForTests();
+    await new Promise((resolve) => server.close(resolve));
+  }
 });

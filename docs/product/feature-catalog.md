@@ -6,9 +6,10 @@ touches an area.
 
 ## Authentication and Roles
 
-- Sign in uses Google authorization for verified `@aischennai.org` accounts.
-- AISC members and the owner have distinct roles.
-- The owner role initially belongs to `caditi28@aischennai.org`.
+- Sign in uses Supabase-managed Google authorization for verified `@aischennai.org` accounts.
+- Supabase is the identity authority; the Forge exchanges a verified Supabase session for its
+  HttpOnly compatibility session at the platform boundary.
+- Role migration is owned by PR-15; existing owner/member behavior remains until then.
 - Authentication and authorization decisions must be enforced by the server.
 - The profile provides logout and editable user-facing fields allowed by the design.
 

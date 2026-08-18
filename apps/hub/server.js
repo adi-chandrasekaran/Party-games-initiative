@@ -17,6 +17,7 @@ import {
 } from "./platform-data.js";
 import { readPostgresStore, writePostgresStore } from "./postgres-store.js";
 import { createGoogleVerifier } from "./google-verifier.js";
+import { createSupabaseTokenVerifier, supabaseAuthConfigured } from "./supabase-auth.js";
 import { deckForGame, deckSummary, extractDeckItems, validatePdfDeck } from "./deck-pipeline.js";
 
 const OWNER_ADMIN_CODE = process.env.OWNER_ADMIN_CODE || "aisc-admin";
@@ -265,6 +266,7 @@ function requireLegacyPasswordAuth(res) {
 }
 
 const productionGoogleVerifier = createGoogleVerifier({ clientId: GOOGLE_CLIENT_ID });
+const productionSupabaseVerifier = createSupabaseTokenVerifier();
 let verifyGoogleIdToken = async (credential) => {
   const fixture = testGoogleFixtures[String(credential || "")];
   if (fixture) {
@@ -273,13 +275,22 @@ let verifyGoogleIdToken = async (credential) => {
   }
   return productionGoogleVerifier(credential);
 };
+let verifySupabaseAccessToken = productionSupabaseVerifier;
 
 export function setGoogleVerifierForTests(verifier) {
   verifyGoogleIdToken = verifier;
 }
 
+export function setSupabaseVerifierForTests(verifier) {
+  verifySupabaseAccessToken = verifier || productionSupabaseVerifier;
+}
+
 export function setSessionTtlForTests(ttlMs) {
   sessionTtlMs = ttlMs;
+}
+
+export function resetAuthRateLimitForTests() {
+  googleAuthAttempts.clear();
 }
 
 function topEntryFromCounts(counts) {
@@ -448,6 +459,7 @@ async function handleLogin(req, res) {
 }
 
 async function handleGoogleAuth(req, res) {
+  if (supabaseAuthConfigured()) return sendJsonError(res, 410, "Google sign-in is handled by Supabase Auth.");
   const retryAfter = consumeGoogleAuthAttempt(req);
   if (retryAfter) return json(res, 429, { error: "Too many Google sign-in attempts. Try again shortly." }, { "Retry-After": String(retryAfter) });
   const store = await readStore();
@@ -501,6 +513,39 @@ async function handleGoogleAuth(req, res) {
   }
 
   const sessionId = createSession(store, user.id, Number.isFinite(profile.sessionTtlMs) ? profile.sessionTtlMs : sessionTtlMs);
+  await writeStore(store);
+  setCookie(res, COOKIE_NAME, sessionId);
+  json(res, 200, await bootstrapPayload(store, user));
+}
+
+async function handleSupabaseAuth(req, res) {
+  const retryAfter = consumeGoogleAuthAttempt(req);
+  if (retryAfter) return json(res, 429, { error: "Too many sign-in attempts. Try again shortly." }, { "Retry-After": String(retryAfter) });
+  const store = await readStore();
+  const body = await readBody(req);
+  let profile;
+  try {
+    profile = await verifySupabaseAccessToken(body.accessToken);
+  } catch (error) {
+    return sendJsonError(res, 401, error.message || "Unable to verify the Supabase session.");
+  }
+
+  const existing = store.users.find((entry) => entry.supabaseUserId === profile.id || normalizeEmail(entry.email) === profile.email);
+  const user = existing || {
+    id: crypto.randomUUID(),
+    username: profile.email.split("@")[0].replace(/[^a-z0-9._-]/g, "") || `user-${crypto.randomUUID().slice(0, 8)}`,
+    role: "member",
+    createdAt: new Date().toISOString(),
+  };
+  user.name = profile.name || user.name || "AISC User";
+  user.email = profile.email;
+  user.avatar = profile.picture || user.avatar || "";
+  user.authProvider = "supabase-google";
+  user.supabaseUserId = profile.id;
+  user.role = user.role || "member";
+  if (!existing) store.users.push(user);
+
+  const sessionId = createSession(store, user.id);
   await writeStore(store);
   setCookie(res, COOKIE_NAME, sessionId);
   json(res, 200, await bootstrapPayload(store, user));
@@ -1026,6 +1071,7 @@ export function createHubApiServer({ staticRoot } = {}) {
     if (req.method === "POST" && routePath === "/signup") return await handleSignup(req, res);
     if (req.method === "POST" && routePath === "/login") return await handleLogin(req, res);
     if (req.method === "POST" && routePath === "/auth/google") return await handleGoogleAuth(req, res);
+    if (req.method === "POST" && routePath === "/auth/supabase") return await handleSupabaseAuth(req, res);
     if (req.method === "POST" && routePath === "/reset-password") return await handleResetPassword(req, res);
     if (req.method === "POST" && routePath === "/logout") return await handleLogout(req, res);
     if (req.method === "PATCH" && routePath === "/profile") return await handleProfile(req, res);

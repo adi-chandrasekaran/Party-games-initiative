@@ -26,9 +26,34 @@ human-approved PR.
 | PR-08 | PostgreSQL-backed persistence | Complete | `feat/pr-08-postgres-persistence` |
 | PR-09 | Google authentication and authorization | Complete | `feat/pr-09-google-auth` |
 | PR-10 | Consolidated realtime and resilient rooms | Complete | `feat/pr-10-realtime` |
-| PR-11 | Shared deck storage and processing | In review | `feat/pr-11-deck-pipeline` |
-| PR-12 | Local quality gates and full regression suite | In review | `feat/pr-12-quality-gates` |
-| PR-13 | Legacy process and compatibility removal | In review | `feat/pr-13-legacy-removal` |
+| PR-11 | Shared deck storage and processing | Complete | `feat/pr-11-deck-pipeline` |
+| PR-12 | Local quality gates and full regression suite | Complete | `feat/pr-12-quality-gates` |
+| PR-13 | Legacy process and compatibility removal | Complete | `feat/pr-13-legacy-removal` |
+| PR-14 | Supabase Google Workspace authentication | In progress | `feat/pr-14-supabase-auth` |
+
+## PR-14: Supabase Google Workspace Authentication
+
+**Status reconciliation:** this table previously recorded PR-11 through PR-13 as `In review`.
+`origin/main` contains merge commits `844c076`, `52a6056`, and `11ac0eb`, respectively, so their
+status is corrected to `Complete` here.
+
+Replace direct Google ID-token handling with Supabase Auth Google OAuth for verified
+`@aischennai.org` accounts. The browser exchanges its Supabase access token with the platform,
+which validates it and creates the existing HttpOnly compatibility session so current HTTP and
+Socket.IO contracts remain stable. Existing Forge users are matched by Supabase user ID or email.
+
+**Excluded:** RBAC replacement, owner-code removal, and Fly deployment are PR-15 and PR-16 work.
+
+**Acceptance gate:** the server rejects missing, expired, non-Google, unverified, and non-AISC
+Supabase identities; a verified identity receives a stable Forge user ID and can use existing
+HTTP/realtime workflows; no Supabase secret is committed.
+
+**Rollback:** remove Supabase environment values to re-enable the tested local Google adapter;
+no user records are deleted.
+
+**Test plan:** unit/integration tests cover Supabase-token verification, domain enforcement,
+identity mapping, and rejected browser role input; Playwright retains the authenticated fixture
+workflow without real cloud credentials.
 
 ## PR-01: Canonical Repository and Behavior Baseline
 
