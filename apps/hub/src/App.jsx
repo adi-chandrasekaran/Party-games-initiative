@@ -61,7 +61,9 @@ const FORGE_UPDATES_MESSAGE = "updates will appear here!";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
-const LOCAL_AUTH_ENABLED = import.meta.env.DEV;
+// Root `pnpm dev` serves a production Vite build, so local test access must be explicitly
+// enabled rather than inferred from Vite's mode. This flag is never set in hosted environments.
+const LOCAL_AUTH_ENABLED = import.meta.env.DEV || import.meta.env.VITE_ENABLE_LOCAL_AUTH === "true";
 const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
   ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
   : null;
