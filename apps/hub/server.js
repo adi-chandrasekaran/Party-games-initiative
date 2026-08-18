@@ -16,7 +16,7 @@ import {
   updateHostAssignments,
   syncPlatformDefaults,
 } from "./platform-data.js";
-import { readPostgresStore, writePostgresStore } from "./postgres-store.js";
+import { postgresStoreHealthcheck, readPostgresStore, writePostgresStore } from "./postgres-store.js";
 import { createGoogleVerifier } from "./google-verifier.js";
 import { createSupabaseTokenVerifier, supabaseAuthConfigured } from "./supabase-auth.js";
 import { deckForGame, deckSummary, extractDeckItems, validatePdfDeck } from "./deck-pipeline.js";
@@ -1103,7 +1103,14 @@ export function createHubApiServer({ staticRoot } = {}) {
       const gameId = routePath.split("/")[3];
       return await handlePlatformGameAccess(req, res, gameId);
     }
-    if (req.method === "GET" && routePath === "/health") return json(res, 200, { ok: true });
+    if (req.method === "GET" && routePath === "/health") {
+      try {
+        await postgresStoreHealthcheck();
+        return json(res, 200, { ok: true, database: "ready" });
+      } catch {
+        return json(res, 503, { ok: false, database: "unavailable" });
+      }
+    }
     if (await serveHubAsset(req, res, staticRoot, url.pathname)) return;
 
     return json(res, 404, { error: "Not found" });
@@ -1114,11 +1121,11 @@ export function createHubApiServer({ staticRoot } = {}) {
   });
 }
 
-export async function startHubApiServer({ port = PORT, staticRoot } = {}) {
+export async function startHubApiServer({ port = PORT, host = process.env.HOST || "127.0.0.1", staticRoot } = {}) {
   await syncPlatformDefaults().catch(() => null);
   const server = createHubApiServer({ staticRoot });
-  await new Promise((resolve) => server.listen(port, "127.0.0.1", resolve));
-  console.log(`Hub API listening on http://127.0.0.1:${port}`);
+  await new Promise((resolve) => server.listen(port, host, resolve));
+  console.log(`Hub API listening on http://${host}:${port}`);
   return server;
 }
 

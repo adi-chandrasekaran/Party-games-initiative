@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { Buffer } from "node:buffer";
 import http from "node:http";
+process.env.DATABASE_URL = "postgresql://forge:forge-local-password@127.0.0.1:5432/forge";
 import { createHubApiServer } from "../../apps/hub/server.js";
 
 async function request(server, pathname, options = {}) {
@@ -23,8 +24,8 @@ test("platform compatibility server preserves supported health and unknown-route
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
 
   try {
-    assert.deepEqual(await request(server, "/health"), { status: 200, payload: { ok: true } });
-    assert.deepEqual(await request(server, "/api/health"), { status: 200, payload: { ok: true } });
+    assert.deepEqual(await request(server, "/health"), { status: 200, payload: { ok: true, database: "ready" } });
+    assert.deepEqual(await request(server, "/api/health"), { status: 200, payload: { ok: true, database: "ready" } });
     assert.deepEqual(await request(server, "/api/not-a-route"), { status: 404, payload: { error: "Not found" } });
   } finally {
     await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));

@@ -1,0 +1,11 @@
+.git
+.github
+node_modules
+**/node_modules
+**/dist
+test-results
+playwright-report
+Party games initiative.code-workspace
+*.log
+.env
+apps/hub/.env
