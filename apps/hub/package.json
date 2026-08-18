@@ -11,13 +11,13 @@
   "dependencies": {
     "@forge/app-registry": "workspace:*",
     "@forge/design-tokens": "workspace:*",
+    "@supabase/supabase-js": "^2.112.3",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
+    "google-auth-library": "^9.15.1",
+    "pdfjs-dist": "5.6.205",
+    "pg": "^8.16.3",
     "react": "latest",
     "react-dom": "latest",
-    "pdfjs-dist": "5.6.205",
-    "google-auth-library": "^9.15.1",
-    "pg": "^8.16.3"
-  },
-  "devDependencies": {}
+    "vite": "latest"
+  }
 }

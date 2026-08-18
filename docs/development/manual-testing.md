@@ -1,26 +1,27 @@
 # Manual Verification
 
-## PR-09 Google authentication
+## PR-14 Supabase Google authentication
 
-This is the manual equivalent of the PR-09 Playwright fixture tests. It requires a Google OAuth
-web client configured with `http://localhost:5176` as an authorized JavaScript origin and a
-verified AISC Workspace account; automated tests use no real credentials.
+This is the manual equivalent of the PR-14 authentication tests. It requires a Supabase project
+with the Google provider enabled and a verified AISC Workspace account; automated tests use no
+real credentials.
 
-1. In `apps/hub/.env`, set the same non-secret `GOOGLE_CLIENT_ID` and `VITE_GOOGLE_CLIENT_ID`.
-   From the repository root, run `pnpm dev` and open `http://localhost:5176`.
+1. In `apps/hub/.env`, set matching `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`,
+   `VITE_SUPABASE_URL`, and `VITE_SUPABASE_PUBLISHABLE_KEY`. In Supabase, enable Google and add
+   `http://localhost:8787` as a redirect URL. From the repository root, run `pnpm dev` and open
+   `http://localhost:8787`.
 2. Select **Sign in with Google**, complete the Google prompt with an `@aischennai.org` account,
    and confirm the hub loads. Reload the page: the signed-in session must remain available.
 3. Select **Log out**, reload, and confirm the Google sign-in gate is displayed again.
 4. In a private browser window, try a non-AISC Google account. It must be rejected and must not
    load the hub.
-5. If testing as `caditi28@aischennai.org`, choose the owner role and confirm the owner-only
-   controls are present. Any other AISC account requesting that role must be rejected.
+5. Confirm the sign-in screen has no owner/member selector or local-password fallback. Roles are
+   deliberately unchanged in this PR and are migrated in PR-15.
 6. Stop the local processes with `Ctrl+C`. Do not enter test fixtures or production credentials
    into source files.
 
-Expected result: verified AISC Google identities receive secure server sessions; the configured
-owner receives the owner role; other domains, expired credentials, and logged-out sessions are
-rejected.
+Expected result: verified AISC Google identities receive secure Forge sessions; other domains,
+expired credentials, and logged-out sessions are rejected.
 
 ## PR-03 Registry-backed launchers
 

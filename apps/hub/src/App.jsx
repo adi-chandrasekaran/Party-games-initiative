@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 import AdminPage from "./AdminPage";
 import { ARCADE_APPS, PLANNER_APPS, getHubAppManifest } from "./appRegistry";
 import "./index.css";
@@ -58,8 +59,12 @@ const FORGE_HOME_CARDS = [
 
 const FORGE_UPDATES_MESSAGE = "updates will appear here!";
 
-const SCHOOL_DOMAIN = "@aischennai.org";
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
+const LOCAL_AUTH_ENABLED = import.meta.env.DEV;
+const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
 const API_BASES = Array.from(new Set([(import.meta.env.VITE_HUB_API_URL || window.location.origin), (import.meta.env.VITE_PLATFORM_API_URL || window.location.origin)].filter(Boolean)));
 const EMPTY_PRIVATE_APP = {
   id: "sample-private-app",
@@ -1519,60 +1524,31 @@ function ForgeShell({
   );
 }
 
-function LoginCard({ onGoogleSignIn }) {
-  const [role, setRole] = useState("member");
+function LoginCard() {
+  const [error, setError] = useState("");
   const [mode, setMode] = useState("login");
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const [error, setError] = useState("");
-  const mountRef = useRef(null);
 
-  useEffect(() => {
-    setError("");
-  }, [role]);
+  const signIn = async () => {
+    if (!supabase) {
+      setError("Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY to enable AISC Google sign-in.");
+      return;
+    }
+    const { error: authError } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
+    if (authError) setError(authError.message);
+  };
 
   const submitLocalAuth = async (event) => {
     event.preventDefault();
-
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail.endsWith(SCHOOL_DOMAIN)) {
-      setError("Use an @aischennai.org email address.");
-      return;
-    }
-
     try {
-      if (mode === "signup") {
-        const response = await apiRequest("/api/signup", {
-          method: "POST",
-          body: {
-            name: name.trim(),
-            username: username.trim(),
-            email: normalizedEmail,
-            password,
-            avatar: avatar.trim(),
-          },
-        });
-        window.location.reload();
-        return response;
-      }
-
-      if (mode === "reset-password") {
-        await apiRequest("/api/reset-password", {
-          method: "POST",
-          body: { email: normalizedEmail, password, confirmPassword },
-        });
-        setMode("login");
-        setError("Password updated. Please log in again.");
-        return;
-      }
-
-      await apiRequest("/api/login", {
+      await apiRequest(mode === "signup" ? "/api/signup" : "/api/login", {
         method: "POST",
-        body: { email: normalizedEmail, password },
+        body: mode === "signup"
+          ? { name: name.trim(), username: username.trim(), email: email.trim().toLowerCase(), password, avatar: "" }
+          : { email: email.trim().toLowerCase(), password },
       });
       window.location.reload();
     } catch (authError) {
@@ -1580,124 +1556,26 @@ function LoginCard({ onGoogleSignIn }) {
     }
   };
 
-  useEffect(() => {
-    if (!GOOGLE_CLIENT_ID || !mountRef.current) return undefined;
-
-    const setup = () => {
-      if (!window.google?.accounts?.id || !mountRef.current) return;
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: (response) => {
-          onGoogleSignIn(role, response.credential, setError);
-        },
-      });
-      mountRef.current.innerHTML = "";
-      window.google.accounts.id.renderButton(mountRef.current, {
-        theme: "filled_black",
-        size: "large",
-        shape: "pill",
-        width: 340,
-        text: "signin_with",
-      });
-    };
-
-    const scriptId = "google-identity-script";
-    let script = document.getElementById(scriptId);
-    if (!script) {
-      script = document.createElement("script");
-      script.id = scriptId;
-      script.src = "https://accounts.google.com/gsi/client";
-      script.async = true;
-      script.defer = true;
-      script.onload = setup;
-      document.head.appendChild(script);
-    } else if (window.google?.accounts?.id) {
-      setup();
-    } else {
-      script.addEventListener("load", setup, { once: true });
-    }
-
-    return () => {
-      script?.removeEventListener?.("load", setup);
-    };
-  }, [onGoogleSignIn, role]);
-
   return (
     <div className="authShell">
       <div className="authCard">
         <div className="authPill">AISC access only</div>
         <h3>Sign in with Google</h3>
-        <p>Choose whether you are an AISC member or the owner, then continue with Google authorization.</p>
-
-        <div className="roleToggle">
-          <button type="button" className={`miniToggle ${role === "member" ? "on" : ""}`} onClick={() => setRole("member")}>
-            AISC member
-          </button>
-          <button type="button" className={`miniToggle ${role === "owner" ? "on" : ""}`} onClick={() => setRole("owner")}>
-            Owner
-          </button>
-        </div>
-
-        <p className="authHelper">
-          {role === "owner" ? "Owner access is limited to caditi28@aischennai.org." : "Only verified @aischennai.org Google accounts can access the hub."}
-        </p>
-
-        {!GOOGLE_CLIENT_ID ? <div className="authError">Set `VITE_GOOGLE_CLIENT_ID` in the hub frontend and `GOOGLE_CLIENT_ID` on the backend.</div> : null}
+        <p>Use your verified AISC Google Workspace account. The Forge checks the account domain before granting access.</p>
         {error ? <div className="authError">{error}</div> : null}
-        <div ref={mountRef} className="googleButtonMount" />
-
-        <div className="localAuthFallback">
-          <div className="authDivider">Local fallback login</div>
-          <form className="authForm" onSubmit={submitLocalAuth}>
-            {mode === "signup" ? (
-              <>
-                <label>
-                  <span>Name</span>
-                  <input value={name} onChange={(event) => setName(event.target.value)} placeholder="Your full name" />
-                </label>
-                <label>
-                  <span>Username</span>
-                  <input value={username} onChange={(event) => setUsername(event.target.value)} placeholder="your_username" />
-                </label>
-              </>
-            ) : null}
-            <label>
-              <span>Email</span>
-              <input value={email} onChange={(event) => setEmail(event.target.value)} placeholder="name@aischennai.org" type="email" />
-            </label>
-            <label>
-              <span>Password</span>
-              <input value={password} onChange={(event) => setPassword(event.target.value)} placeholder={mode === "reset-password" ? "New password" : "Password"} type="password" />
-            </label>
-            {mode === "reset-password" ? (
-              <label>
-                <span>Confirm new password</span>
-                <input value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} placeholder="Confirm password" type="password" />
-              </label>
-            ) : null}
-            {mode === "signup" ? (
-              <label>
-                <span>Profile picture URL or data URL (optional)</span>
-                <input value={avatar} onChange={(event) => setAvatar(event.target.value)} placeholder="https://..." />
-              </label>
-            ) : null}
-            <button type="submit" className="authSubmit">
-              {mode === "signup" ? "Create account" : mode === "reset-password" ? "Reset password" : "Log in"}
-            </button>
-          </form>
-          <button
-            type="button"
-            className="authSwitch"
-            onClick={() => setMode(mode === "reset-password" ? "login" : mode === "signup" ? "login" : "signup")}
-          >
-            {mode === "signup" ? "Already have an account? Log in" : mode === "reset-password" ? "Back to log in" : "Need a new account? Sign up"}
-          </button>
-          {mode === "login" ? (
-            <button type="button" className="authSwitch secondary" onClick={() => setMode("reset-password")}>
-              Forgot password?
-            </button>
-          ) : null}
-        </div>
+        <button type="button" className="authSubmit" onClick={signIn}>Continue with Google</button>
+        {LOCAL_AUTH_ENABLED ? (
+          <div className="localAuthFallback">
+            <div className="authDivider">Local test login</div>
+            <form className="authForm" onSubmit={submitLocalAuth}>
+              {mode === "signup" ? <><label><span>Name</span><input value={name} onChange={(event) => setName(event.target.value)} /></label><label><span>Username</span><input value={username} onChange={(event) => setUsername(event.target.value)} /></label></> : null}
+              <label><span>Email</span><input value={email} onChange={(event) => setEmail(event.target.value)} type="email" /></label>
+              <label><span>Password</span><input value={password} onChange={(event) => setPassword(event.target.value)} type="password" /></label>
+              <button type="submit" className="authSubmit">{mode === "signup" ? "Create account" : "Log in"}</button>
+            </form>
+            <button type="button" className="authSwitch" onClick={() => setMode(mode === "signup" ? "login" : "signup")}>{mode === "signup" ? "Already have an account? Log in" : "Need a new account? Sign up"}</button>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -2803,8 +2681,8 @@ function AppShell({
   );
 }
 
-function AuthGate({ onGoogleSignIn }) {
-  return <LoginCard onGoogleSignIn={onGoogleSignIn} />;
+function AuthGate() {
+  return <LoginCard />;
 }
 
 export default function App() {
@@ -2843,7 +2721,16 @@ export default function App() {
   };
 
   useEffect(() => {
-    refreshState().catch(() => null).finally(() => setLoading(false));
+    const restoreSupabaseSession = async () => {
+      if (supabase) {
+        const { data } = await supabase.auth.getSession();
+        if (data.session?.access_token) {
+          await apiRequest("/api/auth/supabase", { method: "POST", body: { accessToken: data.session.access_token } });
+        }
+      }
+      return refreshState();
+    };
+    restoreSupabaseSession().catch(() => null).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -2867,24 +2754,8 @@ export default function App() {
     window.localStorage.setItem("forge.selectedDeckId", selectedDeckId);
   }, [selectedDeckId]);
 
-  const googleSignIn = async (role, credential, setError) => {
-    try {
-      const payload = await apiRequest("/api/auth/google", { method: "POST", body: { role, credential } });
-      setUser(payload.user);
-      setDashboard({
-        stats: payload.stats || {},
-        decks: payload.decks || [],
-        chats: payload.chats || { threads: [] },
-        privateApps: payload.privateApps || { invites: [], memberships: [], all: [EMPTY_PRIVATE_APP], requestedIds: [] },
-      });
-      setActiveView("arcade");
-    } catch (error) {
-      setError(error.message || "Unable to sign in with Google.");
-    }
-  };
-
   const logout = async () => {
-    await apiRequest("/api/logout", { method: "POST" });
+    await Promise.all([apiRequest("/api/logout", { method: "POST" }), supabase?.auth.signOut()]);
     setUser(null);
     setDashboard({
       stats: {},
@@ -2987,7 +2858,7 @@ export default function App() {
   }
 
   if (!user) {
-    return <AuthGate onGoogleSignIn={googleSignIn} />;
+    return <AuthGate />;
   }
 
   return (
