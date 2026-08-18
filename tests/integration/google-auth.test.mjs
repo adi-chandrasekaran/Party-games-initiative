@@ -60,12 +60,12 @@ test("Google auth rejects an expired server session", async () => {
   } finally { setSessionTtlForTests(8 * 60 * 60 * 1000); await new Promise((resolve) => server.close(resolve)); }
 });
 
-test("Google auth assigns the owner role only to the configured owner fixture", async () => {
+test("Google auth assigns the bootstrap admin role only to the configured admin fixture", async () => {
   setGoogleVerifierForTests(async () => ({ email: "caditi28@aischennai.org", name: "Owner", picture: "", googleSub: "owner-fixture" }));
   const server = createHubApiServer(); await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
   try {
-    const response = await request(server, "/api/auth/google", { credential: "fixture", role: "owner" });
-    assert.equal(response.status, 200); assert.equal(response.payload.user.role, "owner");
+    const response = await request(server, "/api/auth/google", { credential: "fixture" });
+    assert.equal(response.status, 200); assert.equal(response.payload.user.role, "admin");
   } finally { await new Promise((resolve) => server.close(resolve)); }
 });
 
@@ -102,11 +102,29 @@ test("Supabase Google identity creates a stable Forge session without a role sup
   try {
     const first = await request(server, "/api/auth/supabase", { accessToken: "supabase-fixture-token", role: "owner" });
     assert.equal(first.status, 200); assert.equal(first.payload.user.email, "supabase-member@aischennai.org");
-    assert.equal(first.payload.user.role, "member");
+    assert.equal(first.payload.user.role, "student");
     const second = await request(server, "/api/auth/supabase", { accessToken: "supabase-fixture-token" });
     assert.equal(second.status, 200); assert.equal(second.payload.user.id, first.payload.user.id);
   } finally {
     setSupabaseVerifierForTests();
     await new Promise((resolve) => server.close(resolve));
   }
+});
+
+test("RBAC requires an authenticated admin session instead of a browser admin code", async () => {
+  resetAuthRateLimitForTests();
+  setGoogleVerifierForTests(async (credential) => credential === "admin"
+    ? { email: "caditi28@aischennai.org", name: "Admin", picture: "", googleSub: "admin" }
+    : { email: "student-rbac@aischennai.org", name: "Student", picture: "", googleSub: "student-rbac" });
+  const server = createHubApiServer(); await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  try {
+    const admin = await request(server, "/api/auth/google", { credential: "admin" });
+    assert.equal(admin.payload.user.role, "admin");
+    const adminCookie = String(admin.headers["set-cookie"]).split(";")[0];
+    assert.equal((await get(server, "/api/platform/admin/users", { Cookie: adminCookie })).status, 200);
+    const student = await request(server, "/api/auth/google", { credential: "student" });
+    const studentCookie = String(student.headers["set-cookie"]).split(";")[0];
+    const denied = await get(server, "/api/platform/admin/users", { Cookie: studentCookie, "x-owner-admin-code": "aisc-admin" });
+    assert.equal(denied.status, 403);
+  } finally { await new Promise((resolve) => server.close(resolve)); }
 });

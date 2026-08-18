@@ -9,7 +9,10 @@ touches an area.
 - Sign in uses Supabase-managed Google authorization for verified `@aischennai.org` accounts.
 - Supabase is the identity authority; the Forge exchanges a verified Supabase session for its
   HttpOnly compatibility session at the platform boundary.
-- Role migration is owned by PR-15; existing owner/member behavior remains until then.
+- The only platform roles are `admin`, `teacher`, and `student`. New AISC identities start as
+  students; `caditi28@aischennai.org` is the bootstrap admin.
+- Admins manage roles, game visibility, and host assignments. Teachers may host only their
+  assigned private apps; students retain personal features and authenticated public-game access.
 - Authentication and authorization decisions must be enforced by the server.
 - The profile provides logout and editable user-facing fields allowed by the design.
 

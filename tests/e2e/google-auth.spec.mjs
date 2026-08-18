@@ -4,21 +4,21 @@ async function googleAuth(request, credential, role = "member") {
   return request.post("/api/auth/google", { data: { credential, role } });
 }
 
-test("Google fixture member receives a server session and can log out", async ({ page }) => {
+test("Google fixture student receives a server session and can log out", async ({ page }) => {
   await page.goto("/");
   const response = await googleAuth(page.request, "member");
   await expect(response).toBeOK();
-  expect(await response.json()).toMatchObject({ user: { email: "member@aischennai.org", role: "member" } });
+  expect(await response.json()).toMatchObject({ user: { email: "member@aischennai.org", role: "student" } });
 
   const logout = await page.request.post("/api/logout", { data: {} });
   await expect(logout).toBeOK();
 });
 
-test("Google fixture owner receives the owner role", async ({ page }) => {
+test("Google fixture bootstrap account receives the admin role", async ({ page }) => {
   await page.goto("/");
   const response = await googleAuth(page.request, "owner", "owner");
   await expect(response).toBeOK();
-  expect(await response.json()).toMatchObject({ user: { email: "caditi28@aischennai.org", role: "owner" } });
+  expect(await response.json()).toMatchObject({ user: { email: "caditi28@aischennai.org", role: "admin" } });
 });
 
 test("Google fixture rejects an expired credential", async ({ page }) => {

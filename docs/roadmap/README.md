@@ -29,7 +29,24 @@ human-approved PR.
 | PR-11 | Shared deck storage and processing | Complete | `feat/pr-11-deck-pipeline` |
 | PR-12 | Local quality gates and full regression suite | Complete | `feat/pr-12-quality-gates` |
 | PR-13 | Legacy process and compatibility removal | Complete | `feat/pr-13-legacy-removal` |
-| PR-14 | Supabase Google Workspace authentication | In progress | `feat/pr-14-supabase-auth` |
+| PR-14 | Supabase Google Workspace authentication | Complete | `feat/pr-14-supabase-auth` |
+| PR-15 | Server-enforced role-based access control | In progress | `feat/pr-15-rbac` |
+
+## PR-15: Server-Enforced Role-Based Access Control
+
+Replace `owner`, `member`, `host`, and `other` with `admin`, `teacher`, and `student`. New AISC
+identities default to students, while the existing bootstrap identity remains an admin. Admin APIs
+authorize the authenticated server session against the persistent platform registry; browser-held
+admin codes are removed.
+
+**Excluded:** Fly deployment, hosted Supabase dashboard provisioning, and new application features.
+
+**Acceptance gate:** unauthenticated and student callers cannot use any admin API even with the
+old header; admins can manage valid roles and host assignments; the final admin cannot be removed
+or demoted; public games remain available to every authenticated user.
+
+**Rollback:** restore the previous role adapter only as a local emergency rollback. No user or
+host-assignment records are deleted by this migration.
 
 ## PR-14: Supabase Google Workspace Authentication
 

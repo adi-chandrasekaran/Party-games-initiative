@@ -23,6 +23,16 @@ real credentials.
 Expected result: verified AISC Google identities receive secure Forge sessions; other domains,
 expired credentials, and logged-out sessions are rejected.
 
+## PR-15 Role-based access control
+
+1. Sign in as `caditi28@aischennai.org`, open `/admin`, and confirm the admin controls load with
+   no password or owner-code prompt.
+2. Add an AISC user as a `teacher`, assign one private game, and confirm the user can host only
+   that assigned private game. Public games remain hostable by any signed-in user.
+3. Change a user to `student` and confirm they cannot load or mutate `/api/platform/admin/*`,
+   including when supplying the old `x-owner-admin-code` header.
+4. Confirm the final remaining admin cannot be demoted or removed.
+
 ## PR-03 Registry-backed launchers
 
 This is the manual equivalent of the PR-03 Playwright launcher test.

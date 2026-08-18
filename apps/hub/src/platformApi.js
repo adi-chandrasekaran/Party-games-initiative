@@ -1,6 +1,6 @@
 const PLATFORM_API_BASES = [import.meta.env.VITE_PLATFORM_API_URL || window.location.origin];
 
-export async function platformRequest(pathname, { method = "GET", body, code } = {}) {
+export async function platformRequest(pathname, { method = "GET", body } = {}) {
   let lastError = null;
 
   for (const base of PLATFORM_API_BASES) {
@@ -10,7 +10,6 @@ export async function platformRequest(pathname, { method = "GET", body, code } =
         credentials: "include",
         headers: {
           ...(body ? { "Content-Type": "application/json" } : {}),
-          ...(code ? { "x-owner-admin-code": code } : {}),
         },
         body: body ? JSON.stringify(body) : undefined,
       });

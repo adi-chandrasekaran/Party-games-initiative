@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { platformRequest } from "./platformApi";
 
-const ADMIN_CODE_KEY = "party_games_admin_code";
-const ROLE_OPTIONS = ["teacher", "student", "host", "other"];
+const ROLE_OPTIONS = ["admin", "teacher", "student"];
 
 function toggleListValue(list, value) {
   return list.includes(value) ? list.filter((entry) => entry !== value) : [...list, value];
@@ -13,9 +12,6 @@ function GameStatusBadge({ game }) {
 }
 
 export default function AdminPage() {
-  const [code, setCode] = useState(localStorage.getItem(ADMIN_CODE_KEY) || "");
-  const [verified, setVerified] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [games, setGames] = useState([]);
   const [users, setUsers] = useState([]);
@@ -29,40 +25,17 @@ export default function AdminPage() {
 
   const selectedUser = useMemo(() => users.find((user) => user.id === selectedUserId) || null, [selectedUserId, users]);
 
-  const loadAdminData = async (adminCode = code) => {
+  const loadAdminData = async () => {
     const [gamesPayload, usersPayload] = await Promise.all([
-      platformRequest("/api/platform/admin/games", { code: adminCode }),
-      platformRequest("/api/platform/admin/users", { code: adminCode }),
+      platformRequest("/api/platform/admin/games"),
+      platformRequest("/api/platform/admin/users"),
     ]);
     setGames(gamesPayload.games || []);
     setUsers(usersPayload.users || []);
   };
 
-  const verify = async () => {
-    setLoading(true);
-    setMessage("");
-    try {
-      const payload = await platformRequest("/api/platform/admin/verify", { method: "POST", body: { code } });
-      if (!payload.ok) {
-        setVerified(false);
-        setMessage("Invalid owner admin code.");
-        return;
-      }
-      localStorage.setItem(ADMIN_CODE_KEY, code);
-      setVerified(true);
-      await loadAdminData(code);
-      setMessage("Admin access granted.");
-    } catch (error) {
-      setMessage(error.message || "Unable to verify admin code.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    if (!code) return;
-    verify().catch(() => null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadAdminData().catch((error) => setMessage(error.message || "Admin access is required."));
   }, []);
 
   useEffect(() => {
@@ -79,7 +52,7 @@ export default function AdminPage() {
     setDraft({
       name: selectedUser.name || "",
       emailOrUsername: selectedUser.emailOrUsername || "",
-      role: selectedUser.role || "other",
+      role: selectedUser.role || "student",
       hostGameIds: selectedUser.hostGameIds || [],
     });
   }, [selectedUser]);
@@ -87,7 +60,6 @@ export default function AdminPage() {
   const saveGame = async (gameId, patch) => {
     await platformRequest(`/api/platform/admin/games/${gameId}`, {
       method: "PATCH",
-      code,
       body: patch,
     });
     await loadAdminData();
@@ -97,7 +69,6 @@ export default function AdminPage() {
   const saveHosts = async (gameId, hostUserIds) => {
     await platformRequest(`/api/platform/admin/games/${gameId}/hosts`, {
       method: "PATCH",
-      code,
       body: { hostUserIds },
     });
     await loadAdminData();
@@ -114,39 +85,20 @@ export default function AdminPage() {
 
     const path = selectedUser ? `/api/platform/admin/users/${selectedUser.id}` : "/api/platform/admin/users";
     const method = selectedUser ? "PATCH" : "POST";
-    await platformRequest(path, { method, code, body });
+    await platformRequest(path, { method, body });
     await loadAdminData();
     setSelectedUserId("");
     setMessage(selectedUser ? "User updated." : "User added.");
   };
 
   const deleteUser = async (userId) => {
-    await platformRequest(`/api/platform/admin/users/${userId}`, { method: "DELETE", code, body: { code } });
+    await platformRequest(`/api/platform/admin/users/${userId}`, { method: "DELETE", body: {} });
     if (selectedUserId === userId) setSelectedUserId("");
     await loadAdminData();
     setMessage("User removed.");
   };
 
   const hostLookup = Object.fromEntries(users.map((user) => [user.id, user.name || user.emailOrUsername || user.id]));
-
-  if (!verified) {
-    return (
-      <main className="adminPage">
-        <section className="adminShell">
-          <div className="authPill">Owner admin</div>
-          <h1>AISC Forge Admin</h1>
-          <p className="adminLead">Enter the owner code to manage public/private status, visibility, and host assignments.</p>
-          <div className="adminLoginCard">
-            <input value={code} onChange={(event) => setCode(event.target.value)} placeholder="Owner admin code" type="password" />
-            {message ? <div className="adminMessage">{message}</div> : null}
-            <button type="button" className="authSubmit" onClick={verify} disabled={loading}>
-              {loading ? "Checking..." : "Unlock admin"}
-            </button>
-          </div>
-        </section>
-      </main>
-    );
-  }
 
   return (
     <main className="adminPage">
@@ -164,11 +116,7 @@ export default function AdminPage() {
             <button
               type="button"
               className="panelButton ghost"
-              onClick={() => {
-                localStorage.removeItem(ADMIN_CODE_KEY);
-                setVerified(false);
-                setMessage("Signed out of admin.");
-              }}
+              onClick={() => window.history.back()}
             >
               Exit admin
             </button>
@@ -216,7 +164,7 @@ export default function AdminPage() {
                 <div className="adminHostPicker">
                   <span>Set hosts</span>
                   <div className="adminHostCheckboxes">
-                    {users.map((user) => (
+                    {users.filter((user) => user.role === "admin" || user.role === "teacher").map((user) => (
                       <label key={user.id} className="adminCheckbox">
                         <input
                           type="checkbox"
@@ -294,12 +242,12 @@ export default function AdminPage() {
                   <small>{user.role}</small>
                 </div>
                 <div className="adminUserActions">
-                  {user.role !== "owner" ? (
+                  {user.role !== "admin" ? (
                     <button type="button" className="panelButton ghost" onClick={() => setSelectedUserId(user.id)}>
                       Edit
                     </button>
                   ) : null}
-                  {user.role !== "owner" ? (
+                  {user.role !== "admin" ? (
                     <button type="button" className="panelButton ghost" onClick={() => deleteUser(user.id).catch((error) => setMessage(error.message || "Unable to remove user."))}>
                       Remove
                     </button>

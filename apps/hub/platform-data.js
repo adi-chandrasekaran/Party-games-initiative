@@ -2,6 +2,7 @@ import { listPlatformGames } from "@forge/app-registry";
 import { readPostgresStore, writePostgresStore } from "./postgres-store.js";
 
 const PLATFORM_DATA_STORE_ID = "platform-registry";
+export const PLATFORM_ROLES = ["admin", "teacher", "student"];
 
 const GAME_SEED = listPlatformGames(process.env).map((game) => ({ ...game, hostUserIds: ["aditi"] }));
 
@@ -12,7 +13,7 @@ function defaultPlatformData() {
         id: "aditi",
         name: "Aditi",
         emailOrUsername: "aditi@aischennai.org",
-        role: "owner",
+        role: "admin",
         hostGameIds: GAME_SEED.map((game) => game.id),
         createdAt: new Date().toISOString(),
       },
@@ -20,7 +21,7 @@ function defaultPlatformData() {
         id: "caditi28",
         name: "Caditi",
         emailOrUsername: "caditi28@aischennai.org",
-        role: "owner",
+        role: "admin",
         hostGameIds: GAME_SEED.map((game) => game.id),
         createdAt: new Date().toISOString(),
       },
@@ -31,8 +32,13 @@ function defaultPlatformData() {
 
 export async function readPlatformData() {
   const data = await readPostgresStore(defaultPlatformData(), PLATFORM_DATA_STORE_ID);
+  const users = Array.isArray(data.users) ? data.users : [];
+  for (const user of users) {
+    if (user.role === "owner") user.role = "admin";
+    else if (!PLATFORM_ROLES.includes(user.role)) user.role = "student";
+  }
   return {
-    users: Array.isArray(data.users) ? data.users : [],
+    users,
     gameConfigs: Array.isArray(data.gameConfigs) ? data.gameConfigs : [],
   };
 }
@@ -92,7 +98,7 @@ export function canUserHostGame(data, emailOrUsername, gameId) {
     return { canHost: false, reason: "Game not found.", user: null, game: null };
   }
 
-  if (game.status === "hidden" && user?.role !== "owner") {
+  if (game.status === "hidden" && user?.role !== "admin") {
     return { canHost: false, reason: "This game is currently unavailable.", user, game };
   }
 
@@ -100,12 +106,12 @@ export function canUserHostGame(data, emailOrUsername, gameId) {
     return { canHost: false, reason: "You are not assigned as a host for this game. Ask Aditi for access.", user: null, game };
   }
 
-  if (user.role === "owner") {
-    return { canHost: true, reason: "Owner access granted.", user, game };
+  if (user.role === "admin") {
+    return { canHost: true, reason: "Admin access granted.", user, game };
   }
 
-  if ((user.hostGameIds || []).includes(gameId)) {
-    return { canHost: true, reason: "Host access granted.", user, game };
+  if (user.role === "teacher" && (user.hostGameIds || []).includes(gameId)) {
+    return { canHost: true, reason: "Teacher host access granted.", user, game };
   }
 
   if (!game.isPublic && game.status === "active") {
@@ -130,7 +136,7 @@ export async function addOrUpdateUser(input) {
     id: String(input.id || lookup || `user-${Math.random().toString(36).slice(2, 9)}`),
     name: String(input.name || "").trim(),
     emailOrUsername: String(input.emailOrUsername || "").trim(),
-    role: input.role || "other",
+    role: PLATFORM_ROLES.includes(input.role) ? input.role : "student",
     hostGameIds: uniqueIds(input.hostGameIds),
     createdAt: input.createdAt || new Date().toISOString(),
   };
@@ -139,7 +145,7 @@ export async function addOrUpdateUser(input) {
   if (existingIndex >= 0) {
     const existing = data.users[existingIndex];
     const merged = { ...existing, ...nextUser, createdAt: existing.createdAt || nextUser.createdAt };
-    if (merged.role === "owner") {
+    if (merged.role === "admin") {
       merged.hostGameIds = data.gameConfigs.map((game) => game.id);
     }
     data.users[existingIndex] = merged;
@@ -148,7 +154,7 @@ export async function addOrUpdateUser(input) {
     return merged;
   }
 
-  if (nextUser.role === "owner") {
+  if (nextUser.role === "admin") {
     nextUser.hostGameIds = data.gameConfigs.map((game) => game.id);
   }
 
@@ -191,7 +197,7 @@ export async function updateHostAssignments(gameId, hostUserIds) {
     } else {
       user.hostGameIds = user.hostGameIds.filter((id) => id !== gameId);
     }
-    if (user.role === "owner") {
+    if (user.role === "admin") {
       user.hostGameIds = data.gameConfigs.map((entry) => entry.id);
       game.hostUserIds = uniqueIds([...new Set([...game.hostUserIds, user.id])]);
     }
@@ -218,7 +224,7 @@ export async function setGameHostsFromUser(userId, hostGameIds) {
   const user = data.users.find((entry) => entry.id === userId);
   if (!user) return null;
   user.hostGameIds = uniqueIds(hostGameIds);
-  if (user.role === "owner") {
+  if (user.role === "admin") {
     user.hostGameIds = data.gameConfigs.map((game) => game.id);
   }
   syncUserHostGames(data, user.id, user.hostGameIds);
@@ -228,13 +234,13 @@ export async function setGameHostsFromUser(userId, hostGameIds) {
 
 export async function syncPlatformDefaults() {
   const data = await readPlatformData();
-  const owner = data.users.find((user) => user.role === "owner");
-  if (owner) {
-    owner.hostGameIds = data.gameConfigs.map((game) => game.id);
+  const admins = data.users.filter((user) => user.role === "admin");
+  for (const admin of admins) {
+    admin.hostGameIds = data.gameConfigs.map((game) => game.id);
   }
   for (const game of data.gameConfigs) {
     if (!Array.isArray(game.hostUserIds)) game.hostUserIds = [];
-    if (owner && !game.hostUserIds.includes(owner.id)) game.hostUserIds.push(owner.id);
+    for (const admin of admins) if (!game.hostUserIds.includes(admin.id)) game.hostUserIds.push(admin.id);
   }
   await writePlatformData(data);
   return data;
