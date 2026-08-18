@@ -30,7 +30,21 @@ human-approved PR.
 | PR-12 | Local quality gates and full regression suite | Complete | `feat/pr-12-quality-gates` |
 | PR-13 | Legacy process and compatibility removal | Complete | `feat/pr-13-legacy-removal` |
 | PR-14 | Supabase Google Workspace authentication | Complete | `feat/pr-14-supabase-auth` |
-| PR-15 | Server-enforced role-based access control | In progress | `feat/pr-15-rbac` |
+| PR-15 | Server-enforced role-based access control | Complete | `feat/pr-15-rbac` |
+| PR-16 | Fly.io deployment preparation | In progress | `feat/pr-16-fly-deployment` |
+
+## PR-16: Fly.io Deployment Preparation
+
+Add the container, Fly configuration, deployment ADR, health checks, and documented human-only
+release procedure for one Singapore-region platform machine. This PR intentionally creates no
+cloud resources and performs no deployment.
+
+**Acceptance gate:** the image builds locally; `/api/health` returns 200 only when PostgreSQL is
+ready; Fly configuration keeps one machine running and has no committed secrets; docs cover
+Supabase callback configuration, smoke tests, and release rollback.
+
+**Rollback:** no live release exists from this PR. If a later authorized release fails, roll back
+to the prior Fly image rather than changing database data or scaling realtime instances.
 
 ## PR-15: Server-Enforced Role-Based Access Control
 

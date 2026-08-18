@@ -43,3 +43,7 @@ export async function closePostgresStore() {
   if (pool) await pool.end();
   pool = undefined;
 }
+
+export async function postgresStoreHealthcheck() {
+  await databasePool().query("SELECT 1");
+}

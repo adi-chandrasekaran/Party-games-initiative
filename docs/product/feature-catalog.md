@@ -16,6 +16,11 @@ touches an area.
 - Authentication and authorization decisions must be enforced by the server.
 - The profile provides logout and editable user-facing fields allowed by the design.
 
+## Runtime Operations
+
+- The hosted platform runs as one Fly.io machine until realtime broadcasts gain a cross-machine
+  adapter. Its health endpoint reports database readiness without exposing credentials.
+
 ## Forge Home
 
 - The `F` rail item opens a scrollable Forge home page.
