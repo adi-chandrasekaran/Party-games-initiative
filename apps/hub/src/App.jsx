@@ -2853,12 +2853,12 @@ export default function App() {
     );
   }
 
-  if (pathname === "/admin") {
-    return <AdminPage />;
-  }
-
   if (!user) {
     return <AuthGate />;
+  }
+
+  if (pathname === "/admin") {
+    return <AdminPage />;
   }
 
   return (
@@ -2883,7 +2883,7 @@ export default function App() {
       selectedDeckId={selectedDeckId}
       onSelectDeck={setSelectedDeckId}
       onUploadDeck={uploadDeck}
-      isOwner={user?.role === "owner" || user?.email === "caditi28@aischennai.org"}
+      isOwner={user?.role === "admin"}
       onRecordGamePlay={recordInternalGame}
       initialMicroappId={directMicroapp?.id || ""}
       onCreateGameDraft={(kind) => {

@@ -7,6 +7,7 @@ import {
   addOrUpdateUser,
   canUserHostGame,
   deleteUser,
+  findUserByLogin,
   getAllGamesForAdmin,
   getPublicGames,
   readPlatformData,
@@ -20,12 +21,10 @@ import { createGoogleVerifier } from "./google-verifier.js";
 import { createSupabaseTokenVerifier, supabaseAuthConfigured } from "./supabase-auth.js";
 import { deckForGame, deckSummary, extractDeckItems, validatePdfDeck } from "./deck-pipeline.js";
 
-const OWNER_ADMIN_CODE = process.env.OWNER_ADMIN_CODE || "aisc-admin";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const PORT = Number(process.env.PLATFORM_SERVER_PORT || process.env.PORT || 8787);
 const COOKIE_NAME = "party_games_session";
 const SCHOOL_DOMAIN = "@aischennai.org";
-const ADMIN_HEADER = "x-owner-admin-code";
 const AUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 const AUTH_RATE_LIMIT_MAX_ATTEMPTS = 10;
 const __filename = fileURLToPath(import.meta.url);
@@ -372,16 +371,14 @@ function sendJsonError(res, status, message) {
   json(res, status, { error: message });
 }
 
-function isAdminCodeValid(code) {
-  return String(code || "").trim() && String(code || "").trim() === OWNER_ADMIN_CODE;
-}
-
-function getAdminCode(req, body) {
-  return String(body?.code || req.headers[ADMIN_HEADER] || "").trim();
-}
-
-function requireAdminCode(req, body) {
-  return isAdminCodeValid(getAdminCode(req, body));
+async function requireAdmin(req, res) {
+  const store = await readStore();
+  const currentUser = currentUserFromRequest(req, store);
+  if (!currentUser) return null;
+  const data = await readPlatformData();
+  const platformUser = findUserByLogin(data, currentUser.email || currentUser.username || currentUser.name);
+  if (platformUser?.role !== "admin") return null;
+  return { currentUser, data, platformUser };
 }
 
 async function handleSignup(req, res) {
@@ -464,7 +461,6 @@ async function handleGoogleAuth(req, res) {
   if (retryAfter) return json(res, 429, { error: "Too many Google sign-in attempts. Try again shortly." }, { "Retry-After": String(retryAfter) });
   const store = await readStore();
   const body = await readBody(req);
-  const selectedRole = String(body.role || "member").trim().toLowerCase();
 
   if (!GOOGLE_CLIENT_ID) {
     return sendJsonError(res, 503, "Google sign-in is not configured yet.");
@@ -478,10 +474,6 @@ async function handleGoogleAuth(req, res) {
   }
 
   const isOwnerEmail = profile.email === getOwnerLoginEmail();
-  if (selectedRole === "owner" && !isOwnerEmail) {
-    return sendJsonError(res, 403, "Only caditi28@aischennai.org can sign in as owner.");
-  }
-
   const existing = store.users.find((entry) => normalizeEmail(entry.email) === profile.email);
   let user = existing || null;
 
@@ -493,7 +485,7 @@ async function handleGoogleAuth(req, res) {
       username: baseUsername || `user-${crypto.randomUUID().slice(0, 8)}`,
       email: profile.email,
       avatar: profile.picture || "",
-      role: isOwnerEmail ? "owner" : "member",
+      role: isOwnerEmail ? "admin" : "student",
       authProvider: "google",
       googleSub: profile.googleSub,
       createdAt: new Date().toISOString(),
@@ -503,13 +495,13 @@ async function handleGoogleAuth(req, res) {
     user.name = profile.name || user.name;
     user.username = user.username || profile.email.split("@")[0];
     user.avatar = profile.picture || user.avatar || "";
-    user.role = isOwnerEmail ? "owner" : user.role || "member";
+    user.role = isOwnerEmail ? "admin" : (user.role === "member" || user.role === "owner" || !user.role ? "student" : user.role);
     user.authProvider = "google";
     user.googleSub = profile.googleSub;
   }
 
   if (isOwnerEmail) {
-    user.role = "owner";
+    user.role = "admin";
   }
 
   const sessionId = createSession(store, user.id, Number.isFinite(profile.sessionTtlMs) ? profile.sessionTtlMs : sessionTtlMs);
@@ -534,7 +526,7 @@ async function handleSupabaseAuth(req, res) {
   const user = existing || {
     id: crypto.randomUUID(),
     username: profile.email.split("@")[0].replace(/[^a-z0-9._-]/g, "") || `user-${crypto.randomUUID().slice(0, 8)}`,
-    role: "member",
+    role: "student",
     createdAt: new Date().toISOString(),
   };
   user.name = profile.name || user.name || "AISC User";
@@ -542,8 +534,14 @@ async function handleSupabaseAuth(req, res) {
   user.avatar = profile.picture || user.avatar || "";
   user.authProvider = "supabase-google";
   user.supabaseUserId = profile.id;
-  user.role = user.role || "member";
   if (!existing) store.users.push(user);
+
+  const platformData = await readPlatformData();
+  let platformUser = findUserByLogin(platformData, profile.email);
+  if (!platformUser) {
+    platformUser = await addOrUpdateUser({ name: user.name, emailOrUsername: profile.email, role: "student", hostGameIds: [] });
+  }
+  user.role = platformUser.role;
 
   const sessionId = createSession(store, user.id);
   await writeStore(store);
@@ -858,24 +856,15 @@ async function handleDeckById(req, res, deckId) {
   return sendJsonError(res, 405, "Method not allowed.");
 }
 
-async function handlePlatformAdminVerify(req, res) {
-  const body = await readBody(req);
-  if (isAdminCodeValid(body.code)) {
-    return json(res, 200, { ok: true });
-  }
-  return sendJsonError(res, 401, "Invalid owner admin code.");
-}
-
 async function handlePlatformGames(req, res) {
   const data = await readPlatformData();
   json(res, 200, { games: getPublicGames(data) });
 }
 
 async function handlePlatformAdminGames(req, res) {
-  const body = req.method === "PATCH" ? await readBody(req) : {};
-  if (!requireAdminCode(req, body)) return sendJsonError(res, 401, "Invalid owner admin code.");
-  const data = await readPlatformData();
-  json(res, 200, { games: getAllGamesForAdmin(data) });
+  const authorization = await requireAdmin(req, res);
+  if (!authorization) return sendJsonError(res, 403, "Admin access is required.");
+  json(res, 200, { games: getAllGamesForAdmin(authorization.data) });
 }
 
 async function handlePlatformGameAccess(req, res, gameId) {
@@ -928,13 +917,12 @@ async function handlePlatformCanHost(req, res) {
 }
 
 async function handlePlatformAdminUsers(req, res) {
-  const body = req.method === "POST" || req.method === "PATCH" ? await readBody(req) : {};
-  if (!requireAdminCode(req, body)) return sendJsonError(res, 401, "Invalid owner admin code.");
-
-  const data = await readPlatformData();
+  const authorization = await requireAdmin(req, res);
+  if (!authorization) return sendJsonError(res, 403, "Admin access is required.");
+  const body = req.method === "POST" ? await readBody(req) : {};
 
   if (req.method === "GET") {
-    return json(res, 200, { users: data.users });
+    return json(res, 200, { users: authorization.data.users });
   }
 
   if (req.method === "POST") {
@@ -951,14 +939,17 @@ async function handlePlatformAdminUsers(req, res) {
 }
 
 async function handlePlatformAdminUserById(req, res, userId) {
+  const authorization = await requireAdmin(req, res);
+  if (!authorization) return sendJsonError(res, 403, "Admin access is required.");
   const body = await readBody(req);
-  if (!requireAdminCode(req, body)) return sendJsonError(res, 401, "Invalid owner admin code.");
-
-  const data = await readPlatformData();
+  const data = authorization.data;
   const user = data.users.find((entry) => entry.id === userId);
   if (!user) return sendJsonError(res, 404, "User not found.");
 
   if (req.method === "PATCH") {
+    if (user.role === "admin" && body.role !== undefined && body.role !== "admin" && data.users.filter((entry) => entry.role === "admin").length <= 1) {
+      return sendJsonError(res, 400, "You cannot demote the final admin.");
+    }
     const updated = await addOrUpdateUser({
       id: userId,
       name: typeof body.name === "string" ? body.name : user.name,
@@ -971,8 +962,8 @@ async function handlePlatformAdminUserById(req, res, userId) {
   }
 
   if (req.method === "DELETE") {
-    if (user.role === "owner" || user.id === "aditi") {
-      return sendJsonError(res, 400, "You cannot delete the owner user.");
+    if (user.role === "admin" && data.users.filter((entry) => entry.role === "admin").length <= 1) {
+      return sendJsonError(res, 400, "You cannot remove the final admin.");
     }
     const removed = await deleteUser(userId);
     return json(res, 200, { user: removed });
@@ -982,8 +973,8 @@ async function handlePlatformAdminUserById(req, res, userId) {
 }
 
 async function handlePlatformAdminGameById(req, res, gameId) {
+  if (!(await requireAdmin(req, res))) return sendJsonError(res, 403, "Admin access is required.");
   const body = await readBody(req);
-  if (!requireAdminCode(req, body)) return sendJsonError(res, 401, "Invalid owner admin code.");
 
   if (req.method === "PATCH") {
     const game = await updateGameVisibility(gameId, body);
@@ -999,8 +990,8 @@ async function handlePlatformAdminGameById(req, res, gameId) {
 }
 
 async function handlePlatformAdminGameHosts(req, res, gameId) {
+  if (!(await requireAdmin(req, res))) return sendJsonError(res, 403, "Admin access is required.");
   const body = await readBody(req);
-  if (!requireAdminCode(req, body)) return sendJsonError(res, 401, "Invalid owner admin code.");
   if (!Array.isArray(body.hostUserIds)) return sendJsonError(res, 400, "hostUserIds must be an array.");
   const game = await updateHostAssignments(gameId, body.hostUserIds);
   if (!game) return sendJsonError(res, 404, "Game not found.");
@@ -1057,7 +1048,7 @@ export function createHubApiServer({ staticRoot } = {}) {
     if (req.method === "OPTIONS") {
       res.writeHead(204, {
         "Access-Control-Allow-Methods": "GET,POST,PATCH,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, x-owner-admin-code",
+        "Access-Control-Allow-Headers": "Content-Type",
       });
       res.end();
       return;
@@ -1091,7 +1082,6 @@ export function createHubApiServer({ staticRoot } = {}) {
       const deckId = routePath.split("/")[2];
       return await handleDeckById(req, res, deckId);
     }
-    if (req.method === "POST" && routePath === "/platform/admin/verify") return await handlePlatformAdminVerify(req, res);
     if (req.method === "GET" && routePath === "/platform/games") return await handlePlatformGames(req, res);
     if (routePath === "/platform/admin/games" && (req.method === "GET")) return await handlePlatformAdminGames(req, res);
     if (routePath.startsWith("/platform/admin/games/") && routePath.endsWith("/hosts") && req.method === "PATCH") {
