@@ -29,7 +29,8 @@ key is not a service-role key and does not bypass Supabase Row Level Security.
 1. Sign in to the [Supabase Dashboard](https://supabase.com/dashboard/projects) and create a
    project for The Forge. The free plan is sufficient for local testing.
 2. In **Project Settings → API**, copy the **Project URL** and the **Publishable key**. Use the
-   current `sb_publishable_...` key, not a service-role key.
+   current `sb_publishable_...` key, not a service-role key. The Forge operator owns this
+   Supabase project; AISC users do not need access to it.
 
 This is a hosted Supabase project accessed by a locally running Forge. Do not run a separate
 local Supabase stack unless you specifically need to test Supabase itself; Google OAuth is simpler
@@ -38,7 +39,9 @@ to validate against this one project.
 ### 2. Configure Google OAuth in Google Cloud
 
 1. Open the [Google Cloud Console](https://console.cloud.google.com/), select or create the
-   project that will own Forge sign-in, and configure its consent screen/audience for AISC.
+   project that will own Forge sign-in, and configure its consent screen as an **external** app.
+   The Forge operator owns this project and its OAuth client; AISC Workspace administrator access
+   is not required.
 2. Create an OAuth 2.0 **Web application** client.
 3. Add this authorized JavaScript origin:
 
@@ -57,9 +60,23 @@ to validate against this one project.
 5. Copy the Google OAuth client ID and client secret into Supabase's Google provider settings,
    enable the provider, and save. Do not place either value in this repository or in Fly.
 
-Google Workspace audience restrictions are an optional additional guardrail. The Forge server
-always verifies that the returned identity is Google-backed, confirmed, and ends in
-`@aischennai.org` before granting a Forge session.
+Do not attempt to make this OAuth client **internal** to AISC unless an AISC Workspace
+administrator owns or authorizes the Google Cloud project. An external client is the expected
+model for a customer-facing Forge. Google may show its consent screen to any Google user, but
+Forge must grant an application session only to approved AISC Workspace identities.
+
+### 2a. Domain authorization policy
+
+The `hd=aischennai.org` OAuth parameter may be used as an account-picker hint, but it is not an
+authorization control. The server must validate the `hd` (hosted-domain) claim returned by Google
+and require exactly `aischennai.org`, in addition to requiring a confirmed Google identity.
+Checking only whether an email string ends in `@aischennai.org` is not sufficient to prove
+Workspace membership.
+
+**Current implementation status:** Forge currently verifies the Google provider, confirmed email,
+and `@aischennai.org` email suffix. It does not yet validate the Google `hd` claim. Local testing
+with AISC accounts can proceed, but production deployment is blocked on the dedicated server-side
+`hd` validation change and its regression tests.
 
 ### 3. Allow the local Forge callback in Supabase
 
@@ -107,7 +124,8 @@ pnpm dev
 Open `http://localhost:8787`, choose **Continue with Google**, and use a verified
 `@aischennai.org` account. After returning to the Forge, reload once to confirm the session
 persists. Log out and confirm the gate returns. In a private window, a non-AISC Google account
-must be rejected.
+must be rejected. This validates the current email-domain gate; complete the `hd` hardening
+before treating it as the final production control.
 
 If the page says Supabase configuration is missing, stop the process and start it again with the
 three `set`/`source` commands above. If Google reports `redirect_uri_mismatch`, compare the
@@ -154,11 +172,11 @@ URL as a build argument.
 
 ### 3. Release and verify
 
-Only after explicit human authorization, follow the release procedure in
-[`../deployment/fly.md`](../deployment/fly.md). Verify `/api/health`, Google sign-in, logout,
-rejection of a non-AISC identity, authenticated API access, and a two-browser multiplayer
-host/join flow. Keep exactly one Fly machine running because Socket.IO broadcasts are not yet
-cross-machine.
+Only after explicit human authorization **and after the `hd` validation change described above is
+merged**, follow the release procedure in [`../deployment/fly.md`](../deployment/fly.md). Verify
+`/api/health`, Google sign-in, logout, rejection of a non-AISC identity, authenticated API access,
+and a two-browser multiplayer host/join flow. Keep exactly one Fly machine running because
+Socket.IO broadcasts are not yet cross-machine.
 
 ## CI/CD boundary
 
