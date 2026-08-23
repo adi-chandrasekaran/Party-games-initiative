@@ -34,9 +34,15 @@ are served from that same origin.
 - PostgreSQL persistence is required. The documented local test database URL is
   `postgresql://forge:forge-local-password@127.0.0.1:5432/forge`; do not use this example for a
   shared or production database.
-- PR-09 uses `GOOGLE_CLIENT_ID` to verify Google ID tokens. Set `TRUSTED_ORIGINS` to the comma-
-  separated browser origins that may make authenticated mutations in production. Never configure
-  `AUTH_TEST_GOOGLE_FIXTURES` outside automated tests; it is ignored unless `NODE_ENV=test`.
+- Supabase is the Google identity provider. Configure `SUPABASE_URL`,
+  `SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_PUBLISHABLE_KEY` in the
+  ignored `apps/hub/.env` file. Source that file before `pnpm dev` so the platform server receives
+  the non-Vite values too. See
+  [`supabase-and-fly-setup.md`](supabase-and-fly-setup.md) for the exact local and future Fly
+  procedures.
+- Set `TRUSTED_ORIGINS` to the comma-separated browser origins that may make authenticated
+  mutations in production. Never configure `AUTH_TEST_GOOGLE_FIXTURES` outside automated tests;
+  it is ignored unless `NODE_ENV=test`.
 
 ## Deployment Constraint
 

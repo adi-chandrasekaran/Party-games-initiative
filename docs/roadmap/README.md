@@ -31,7 +31,7 @@ human-approved PR.
 | PR-13 | Legacy process and compatibility removal | Complete | `feat/pr-13-legacy-removal` |
 | PR-14 | Supabase Google Workspace authentication | Complete | `feat/pr-14-supabase-auth` |
 | PR-15 | Server-enforced role-based access control | Complete | `feat/pr-15-rbac` |
-| PR-16 | Fly.io deployment preparation | In progress | `feat/pr-16-fly-deployment` |
+| PR-16 | Fly.io deployment preparation | Complete | `feat/pr-16-fly-deployment` |
 
 ## PR-16: Fly.io Deployment Preparation
 
@@ -45,6 +45,9 @@ Supabase callback configuration, smoke tests, and release rollback.
 
 **Rollback:** no live release exists from this PR. If a later authorized release fails, roll back
 to the prior Fly image rather than changing database data or scaling realtime instances.
+
+**Evidence:** merged as `065df35` (`feat(deploy): prepare Fly platform runtime`). This milestone
+prepared configuration only; no Fly app, secret, or release was created.
 
 ## PR-15: Server-Enforced Role-Based Access Control
 

@@ -15,9 +15,11 @@ the product, architecture, roadmap, and development workflow without previous ch
 7. [`roadmap/README.md`](roadmap/README.md) - sequenced, testable refactor milestones.
 8. [`development/local-development.md`](development/local-development.md) - current local
    startup instructions and target developer experience.
-9. [`development/workflow.md`](development/workflow.md) - branches, commits, and PRs.
-10. [`development/testing.md`](development/testing.md) - required test strategy.
-11. [`development/definition-of-done.md`](development/definition-of-done.md) - milestone gate.
+9. [`development/supabase-and-fly-setup.md`](development/supabase-and-fly-setup.md) - configure
+   local Google sign-in now and a future Fly release without exposing secrets.
+10. [`development/workflow.md`](development/workflow.md) - branches, commits, and PRs.
+11. [`development/testing.md`](development/testing.md) - required test strategy.
+12. [`development/definition-of-done.md`](development/definition-of-done.md) - milestone gate.
 
 ## Structure
 

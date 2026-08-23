@@ -6,10 +6,9 @@ This is the manual equivalent of the PR-14 authentication tests. It requires a S
 with the Google provider enabled and a verified AISC Workspace account; automated tests use no
 real credentials.
 
-1. In `apps/hub/.env`, set matching `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`,
-   `VITE_SUPABASE_URL`, and `VITE_SUPABASE_PUBLISHABLE_KEY`. In Supabase, enable Google and add
-   `http://localhost:8787` as a redirect URL. From the repository root, run `pnpm dev` and open
-   `http://localhost:8787`.
+1. Complete **Set 1** in
+   [`supabase-and-fly-setup.md`](supabase-and-fly-setup.md), then source `apps/hub/.env` before
+   running `pnpm dev` as shown there. Open `http://localhost:8787`.
 2. Select **Sign in with Google**, complete the Google prompt with an `@aischennai.org` account,
    and confirm the hub loads. Reload the page: the signed-in session must remain available.
 3. Select **Log out**, reload, and confirm the Google sign-in gate is displayed again.
