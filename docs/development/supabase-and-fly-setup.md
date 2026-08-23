@@ -70,10 +70,11 @@ Open **Authentication → URL Configuration** in Supabase and set:
 
 ### 4. Create the uncommitted local environment file
 
-From the repository root, copy the safe template:
+From the repository root, create the safe template only if you do not already have a local
+environment file:
 
 ```bash
-cp apps/hub/.env.example apps/hub/.env
+test -f apps/hub/.env || cp apps/hub/.env.example apps/hub/.env
 ```
 
 Replace the first four placeholder values in `apps/hub/.env` with the URL and publishable key
