@@ -38,6 +38,7 @@ test("preview navigation retains the explicit preview query", async ({ page }) =
 test("preview keeps its visual boundary across all six Arcade game launches", async ({ page }) => {
   await page.goto("/?dev-auth=1&workspace=arcade");
   await expect(page.getByRole("button", { name: "IMPOSTER" })).toBeVisible();
+  await expect(page.locator(".launchCardButton")).toHaveCount(6);
 
   for (const title of ["IMPOSTER", "QUIZ SHOOTER", "BUILD A BEAST"]) {
     await page.getByRole("button", { name: title }).click();
@@ -73,6 +74,17 @@ test("preview styles the remaining Forge navigation without changing its boundar
   const rail = page.locator(".forgeSidebar");
   for (const label of ["Profile", "Clubs", "Classes", "Requests"]) {
     await rail.getByRole("button", { name: label, exact: true }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-forge-preview", "figma");
+  }
+});
+
+test("preview renders Clubs and Classes as compact Figma card grids", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+  const rail = page.locator(".forgeSidebar");
+  for (const label of ["Clubs", "Classes"]) {
+    await rail.getByRole("button", { name: label, exact: true }).click();
+    await expect(page.locator(".communityGrid")).toBeVisible();
+    await expect(page.locator(".communityCard")).toHaveCount(3);
     await expect(page.locator("html")).toHaveAttribute("data-forge-preview", "figma");
   }
 });

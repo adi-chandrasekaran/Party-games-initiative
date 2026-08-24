@@ -1,0 +1,34 @@
+/* Loaded after legacy styles; inert outside the explicit local preview root. */
+:root[data-forge-preview='figma'] .workspaceStage { padding: 28px !important; background: #0d1117 !important; }
+:root[data-forge-preview='figma'] .workspaceHome { width: 100% !important; margin: 0 !important; padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'] .workspaceHero { display: block !important; min-height: 0 !important; margin: 0 0 24px !important; padding: 0 !important; text-align: left !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'] .workspaceEyebrow { display: none !important; }
+:root[data-forge-preview='figma'] .workspaceHero h1 { margin: 0 !important; color: #e6edf3 !important; font-size: 26px !important; line-height: 1.2 !important; text-align: left !important; }
+:root[data-forge-preview='figma'] .workspaceHero h2 { margin: 4px 0 0 !important; color: #8b949e !important; font-size: 13px !important; font-weight: 400 !important; text-align: left !important; }
+:root[data-forge-preview='figma'] .workspaceLauncherGrid { width: 100% !important; max-width: none !important; margin: 0 !important; grid-template-columns: repeat(5, minmax(150px, 1fr)) !important; gap: 16px !important; }
+:root[data-forge-preview='figma'] .launchCardFrame { min-height: 0 !important; height: 190px !important; aspect-ratio: 1 / 1 !important; padding: 16px !important; border: 1px solid transparent !important; border-radius: 12px !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'] .launchCardButton:nth-child(3n + 1) .launchCardFrame { background: linear-gradient(135deg, #20183c, #18192d) !important; }
+:root[data-forge-preview='figma'] .launchCardButton:nth-child(3n + 2) .launchCardFrame { background: linear-gradient(135deg, #0d2d38, #10252e) !important; }
+:root[data-forge-preview='figma'] .launchCardButton:nth-child(3n) .launchCardFrame { background: linear-gradient(135deg, #0d3028, #11251f) !important; }
+:root[data-forge-preview='figma'] .launchCardIcon { width: 38px !important; height: 38px !important; margin-bottom: 14px !important; }
+:root[data-forge-preview='figma'] .launchCardTitle { margin: 0 0 5px !important; color: #e6edf3 !important; font-family: "Plus Jakarta Sans", Inter, sans-serif !important; font-size: 15px !important; font-weight: 700 !important; letter-spacing: 0 !important; }
+:root[data-forge-preview='figma'] .launchCardSubtitle { margin: 0 !important; color: #8b949e !important; font-size: 11px !important; line-height: 1.45 !important; }
+:root[data-forge-preview='figma'] .launchCardCta { margin-top: auto !important; padding: 6px 12px !important; border: 0 !important; border-radius: 8px !important; color: #fff !important; font-size: 11px !important; font-weight: 600 !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'] .launchCardButton:nth-child(3n + 1) .launchCardCta { background: #7c3aed !important; }
+:root[data-forge-preview='figma'] .launchCardButton:nth-child(3n + 2) .launchCardCta { background: #06b6d4 !important; }
+:root[data-forge-preview='figma'] .launchCardButton:nth-child(3n) .launchCardCta { background: #10b981 !important; }
+:root[data-forge-preview='figma'] .forgeMain:has(.communityPage) { padding: 28px !important; overflow: auto !important; }
+:root[data-forge-preview='figma'] .communityPage { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; background: transparent !important; border: 0 !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'] .communityPage .workspaceHero { margin-bottom: 24px !important; }
+:root[data-forge-preview='figma'] .communityGrid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 16px !important; margin: 0 !important; }
+:root[data-forge-preview='figma'] .communityCard { position: relative !important; min-height: 232px !important; padding: 20px !important; display: flex !important; flex-direction: column !important; gap: 0 !important; border: 1px solid #30363d !important; border-radius: 12px !important; background: #161b22 !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'] .communityCardTop { display: block !important; min-height: 72px !important; }
+:root[data-forge-preview='figma'] .communityAvatar { width: 32px !important; height: 32px !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; font-size: 28px !important; }
+:root[data-forge-preview='figma'] .communityCardTop > div:last-child { display: contents !important; }
+:root[data-forge-preview='figma'] .communityCardTop strong { position: absolute !important; top: 100px !important; left: 20px !important; color: #e6edf3 !important; font-family: "Plus Jakarta Sans", Inter, sans-serif !important; font-size: 15px !important; font-weight: 700 !important; }
+:root[data-forge-preview='figma'] .communityCardTop span { position: absolute !important; top: 24px !important; right: 20px !important; padding: 2px 8px !important; border-radius: 10px !important; color: #8b949e !important; background: #2d333b !important; font-size: 10px !important; }
+:root[data-forge-preview='figma'] .communityCard p { margin: 28px 0 0 !important; color: #8b949e !important; font-size: 12px !important; line-height: 1.5 !important; }
+:root[data-forge-preview='figma'] .communityMeta { margin-top: auto !important; color: #8b949e !important; font-size: 11px !important; }
+:root[data-forge-preview='figma'] .communityAction { align-self: flex-start !important; margin-top: 12px !important; padding: 6px 12px !important; border: 0 !important; border-radius: 8px !important; background: #7c3aed !important; color: #fff !important; box-shadow: none !important; font-size: 11px !important; }
+@media (max-width: 1100px) { :root[data-forge-preview='figma'] .workspaceLauncherGrid { grid-template-columns: repeat(4, minmax(150px, 1fr)) !important; } }
+@media (max-width: 760px) { :root[data-forge-preview='figma'] .workspaceLauncherGrid,:root[data-forge-preview='figma'] .communityGrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }

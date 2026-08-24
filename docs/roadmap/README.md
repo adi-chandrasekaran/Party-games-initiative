@@ -37,7 +37,8 @@ human-approved PR.
 | PR-21 | Preview-only Arcade Figma parity | In review | `feat/pr-21-preview-arcade-parity` |
 | PR-22 | Preview-only Planner Figma parity | In review | `feat/pr-22-preview-planner-parity` |
 | PR-23 | Preview-only remaining pages and regression gate | In review | `feat/pr-23-preview-forge-regression` |
-| PR-24 | Preview-only Figma shell rebuild | In progress | `feat/pr-24-preview-shell-rebuild` |
+| PR-24 | Preview-only Figma shell rebuild | In review | `feat/pr-24-preview-shell-rebuild` |
+| PR-25 | Preview-only Arcade Figma card parity | In progress | `feat/pr-25-preview-arcade-parity` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -114,6 +115,21 @@ sizes, matches the pinned Figma shell proportions and tokens, and no style appli
 the local preview build flag and `?dev-auth=1`.
 
 **Rollback:** remove the explicit preview URL flag or build flag.
+
+## PR-25: Preview-Only Arcade Figma Card Parity
+
+Use the pinned Figma Arcade card hierarchy for the six real Forge games, and bring each existing
+entry surface into that preview-only visual system. Imposter, Quiz Shooter, Build a Beast,
+Flashcards, Quiz Bowl, and Word Match retain their existing routes, decks, realtime behavior,
+and game rules.
+
+**Excluded:** game logic, game inventory, authentication, production styling, and AI UI.
+
+**Acceptance gate:** exactly six Arcade launch cards appear in the Figma grid; every card opens
+and returns; iframe and embedded entries retain the preview marker only on the explicit local
+preview URL.
+
+**Rollback:** remove the local preview flag; no game or room data changes.
 
 ## PR-19: Local Authenticated Forge Preview
 
