@@ -35,7 +35,8 @@ human-approved PR.
 | PR-19 | Local authenticated Forge preview | In review | `feat/pr-19-local-forge-preview` |
 | PR-20 | Preview-only Figma visual foundation | In review | `feat/pr-20-preview-figma-shell` |
 | PR-21 | Preview-only Arcade Figma parity | In review | `feat/pr-21-preview-arcade-parity` |
-| PR-22 | Preview-only Planner Figma parity | In progress | `feat/pr-22-preview-planner-parity` |
+| PR-22 | Preview-only Planner Figma parity | In review | `feat/pr-22-preview-planner-parity` |
+| PR-23 | Preview-only remaining pages and regression gate | In progress | `feat/pr-23-preview-forge-regression` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -84,6 +85,19 @@ only with the explicit build and URL flags; existing focused Playwright interact
 desktop and narrow viewports.
 
 **Rollback:** remove the preview query or build flag; no planner data is migrated or modified.
+
+## PR-23: Preview-Only Remaining Pages and Regression Gate
+
+Complete the preview visual layer for Profile, Statistics, Chats, Decks, Clubs, Classes,
+Requests, and admin-facing cards. Add regression coverage for the explicit preview boundary and
+the complete six-game/four-planner inventory.
+
+**Excluded:** all product behavior, roles, data, authentication, and production UI.
+
+**Acceptance gate:** desktop and narrow reference tests retain the preview-only style; all
+remaining navigable pages use preview card/tokens; an ordinary URL has no preview marker.
+
+**Rollback:** omit `?dev-auth=1` or `VITE_ENABLE_LOCAL_PREVIEW=true`; no stored data is affected.
 
 ## PR-19: Local Authenticated Forge Preview
 

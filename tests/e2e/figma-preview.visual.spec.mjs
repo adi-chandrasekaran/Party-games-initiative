@@ -67,3 +67,12 @@ test("preview keeps its visual boundary across all four Planner app launches", a
     await page.getByRole("button", { name: "Back to Planner" }).click();
   }
 });
+
+test("preview styles the remaining Forge navigation without changing its boundary", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+  const rail = page.locator(".forgeSidebar");
+  for (const label of ["Profile", "Clubs", "Classes", "Requests"]) {
+    await rail.getByRole("button", { name: label, exact: true }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-forge-preview", "figma");
+  }
+});

@@ -1758,6 +1758,59 @@ h2 {
   background: var(--figma-shell-surface-2-light);
 }
 
+/* PR-23: secondary Forge pages share the same visual system, without changing their actions. */
+:root[data-forge-preview='figma'] .profilePage,
+:root[data-forge-preview='figma'] .statsPage,
+:root[data-forge-preview='figma'] .chatsPage,
+:root[data-forge-preview='figma'] .workspaceDecksView,
+:root[data-forge-preview='figma'] .communityGrid,
+:root[data-forge-preview='figma'] .requestOnlyPanel,
+:root[data-forge-preview='figma'] .privateAppsPage,
+:root[data-forge-preview='figma'] .privateAppDetail {
+  color: var(--figma-shell-text-dark);
+}
+
+:root[data-forge-preview='figma'] .profileCard,
+:root[data-forge-preview='figma'] .profileEditCard,
+:root[data-forge-preview='figma'] .profileStatTile,
+:root[data-forge-preview='figma'] .statsCard,
+:root[data-forge-preview='figma'] .chatPanel,
+:root[data-forge-preview='figma'] .chatThread,
+:root[data-forge-preview='figma'] .deckBubble,
+:root[data-forge-preview='figma'] .communityCard,
+:root[data-forge-preview='figma'] .privateAppCard,
+:root[data-forge-preview='figma'] .requestOnlyPanel {
+  border-color: var(--figma-shell-border-dark) !important;
+  border-radius: 16px !important;
+  background: var(--figma-shell-surface-dark) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.2) !important;
+}
+
+:root[data-forge-preview='figma'] .profilePage h1,
+:root[data-forge-preview='figma'] .statsPage h1,
+:root[data-forge-preview='figma'] .communityPage h1,
+:root[data-forge-preview='figma'] .requestOnlyPanel h1 {
+  letter-spacing: -0.06em;
+}
+
+:root[data-forge-preview='figma'][data-forge-theme='light'] .profilePage,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .statsPage,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .chatsPage,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .workspaceDecksView,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .communityGrid,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .requestOnlyPanel { color: var(--figma-shell-text-light); }
+
+:root[data-forge-preview='figma'][data-forge-theme='light'] .profileCard,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .profileEditCard,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .profileStatTile,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .statsCard,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .chatPanel,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .chatThread,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .deckBubble,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .communityCard,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .privateAppCard,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .requestOnlyPanel { border-color: var(--figma-shell-border-light) !important; background: var(--figma-shell-surface-light) !important; }
+
 /* Local Figma Make preview. This selector is set only for ?dev-auth=1 builds with
  * VITE_ENABLE_LOCAL_PREVIEW=true, so the authenticated product keeps its own skin. */
 :root[data-forge-preview='figma'] {
