@@ -25,6 +25,8 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const PORT = Number(process.env.PLATFORM_SERVER_PORT || process.env.PORT || 8787);
 const COOKIE_NAME = "party_games_session";
 const SCHOOL_DOMAIN = "@aischennai.org";
+const LOCAL_PREVIEW_EMAIL = "local-preview@aischennai.org";
+const LOCAL_PREVIEW_USER_ID = "local-forge-preview";
 const AUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 const AUTH_RATE_LIMIT_MAX_ATTEMPTS = 10;
 const __filename = fileURLToPath(import.meta.url);
@@ -256,6 +258,10 @@ function getOwnerLoginEmail() {
 
 function legacyPasswordAuthDisabled() {
   return process.env.NODE_ENV === "production" && process.env.ALLOW_LEGACY_PASSWORD_AUTH !== "true";
+}
+
+function localPreviewEnabled() {
+  return process.env.NODE_ENV !== "production" && process.env.FORGE_LOCAL_PREVIEW === "true";
 }
 
 function requireLegacyPasswordAuth(res) {
@@ -542,6 +548,39 @@ async function handleSupabaseAuth(req, res) {
     platformUser = await addOrUpdateUser({ name: user.name, emailOrUsername: profile.email, role: "student", hostGameIds: [] });
   }
   user.role = platformUser.role;
+
+  const sessionId = createSession(store, user.id);
+  await writeStore(store);
+  setCookie(res, COOKIE_NAME, sessionId);
+  json(res, 200, await bootstrapPayload(store, user));
+}
+
+async function handleLocalPreviewSession(req, res) {
+  if (!localPreviewEnabled()) return sendJsonError(res, 404, "Not found");
+
+  const store = await readStore();
+  const existing = store.users.find((entry) => entry.id === LOCAL_PREVIEW_USER_ID || normalizeEmail(entry.email) === LOCAL_PREVIEW_EMAIL);
+  const user = existing || {
+    id: LOCAL_PREVIEW_USER_ID,
+    username: "local-preview",
+    createdAt: new Date().toISOString(),
+  };
+
+  user.name = "Local Forge Preview";
+  user.username = "local-preview";
+  user.email = LOCAL_PREVIEW_EMAIL;
+  user.avatar = "";
+  user.role = "admin";
+  user.authProvider = "local-preview";
+  if (!existing) store.users.push(user);
+
+  await addOrUpdateUser({
+    id: LOCAL_PREVIEW_USER_ID,
+    name: user.name,
+    emailOrUsername: LOCAL_PREVIEW_EMAIL,
+    role: "admin",
+    hostGameIds: [],
+  });
 
   const sessionId = createSession(store, user.id);
   await writeStore(store);
@@ -1063,6 +1102,7 @@ export function createHubApiServer({ staticRoot } = {}) {
     if (req.method === "POST" && routePath === "/login") return await handleLogin(req, res);
     if (req.method === "POST" && routePath === "/auth/google") return await handleGoogleAuth(req, res);
     if (req.method === "POST" && routePath === "/auth/supabase") return await handleSupabaseAuth(req, res);
+    if (req.method === "POST" && routePath === "/dev/preview-session") return await handleLocalPreviewSession(req, res);
     if (req.method === "POST" && routePath === "/reset-password") return await handleResetPassword(req, res);
     if (req.method === "POST" && routePath === "/logout") return await handleLogout(req, res);
     if (req.method === "PATCH" && routePath === "/profile") return await handleProfile(req, res);

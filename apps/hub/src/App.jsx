@@ -64,6 +64,7 @@ const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY |
 // Root `pnpm dev` serves a production Vite build, so local test access must be explicitly
 // enabled rather than inferred from Vite's mode. This flag is never set in hosted environments.
 const LOCAL_AUTH_ENABLED = import.meta.env.DEV || import.meta.env.VITE_ENABLE_LOCAL_AUTH === "true";
+const LOCAL_PREVIEW_ENABLED = import.meta.env.VITE_ENABLE_LOCAL_PREVIEW === "true";
 const supabase = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
   ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
   : null;
@@ -2724,6 +2725,11 @@ export default function App() {
 
   useEffect(() => {
     const restoreSupabaseSession = async () => {
+      const localPreviewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
+      if (LOCAL_PREVIEW_ENABLED && localPreviewRequested) {
+        await apiRequest("/api/dev/preview-session", { method: "POST" });
+        return refreshState();
+      }
       if (supabase) {
         const { data } = await supabase.auth.getSession();
         if (data.session?.access_token) {

@@ -31,7 +31,28 @@ human-approved PR.
 | PR-13 | Legacy process and compatibility removal | Complete | `feat/pr-13-legacy-removal` |
 | PR-14 | Supabase Google Workspace authentication | Complete | `feat/pr-14-supabase-auth` |
 | PR-15 | Server-enforced role-based access control | Complete | `feat/pr-15-rbac` |
-| PR-16 | Fly.io deployment preparation | In progress | `feat/pr-16-fly-deployment` |
+| PR-16 | Fly.io deployment preparation | Complete | `feat/pr-16-fly-deployment` |
+| PR-19 | Local authenticated Forge preview | In progress | `feat/pr-19-local-forge-preview` |
+
+## PR-19: Local Authenticated Forge Preview
+
+**Status reconciliation:** `origin/main` contains merge commit `cb922a1` for PR-16, so its
+previous `In progress` status is corrected to `Complete` here before PR-19 begins.
+
+Provide a separate local development branch and a direct preview URL for shell and game work.
+The URL must create a real, local server session so game and admin APIs retain their normal
+authorization behavior. It is enabled only by explicit browser and server environment switches,
+and the server must reject it in production.
+
+**Excluded:** changing Supabase authentication, weakening hosted access control, committing or
+deploying credentials, and Fly deployment.
+
+**Acceptance gate:** with both local preview switches set, the documented URL opens Forge as the
+local preview admin and can call an admin API; without the server switch the endpoint returns
+`404`; production mode always rejects it; integration and Playwright tests cover the behavior.
+
+**Rollback:** unset either preview switch or stop the separate local process. No customer
+identity, hosted configuration, or production session is changed.
 
 ## PR-16: Fly.io Deployment Preparation
 
