@@ -54,3 +54,16 @@ test("preview keeps its visual boundary across all six Arcade game launches", as
     await page.getByRole("button", { name: "Back to Arcade" }).click();
   }
 });
+
+test("preview keeps its visual boundary across all four Planner app launches", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=planner");
+  await expect(page.getByRole("button", { name: "HABIT TRACKER" })).toBeVisible();
+
+  for (const title of ["HABIT TRACKER", "TO-DO BOARD", "TIMER", "ASSIGNMENTS"]) {
+    await page.getByRole("button", { name: title }).click();
+    const frame = page.locator(".sameOriginMicroappFrame");
+    await expect(frame).toHaveAttribute("src", /dev-auth=1/);
+    await expect(frame.contentFrame().locator("html")).toHaveAttribute("data-forge-preview", "figma");
+    await page.getByRole("button", { name: "Back to Planner" }).click();
+  }
+});

@@ -34,7 +34,8 @@ human-approved PR.
 | PR-16 | Fly.io deployment preparation | Complete | `feat/pr-16-fly-deployment` |
 | PR-19 | Local authenticated Forge preview | In review | `feat/pr-19-local-forge-preview` |
 | PR-20 | Preview-only Figma visual foundation | In review | `feat/pr-20-preview-figma-shell` |
-| PR-21 | Preview-only Arcade Figma parity | In progress | `feat/pr-21-preview-arcade-parity` |
+| PR-21 | Preview-only Arcade Figma parity | In review | `feat/pr-21-preview-arcade-parity` |
+| PR-22 | Preview-only Planner Figma parity | In progress | `feat/pr-22-preview-planner-parity` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -68,6 +69,21 @@ Playwright coverage passes.
 
 **Rollback:** remove `?dev-auth=1` or unset `VITE_ENABLE_LOCAL_PREVIEW`; no game data or room
 state is changed by this visual layer.
+
+## PR-22: Preview-Only Planner Figma Parity
+
+Apply the preview Figma treatment to Planner and its four existing apps: Habit Tracker, To-do
+Board, Timer, and Assignments. Browser-local data, timers, sheets, boards, and all interactions
+are preserved.
+
+**Excluded:** new planner tools, data-model changes, AI-assistant UI, production styling, and
+authentication changes.
+
+**Acceptance gate:** all four Planner launch cards and surfaces retain the local preview marker
+only with the explicit build and URL flags; existing focused Playwright interactions pass at
+desktop and narrow viewports.
+
+**Rollback:** remove the preview query or build flag; no planner data is migrated or modified.
 
 ## PR-19: Local Authenticated Forge Preview
 

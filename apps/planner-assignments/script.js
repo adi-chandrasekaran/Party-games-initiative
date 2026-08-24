@@ -1,4 +1,7 @@
 const STORAGE_KEY = "forge.planner.assignments.v1";
+if (window.__FORGE_LOCAL_PREVIEW__ === true && new URLSearchParams(window.location.search).get("dev-auth") === "1") {
+  document.documentElement.dataset.forgePreview = "figma";
+}
 const rootTabs = document.querySelector("#sheetTabs");
 const rootMeta = document.querySelector("#sheetMeta");
 const rootGrid = document.querySelector("#sheetGrid");

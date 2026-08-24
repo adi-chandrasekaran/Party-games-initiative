@@ -1,4 +1,7 @@
 const root = document.querySelector("#viewRoot");
+if (window.__FORGE_LOCAL_PREVIEW__ === true && new URLSearchParams(window.location.search).get("dev-auth") === "1") {
+  document.documentElement.dataset.forgePreview = "figma";
+}
 const PRESETS = [
   { minutes: 5, label: "Quick reset" },
   { minutes: 25, label: "Pomodoro" },
