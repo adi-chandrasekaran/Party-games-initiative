@@ -34,3 +34,23 @@ test("preview navigation retains the explicit preview query", async ({ page }) =
   await expect(page).toHaveURL(/dev-auth=1/);
   await expect(page.locator("html")).toHaveAttribute("data-forge-preview", "figma");
 });
+
+test("preview keeps its visual boundary across all six Arcade game launches", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+  await expect(page.getByRole("button", { name: "IMPOSTER" })).toBeVisible();
+
+  for (const title of ["IMPOSTER", "QUIZ SHOOTER", "BUILD A BEAST"]) {
+    await page.getByRole("button", { name: title }).click();
+    const frame = page.locator(".sameOriginMicroappFrame");
+    await expect(frame).toHaveAttribute("src", /dev-auth=1/);
+    await expect(frame.contentFrame().locator("html")).toHaveAttribute("data-forge-preview", "figma");
+    await page.getByRole("button", { name: "Back to Arcade" }).click();
+  }
+
+  for (const title of ["FLASHCARDS", "QUIZ BOWL", "WORD MATCH"]) {
+    await page.getByRole("button", { name: title }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-forge-preview", "figma");
+    await expect(page.getByRole("button", { name: "Back to Arcade" })).toBeVisible();
+    await page.getByRole("button", { name: "Back to Arcade" }).click();
+  }
+});

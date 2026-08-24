@@ -33,7 +33,8 @@ human-approved PR.
 | PR-15 | Server-enforced role-based access control | Complete | `feat/pr-15-rbac` |
 | PR-16 | Fly.io deployment preparation | Complete | `feat/pr-16-fly-deployment` |
 | PR-19 | Local authenticated Forge preview | In review | `feat/pr-19-local-forge-preview` |
-| PR-20 | Preview-only Figma visual foundation | In progress | `feat/pr-20-preview-figma-shell` |
+| PR-20 | Preview-only Figma visual foundation | In review | `feat/pr-20-preview-figma-shell` |
+| PR-21 | Preview-only Arcade Figma parity | In progress | `feat/pr-21-preview-arcade-parity` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -50,6 +51,23 @@ Arcade cards remain present.
 
 **Rollback:** remove `?dev-auth=1` or unset `VITE_ENABLE_LOCAL_PREVIEW`; no persisted user or
 application state changes.
+
+## PR-21: Preview-Only Arcade Figma Parity
+
+Apply the approved preview Figma treatment to the Arcade workspace and its six existing game
+surfaces: Imposter, Quiz Shooter, Build a Beast, Flashcards, Quiz Bowl, and Word Match. Routes,
+deck selection, realtime transport, game rules, and all persisted data remain unchanged.
+
+**Excluded:** new games, AI-assistant UI, production styling, authentication changes, and game
+logic changes.
+
+**Acceptance gate:** an explicit local preview URL presents all six Arcade cards and each game
+surface in the preview treatment at desktop and narrow sizes; launching each game retains the
+preview query; ordinary URLs do not receive the treatment; focused functional and visual
+Playwright coverage passes.
+
+**Rollback:** remove `?dev-auth=1` or unset `VITE_ENABLE_LOCAL_PREVIEW`; no game data or room
+state is changed by this visual layer.
 
 ## PR-19: Local Authenticated Forge Preview
 

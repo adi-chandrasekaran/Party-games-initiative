@@ -322,6 +322,11 @@ function buildCardBackground(accent, theme = "dark") {
 }
 
 function SameOriginMicroapp({ app, onBack }) {
+  const source = new URL(app.sameOriginEntry, window.location.origin);
+  if (new URLSearchParams(window.location.search).get("dev-auth") === "1") {
+    source.searchParams.set("dev-auth", "1");
+  }
+
   return (
     <section className="sameOriginMicroapp" aria-label={`${app.title} app`}>
       <div className="sameOriginMicroappToolbar">
@@ -329,7 +334,11 @@ function SameOriginMicroapp({ app, onBack }) {
           Back to {app.area === "planner" ? "Planner" : "Arcade"}
         </button>
       </div>
-      <iframe className="sameOriginMicroappFrame" title={app.title} src={app.sameOriginEntry} />
+      <iframe
+        className="sameOriginMicroappFrame"
+        title={app.title}
+        src={`${source.pathname}${source.search}${source.hash}`}
+      />
     </section>
   );
 }

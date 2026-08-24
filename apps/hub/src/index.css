@@ -1702,6 +1702,62 @@ h2 {
   }
 }
 
+/* PR-21: detailed Arcade treatment remains unavailable without the preview root attribute. */
+:root[data-forge-preview='figma'] .arcadeGameView {
+  gap: 20px;
+  padding: 4px 0 10px;
+}
+
+:root[data-forge-preview='figma'] .arcadeGameTopBar {
+  padding: 20px 22px;
+  border: 1px solid var(--figma-shell-border-dark);
+  border-radius: 16px;
+  background: var(--figma-shell-surface-dark);
+}
+
+:root[data-forge-preview='figma'] .arcadeGameTopBar h3 { letter-spacing: -0.04em; }
+
+:root[data-forge-preview='figma'] .deckPickerChip,
+:root[data-forge-preview='figma'] .arcadeQuizChoice,
+:root[data-forge-preview='figma'] .arcadeMatchChip {
+  border-color: var(--figma-shell-border-dark);
+  border-radius: 10px;
+  background: var(--figma-shell-surface-2-dark);
+}
+
+:root[data-forge-preview='figma'] .deckPickerChip.isActive,
+:root[data-forge-preview='figma'] .arcadeMatchChip.selected {
+  border-color: var(--figma-shell-violet);
+  background: rgba(124, 58, 237, 0.13);
+  color: var(--figma-shell-violet-light);
+}
+
+:root[data-forge-preview='figma'] .arcadeFlipFace,
+:root[data-forge-preview='figma'] .arcadeQuizQuestion {
+  border-color: var(--figma-shell-border-dark);
+  border-radius: 16px;
+  background: var(--figma-shell-surface-dark);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.24);
+}
+
+:root[data-forge-preview='figma'] .arcadeFlipFace.back {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.22), var(--figma-shell-surface-dark));
+}
+
+:root[data-forge-preview='figma'][data-forge-theme='light'] .arcadeGameTopBar,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .arcadeFlipFace,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .arcadeQuizQuestion {
+  border-color: var(--figma-shell-border-light);
+  background: var(--figma-shell-surface-light);
+}
+
+:root[data-forge-preview='figma'][data-forge-theme='light'] .deckPickerChip,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .arcadeQuizChoice,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .arcadeMatchChip {
+  border-color: var(--figma-shell-border-light);
+  background: var(--figma-shell-surface-2-light);
+}
+
 /* Local Figma Make preview. This selector is set only for ?dev-auth=1 builds with
  * VITE_ENABLE_LOCAL_PREVIEW=true, so the authenticated product keeps its own skin. */
 :root[data-forge-preview='figma'] {
