@@ -1336,6 +1336,8 @@ function ForgeShell({
 
   const selectedDeck = decks.find((deck) => deck.id === selectedDeckId) || null;
   const arcadeGames = games;
+  const previewQuery = new URLSearchParams(window.location.search).get("dev-auth") === "1" ? "&dev-auth=1" : "";
+  const previewRouteQuery = previewQuery ? "?dev-auth=1" : "";
   const currentWorkspace = activeView === "planner" ? "planner" : "arcade";
   const currentTab = workspaceTabs[currentWorkspace];
   const setCurrentTab = (tab) => {
@@ -1353,7 +1355,7 @@ function ForgeShell({
     setActiveView(view);
     setActiveArcadeGame("");
     setActiveMicroappId("");
-    window.history.pushState({}, "", `/?workspace=${view === "planner" ? "planner" : "arcade"}`);
+    window.history.pushState({}, "", `/?workspace=${view === "planner" ? "planner" : "arcade"}${previewQuery}`);
     if (view === "arcade" || view === "planner") {
       setWorkspaceTabs((prev) => ({ ...prev, [view]: "home" }));
     }
@@ -1363,7 +1365,7 @@ function ForgeShell({
     setActiveView(item.area);
     setWorkspaceTabs((prev) => ({ ...prev, [item.area]: "home" }));
     setActiveMicroappId(item.id);
-    window.history.pushState({}, "", item.canonicalRoute);
+    window.history.pushState({}, "", `${item.canonicalRoute}${previewRouteQuery}`);
     return onRecordGamePlay?.(item.title);
   };
 
@@ -1371,7 +1373,7 @@ function ForgeShell({
     const app = getHubAppManifest(activeMicroappId);
     const workspace = app?.area || currentWorkspace;
     setActiveMicroappId("");
-    window.history.pushState({}, "", `/?workspace=${workspace}`);
+    window.history.pushState({}, "", `/?workspace=${workspace}${previewQuery}`);
   };
 
   const arcadeHome = () => (

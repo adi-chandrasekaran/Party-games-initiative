@@ -27,3 +27,10 @@ test("normal application URL does not enable the preview visual attribute", asyn
   await page.goto("/?workspace=arcade");
   await expect(page.locator("html")).not.toHaveAttribute("data-forge-preview", "figma");
 });
+
+test("preview navigation retains the explicit preview query", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+  await page.locator(".forgeSidebar").getByRole("button", { name: "Planner", exact: true }).click();
+  await expect(page).toHaveURL(/dev-auth=1/);
+  await expect(page.locator("html")).toHaveAttribute("data-forge-preview", "figma");
+});
