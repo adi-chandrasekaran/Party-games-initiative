@@ -323,9 +323,20 @@ function buildCardBackground(accent, theme = "dark") {
 
 function SameOriginMicroapp({ app, onBack }) {
   const source = new URL(app.sameOriginEntry, window.location.origin);
-  if (new URLSearchParams(window.location.search).get("dev-auth") === "1") {
+  const previewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
+  if (previewRequested) {
     source.searchParams.set("dev-auth", "1");
   }
+
+  const hideEmbeddedPreviewBackButton = (event) => {
+    if (!previewRequested) return;
+    const frameDocument = event.currentTarget.contentDocument;
+    if (!frameDocument || frameDocument.getElementById("forge-preview-shell-overrides")) return;
+    const style = frameDocument.createElement("style");
+    style.id = "forge-preview-shell-overrides";
+    style.textContent = ".backButton { display: none !important; }";
+    frameDocument.head.append(style);
+  };
 
   return (
     <section className="sameOriginMicroapp" aria-label={`${app.title} app`}>
@@ -338,6 +349,7 @@ function SameOriginMicroapp({ app, onBack }) {
         className="sameOriginMicroappFrame"
         title={app.title}
         src={`${source.pathname}${source.search}${source.hash}`}
+        onLoad={hideEmbeddedPreviewBackButton}
       />
     </section>
   );

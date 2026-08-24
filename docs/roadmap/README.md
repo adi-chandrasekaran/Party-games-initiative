@@ -39,8 +39,9 @@ human-approved PR.
 | PR-23 | Preview-only remaining pages and regression gate | In review | `feat/pr-23-preview-forge-regression` |
 | PR-24 | Preview-only Figma shell rebuild | In review | `feat/pr-24-preview-shell-rebuild` |
 | PR-25 | Preview-only Arcade Figma card parity | In review | `feat/pr-25-preview-arcade-parity` |
-| PR-26 | Preview-only launcher card touch-ups | In progress | `feat/pr-26-preview-card-touchups` |
-| PR-27 | Preview-only light-mode correction | In progress | `feat/pr-27-preview-light-mode` |
+| PR-26 | Preview-only launcher card touch-ups | In review | `feat/pr-26-preview-card-touchups` |
+| PR-27 | Preview-only light-mode correction | In review | `feat/pr-27-preview-light-mode` |
+| PR-28 | Preview-only layout polish | In progress | `feat/pr-28-preview-layout-polish` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -162,6 +163,22 @@ request panel are white with subtle grey borders; headings are near-black and su
 grey; Arcade and Planner canvas backgrounds are light while their card colours remain distinct.
 
 **Rollback:** select the dark theme or omit the local preview flag; no persisted data changes.
+
+## PR-28: Preview-Only Layout Polish
+
+Arrange the six Arcade launchers in one desktop row, center and enlarge the Requests copy, and
+remove duplicate navigation inside preview-embedded legacy apps. The parent Forge shell keeps the
+single Back to Arcade/Planner control. Make the embedded app frame fill the available preview
+workspace while retaining rounded lower corners.
+
+**Excluded:** micro-app behavior, routes, standalone app pages, game/planner content, production
+styling, and authentication.
+
+**Acceptance gate:** a desktop Arcade grid has six cards on one row; Requests is centered with
+larger copy; each of the seven embedded apps shows only the parent shell back action in preview;
+the embedded frame fills its shell to the bottom edge with rounded corners.
+
+**Rollback:** omit the explicit local preview URL; no persisted data changes.
 
 ## PR-19: Local Authenticated Forge Preview
 

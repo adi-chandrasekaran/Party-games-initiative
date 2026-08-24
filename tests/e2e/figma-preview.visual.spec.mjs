@@ -45,6 +45,7 @@ test("preview keeps its visual boundary across all six Arcade game launches", as
     const frame = page.locator(".sameOriginMicroappFrame");
     await expect(frame).toHaveAttribute("src", /dev-auth=1/);
     await expect(frame.contentFrame().locator("html")).toHaveAttribute("data-forge-preview", "figma");
+    await expect(frame.contentFrame().locator(".backButton")).toBeHidden();
     await page.getByRole("button", { name: "Back to Arcade" }).click();
   }
 
@@ -87,6 +88,30 @@ test("preview launcher cards have one contained action and uniform icons", async
   expect(measurements.every((card) => card.pseudoHidden && card.wrapperIsFlat)).toBe(true);
 });
 
+test("preview uses a six-card Arcade row, centered requests, and one shell back action", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+  const cards = page.locator(".launchCardButton");
+  await expect(cards).toHaveCount(6);
+  const cardTops = await cards.evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().top)));
+  expect(new Set(cardTops).size).toBe(1);
+
+  await page.getByRole("button", { name: "IMPOSTER" }).click();
+  const frame = page.locator(".sameOriginMicroappFrame");
+  await expect(frame.contentFrame().locator(".backButton")).toBeHidden();
+  await expect(page.getByRole("button", { name: "Back to Arcade" })).toHaveCount(1);
+  const frameFillsShell = await page.locator(".sameOriginMicroapp").evaluate((shell) => {
+    const frameRect = shell.querySelector(".sameOriginMicroappFrame").getBoundingClientRect();
+    const shellRect = shell.getBoundingClientRect();
+    return Math.abs(shellRect.bottom - frameRect.bottom) <= 1 && frameRect.height > 0;
+  });
+  expect(frameFillsShell).toBe(true);
+
+  await page.goto("/?dev-auth=1");
+  await page.locator(".forgeSidebar").getByRole("button", { name: "Requests", exact: true }).click();
+  await expect(page.locator(".requestOnlyPanel .workspaceHero")).toHaveCSS("text-align", "center");
+  await expect(page.locator(".requestOnlyPanel .workspaceHero h2")).toHaveCSS("font-size", "16px");
+});
+
 test("preview light mode uses readable surfaces and text across Forge pages", async ({ page }) => {
   const turnOnLightTheme = async () => {
     await expect(page.locator(".forgeSidebar")).toBeVisible();
@@ -127,6 +152,7 @@ test("preview keeps its visual boundary across all four Planner app launches", a
     const frame = page.locator(".sameOriginMicroappFrame");
     await expect(frame).toHaveAttribute("src", /dev-auth=1/);
     await expect(frame.contentFrame().locator("html")).toHaveAttribute("data-forge-preview", "figma");
+    await expect(frame.contentFrame().locator(".backButton")).toBeHidden();
     await page.getByRole("button", { name: "Back to Planner" }).click();
   }
 });
