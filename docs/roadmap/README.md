@@ -38,7 +38,8 @@ human-approved PR.
 | PR-22 | Preview-only Planner Figma parity | In review | `feat/pr-22-preview-planner-parity` |
 | PR-23 | Preview-only remaining pages and regression gate | In review | `feat/pr-23-preview-forge-regression` |
 | PR-24 | Preview-only Figma shell rebuild | In review | `feat/pr-24-preview-shell-rebuild` |
-| PR-25 | Preview-only Arcade Figma card parity | In progress | `feat/pr-25-preview-arcade-parity` |
+| PR-25 | Preview-only Arcade Figma card parity | In review | `feat/pr-25-preview-arcade-parity` |
+| PR-26 | Preview-only launcher card touch-ups | In progress | `feat/pr-26-preview-card-touchups` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -130,6 +131,21 @@ and returns; iframe and embedded entries retain the preview marker only on the e
 preview URL.
 
 **Rollback:** remove the local preview flag; no game or room data changes.
+
+## PR-26: Preview-Only Launcher Card Touch-Ups
+
+Remove the duplicate launcher action treatment introduced by legacy preview rules. Each Arcade and
+Planner launcher remains one compact coloured, clickable square with one in-card action. Normalize
+all launcher icons to a contained 40px box so titles and descriptions remain unobstructed.
+
+**Excluded:** card inventory, layout beyond the card hit area, game and planner behavior, routes,
+authentication, and production styling.
+
+**Acceptance gate:** Arcade shows exactly six and Planner exactly four coloured 190px launcher
+squares at desktop width, each has one action, and every icon is contained without overlapping its
+title. The appearance is active only on the explicit local preview URL.
+
+**Rollback:** remove the local preview flag; no persisted data changes.
 
 ## PR-19: Local Authenticated Forge Preview
 

@@ -56,6 +56,37 @@ test("preview keeps its visual boundary across all six Arcade game launches", as
   }
 });
 
+test("preview launcher cards have one contained action and uniform icons", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+  const cards = page.locator(".launchCardButton");
+  await expect(cards).toHaveCount(6);
+  await expect(cards.locator(".launchCardCta")).toHaveCount(6);
+
+  const measurements = await cards.evaluateAll((nodes) => nodes.map((node) => {
+    const frame = node.querySelector(".launchCardFrame").getBoundingClientRect();
+    const icon = node.querySelector(".launchCardIcon").getBoundingClientRect();
+    const title = node.querySelector(".launchCardTitle").getBoundingClientRect();
+    const pseudo = getComputedStyle(node, "::after");
+    const button = getComputedStyle(node);
+    return {
+      buttonWidth: node.getBoundingClientRect().width,
+      buttonHeight: node.getBoundingClientRect().height,
+      frameWidth: frame.width,
+      frameHeight: frame.height,
+      iconWidth: icon.width,
+      iconHeight: icon.height,
+      iconFits: icon.right <= frame.right && icon.bottom <= title.top,
+      pseudoHidden: pseudo.display === "none" || pseudo.content === "none",
+      wrapperIsFlat: button.backgroundColor === "rgba(0, 0, 0, 0)" && button.borderTopWidth === "0px",
+    };
+  }));
+
+  expect(measurements.every((card) => card.frameWidth === 190 && card.frameHeight === 190)).toBe(true);
+  expect(measurements.every((card) => card.buttonWidth === card.frameWidth && card.buttonHeight === card.frameHeight)).toBe(true);
+  expect(measurements.every((card) => card.iconWidth === 40 && card.iconHeight === 40 && card.iconFits)).toBe(true);
+  expect(measurements.every((card) => card.pseudoHidden && card.wrapperIsFlat)).toBe(true);
+});
+
 test("preview keeps its visual boundary across all four Planner app launches", async ({ page }) => {
   await page.goto("/?dev-auth=1&workspace=planner");
   await expect(page.getByRole("button", { name: "HABIT TRACKER" })).toBeVisible();
