@@ -87,6 +87,37 @@ test("preview launcher cards have one contained action and uniform icons", async
   expect(measurements.every((card) => card.pseudoHidden && card.wrapperIsFlat)).toBe(true);
 });
 
+test("preview light mode uses readable surfaces and text across Forge pages", async ({ page }) => {
+  const turnOnLightTheme = async () => {
+    await expect(page.locator(".forgeSidebar")).toBeVisible();
+    if (await page.locator("html").getAttribute("data-forge-theme") !== "light") {
+      await page.getByRole("button", { name: "Toggle theme" }).click();
+    }
+    await expect(page.locator("html")).toHaveAttribute("data-forge-theme", "light");
+  };
+
+  await page.goto("/?dev-auth=1");
+  await turnOnLightTheme();
+  await page.getByRole("button", { name: "Forge home" }).click();
+  await expect(page.locator(".forgeMain")).toHaveCSS("background-color", "rgb(247, 248, 251)");
+  await expect(page.locator(".forgeHomeCard").first()).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(page.locator(".forgeHomeCard strong").first()).toHaveCSS("color", "rgb(17, 24, 39)");
+
+  await page.goto("/?dev-auth=1&workspace=arcade");
+  await turnOnLightTheme();
+  await expect(page.locator(".workspaceStage")).toHaveCSS("background-color", "rgb(248, 250, 252)");
+  await expect(page.locator(".launchCardTitle").first()).toHaveCSS("color", "rgb(17, 24, 39)");
+
+  await page.goto("/?dev-auth=1");
+  await turnOnLightTheme();
+  const rail = page.locator(".forgeSidebar");
+  await rail.getByRole("button", { name: "Clubs", exact: true }).click();
+  await expect(page.locator(".communityCard").first()).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(page.locator(".communityCardTop strong").first()).toHaveCSS("color", "rgb(17, 24, 39)");
+  await rail.getByRole("button", { name: "Requests", exact: true }).click();
+  await expect(page.locator(".requestOnlyPanel")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+});
+
 test("preview keeps its visual boundary across all four Planner app launches", async ({ page }) => {
   await page.goto("/?dev-auth=1&workspace=planner");
   await expect(page.getByRole("button", { name: "HABIT TRACKER" })).toBeVisible();

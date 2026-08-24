@@ -35,5 +35,37 @@
 :root[data-forge-preview='figma'] .communityCard p { margin: 28px 0 0 !important; color: #8b949e !important; font-size: 12px !important; line-height: 1.5 !important; }
 :root[data-forge-preview='figma'] .communityMeta { margin-top: auto !important; color: #8b949e !important; font-size: 11px !important; }
 :root[data-forge-preview='figma'] .communityAction { align-self: flex-start !important; margin-top: 12px !important; padding: 6px 12px !important; border: 0 !important; border-radius: 8px !important; background: #7c3aed !important; color: #fff !important; box-shadow: none !important; font-size: 11px !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeMain { background: #f7f8fb !important; color: #111827 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .workspaceStage { background: #f8fafc !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .workspaceHero h1,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .workspaceHero h2 { color: #111827 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .workspaceHero h2 { color: #667085 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .launchCardButton:nth-child(3n + 1) .launchCardFrame { background: linear-gradient(135deg, #f1edff, #e8e1ff) !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .launchCardButton:nth-child(3n + 2) .launchCardFrame { background: linear-gradient(135deg, #e1f7fb, #d4f0f7) !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .launchCardButton:nth-child(3n) .launchCardFrame { background: linear-gradient(135deg, #e0f7ed, #d0f1e0) !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .launchCardTitle { color: #111827 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .launchCardSubtitle { color: #4b5563 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomePanel { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomePage { color: #111827 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeHero h1,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeHero h2,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeCard strong,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeUpdates strong { color: #111827 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeDescription,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeCard p,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeUpdates span { color: #667085 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeUpdates,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .forgeHomeCard { background: #fff !important; border: 1px solid #d9dee7 !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .communityPage,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .requestOnlyPanel { color: #111827 !important; background: transparent !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .communityCard,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .requestOnlyPanel { background: #fff !important; border-color: #d9dee7 !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .communityCardTop strong { color: #111827 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .communityCardTop span { color: #4b5563 !important; background: #edf0f4 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .communityCard p,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .communityMeta,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .requestOnlyPanel p { color: #667085 !important; }
+:root[data-forge-preview='figma'][data-forge-theme='light'] .requestOnlyPanel h1,
+:root[data-forge-preview='figma'][data-forge-theme='light'] .requestOnlyPanel h2 { color: #111827 !important; }
 @media (max-width: 1100px) { :root[data-forge-preview='figma'] .workspaceLauncherGrid { grid-template-columns: repeat(4, 190px) !important; } }
 @media (max-width: 760px) { :root[data-forge-preview='figma'] .workspaceLauncherGrid,:root[data-forge-preview='figma'] .communityGrid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } :root[data-forge-preview='figma'] .launchCardButton,:root[data-forge-preview='figma'] .launchCardFrame { width: 100% !important; } }

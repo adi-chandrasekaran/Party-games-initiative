@@ -40,6 +40,7 @@ human-approved PR.
 | PR-24 | Preview-only Figma shell rebuild | In review | `feat/pr-24-preview-shell-rebuild` |
 | PR-25 | Preview-only Arcade Figma card parity | In review | `feat/pr-25-preview-arcade-parity` |
 | PR-26 | Preview-only launcher card touch-ups | In progress | `feat/pr-26-preview-card-touchups` |
+| PR-27 | Preview-only light-mode correction | In progress | `feat/pr-27-preview-light-mode` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -146,6 +147,21 @@ squares at desktop width, each has one action, and every icon is contained witho
 title. The appearance is active only on the explicit local preview URL.
 
 **Rollback:** remove the local preview flag; no persisted data changes.
+
+## PR-27: Preview-Only Light-Mode Correction
+
+Correct the explicit local preview's light theme. Forge pages use white cards with fine grey
+borders and readable dark text; Arcade and Planner use a light canvas with separately tinted
+launcher cards. Community and request pages use the same readable surface and typography rules.
+
+**Excluded:** dark-theme appearance, app/game logic, content, routes, authentication, and
+production styling.
+
+**Acceptance gate:** in the preview's light theme, core Forge cards, community cards, and the
+request panel are white with subtle grey borders; headings are near-black and supporting text is
+grey; Arcade and Planner canvas backgrounds are light while their card colours remain distinct.
+
+**Rollback:** select the dark theme or omit the local preview flag; no persisted data changes.
 
 ## PR-19: Local Authenticated Forge Preview
 
