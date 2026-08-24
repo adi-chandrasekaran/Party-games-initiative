@@ -36,7 +36,8 @@ human-approved PR.
 | PR-20 | Preview-only Figma visual foundation | In review | `feat/pr-20-preview-figma-shell` |
 | PR-21 | Preview-only Arcade Figma parity | In review | `feat/pr-21-preview-arcade-parity` |
 | PR-22 | Preview-only Planner Figma parity | In review | `feat/pr-22-preview-planner-parity` |
-| PR-23 | Preview-only remaining pages and regression gate | In progress | `feat/pr-23-preview-forge-regression` |
+| PR-23 | Preview-only remaining pages and regression gate | In review | `feat/pr-23-preview-forge-regression` |
+| PR-24 | Preview-only Figma shell rebuild | In progress | `feat/pr-24-preview-shell-rebuild` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -98,6 +99,21 @@ the complete six-game/four-planner inventory.
 remaining navigable pages use preview card/tokens; an ordinary URL has no preview marker.
 
 **Rollback:** omit `?dev-auth=1` or `VITE_ENABLE_LOCAL_PREVIEW=true`; no stored data is affected.
+
+## PR-24: Preview-Only Figma Shell Rebuild
+
+Replace the previous preview CSS overlay with a final-order, scoped Figma shell layer. It owns
+the 64px outer rail, 240px workspace sidebar, Figma typography, card canvas, and responsive
+collapse behavior while preserving the existing component tree and every current route/action.
+
+**Excluded:** application logic, game or planner content, authentication, production styling,
+and AI-assistant UI.
+
+**Acceptance gate:** the preview URL visibly differs from the normal URL at desktop and narrow
+sizes, matches the pinned Figma shell proportions and tokens, and no style applies without both
+the local preview build flag and `?dev-auth=1`.
+
+**Rollback:** remove the explicit preview URL flag or build flag.
 
 ## PR-19: Local Authenticated Forge Preview
 

@@ -5738,6 +5738,107 @@ body {
   }
 }
 
+/* PR-24 final cascade anchor: no legacy stylesheet may override the preview shell below. */
+:root[data-forge-preview='figma'] .forgeShell { display:flex !important; flex-direction:row !important; min-height:100vh !important; height:100vh !important; overflow:hidden !important; background:#0d1117 !important; }
+:root[data-forge-preview='figma'] .forgeSidebar { width:64px !important; min-width:64px !important; max-width:64px !important; min-height:100vh !important; padding:12px 0 !important; align-items:center !important; gap:4px !important; background:#161b22 !important; border:0 !important; border-right:1px solid #30363d !important; }
+:root[data-forge-preview='figma'] .forgeBrandMark { width:36px !important; height:36px !important; min-height:36px !important; margin:0 0 8px !important; border:0 !important; border-radius:10px !important; background:linear-gradient(135deg,#7c3aed,#06b6d4) !important; color:#fff !important; }
+:root[data-forge-preview='figma'] .forgeRailGroup { display:flex !important; flex-direction:column !important; gap:4px !important; }
+:root[data-forge-preview='figma'] .forgeRailButton { width:44px !important; height:44px !important; min-width:44px !important; min-height:44px !important; border:0 !important; border-radius:12px !important; background:transparent !important; color:#8b949e !important; }
+:root[data-forge-preview='figma'] .forgeRailButton.active { background:rgba(124,58,237,.13) !important; color:#a78bfa !important; }
+:root[data-forge-preview='figma'] .forgeMain { flex:1 !important; min-width:0 !important; overflow:hidden !important; background:#0d1117 !important; }
+:root[data-forge-preview='figma'] .workspaceShell { display:flex !important; height:100vh !important; overflow:hidden !important; background:#0d1117 !important; }
+:root[data-forge-preview='figma'] .workspaceSidebar { width:240px !important; min-width:240px !important; padding:20px 12px !important; overflow-y:auto !important; border:0 !important; border-right:1px solid #30363d !important; border-radius:0 !important; background:#161b22 !important; }
+:root[data-forge-preview='figma'] .workspaceStage { flex:1 !important; min-width:0 !important; padding:28px !important; overflow:auto !important; background:#0d1117 !important; }
+:root[data-forge-preview='figma'] .workspaceLauncherGrid,:root[data-forge-preview='figma'] .plannerLauncherGrid { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:16px !important; }
+:root[data-forge-preview='figma'] .workspaceLaunchButton { min-height:228px !important; padding:20px !important; border:1px solid #30363d !important; border-radius:12px !important; background:#161b22 !important; box-shadow:none !important; }
+@media (max-width:760px) { :root[data-forge-preview='figma'] .forgeShell { display:block !important; height:auto !important; overflow:visible !important; } :root[data-forge-preview='figma'] .forgeSidebar { width:100% !important; max-width:none !important; min-height:64px !important; height:64px !important; flex-direction:row !important; overflow-x:auto !important; padding:8px 10px !important; } :root[data-forge-preview='figma'] .forgeSidebarSpacer,:root[data-forge-preview='figma'] .forgeSidebarDivider { display:none !important; } :root[data-forge-preview='figma'] .forgeRailGroup { flex-direction:row !important; } :root[data-forge-preview='figma'] .workspaceShell { display:block !important; height:auto !important; overflow:visible !important; } :root[data-forge-preview='figma'] .workspaceSidebar { width:100% !important; min-width:0 !important; border-right:0 !important; border-bottom:1px solid #30363d !important; } :root[data-forge-preview='figma'] .workspaceStage { padding:20px 16px !important; overflow:visible !important; } :root[data-forge-preview='figma'] .workspaceLauncherGrid,:root[data-forge-preview='figma'] .plannerLauncherGrid { grid-template-columns:1fr !important; } }
+
+/* PR-24 — final-order Figma shell.  This is deliberately last so legacy hub CSS cannot win. */
+:root[data-forge-preview='figma'] {
+  --figma-bg: #0d1117;
+  --figma-surface: #161b22;
+  --figma-surface-2: #21262d;
+  --figma-border: #30363d;
+  --figma-text: #e6edf3;
+  --figma-muted: #8b949e;
+  --figma-violet: #7c3aed;
+  --figma-violet-light: #a78bfa;
+}
+
+:root[data-forge-preview='figma'] body {
+  margin: 0 !important;
+  background: var(--figma-bg) !important;
+  color: var(--figma-text) !important;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+
+:root[data-forge-preview='figma'] .forgeShell {
+  display: flex !important;
+  flex-direction: row !important;
+  min-height: 100vh !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  background: var(--figma-bg) !important;
+}
+
+:root[data-forge-preview='figma'] .forgeSidebar {
+  width: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;
+  min-height: 100vh !important;
+  padding: 12px 0 !important;
+  gap: 4px !important;
+  align-items: center !important;
+  background: var(--figma-surface) !important;
+  border: 0 !important;
+  border-right: 1px solid var(--figma-border) !important;
+}
+
+:root[data-forge-preview='figma'] .forgeBrandMark {
+  width: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  margin: 0 0 8px !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  background: linear-gradient(135deg, var(--figma-violet), #06b6d4) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, .4) !important;
+}
+
+:root[data-forge-preview='figma'] .forgeSidebarDivider { width: 32px !important; height: 1px !important; margin: 4px 0 !important; background: var(--figma-border) !important; }
+:root[data-forge-preview='figma'] .forgeRailGroup { display: flex !important; flex-direction: column !important; gap: 4px !important; }
+:root[data-forge-preview='figma'] .forgeRailButton,
+:root[data-forge-preview='figma'] .forgeThemeToggle,
+:root[data-forge-preview='figma'] .forgeAvatarButton { width: 44px !important; height: 44px !important; min-width: 44px !important; min-height: 44px !important; border: 0 !important; border-radius: 12px !important; background: transparent !important; color: var(--figma-muted) !important; }
+:root[data-forge-preview='figma'] .forgeRailButton.active { background: rgba(124,58,237,.13) !important; color: var(--figma-violet-light) !important; }
+
+:root[data-forge-preview='figma'] .forgeMain { flex: 1 !important; min-width: 0 !important; overflow: hidden !important; background: var(--figma-bg) !important; }
+:root[data-forge-preview='figma'] .workspaceShell { display: flex !important; height: 100vh !important; overflow: hidden !important; background: var(--figma-bg) !important; }
+:root[data-forge-preview='figma'] .workspaceSidebar { width: 240px !important; min-width: 240px !important; padding: 20px 12px !important; overflow-y: auto !important; border: 0 !important; border-right: 1px solid var(--figma-border) !important; border-radius: 0 !important; background: var(--figma-surface) !important; }
+:root[data-forge-preview='figma'] .workspaceStage { flex: 1 !important; min-width: 0 !important; padding: 28px !important; overflow: auto !important; background: var(--figma-bg) !important; }
+:root[data-forge-preview='figma'] .workspaceSidebarTitle,
+:root[data-forge-preview='figma'] .workspaceHero h1 { font-family: "Plus Jakarta Sans", Inter, sans-serif !important; letter-spacing: -.04em !important; }
+:root[data-forge-preview='figma'] .inner-nav-item { min-height: 36px !important; padding: 8px 12px !important; border-radius: 8px !important; color: var(--figma-muted) !important; }
+:root[data-forge-preview='figma'] .inner-nav-item.active { background: rgba(124,58,237,.13) !important; color: var(--figma-violet-light) !important; }
+:root[data-forge-preview='figma'] .workspaceLauncherGrid,
+:root[data-forge-preview='figma'] .plannerLauncherGrid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 16px !important; }
+:root[data-forge-preview='figma'] .workspaceLaunchButton { min-height: 228px !important; padding: 20px !important; border: 1px solid var(--figma-border) !important; border-radius: 12px !important; background: var(--figma-surface) !important; box-shadow: none !important; }
+:root[data-forge-preview='figma'] .workspaceLaunchCard { height: 118px !important; border-radius: 10px !important; box-shadow: none !important; }
+
+@media (max-width: 760px) {
+  :root[data-forge-preview='figma'] .forgeShell { display: block !important; height: auto !important; overflow: visible !important; }
+  :root[data-forge-preview='figma'] .forgeSidebar { width: 100% !important; max-width: none !important; min-height: 64px !important; height: 64px !important; flex-direction: row !important; overflow-x: auto !important; padding: 8px 10px !important; }
+  :root[data-forge-preview='figma'] .forgeSidebarSpacer,
+  :root[data-forge-preview='figma'] .forgeSidebarDivider { display: none !important; }
+  :root[data-forge-preview='figma'] .forgeRailGroup { flex-direction: row !important; }
+  :root[data-forge-preview='figma'] .workspaceShell { display: block !important; height: auto !important; overflow: visible !important; }
+  :root[data-forge-preview='figma'] .workspaceSidebar { width: 100% !important; min-width: 0 !important; border-right: 0 !important; border-bottom: 1px solid var(--figma-border) !important; }
+  :root[data-forge-preview='figma'] .workspaceStage { padding: 20px 16px !important; overflow: visible !important; }
+  :root[data-forge-preview='figma'] .workspaceLauncherGrid,
+  :root[data-forge-preview='figma'] .plannerLauncherGrid { grid-template-columns: 1fr !important; }
+}
+
 /* Runtime lock for the current cleanup pass.
    This intentionally sits at the very end so it wins over older duplicate rules. */
 .forgeShell {
