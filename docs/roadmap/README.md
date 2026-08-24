@@ -41,7 +41,8 @@ human-approved PR.
 | PR-25 | Preview-only Arcade Figma card parity | In review | `feat/pr-25-preview-arcade-parity` |
 | PR-26 | Preview-only launcher card touch-ups | In review | `feat/pr-26-preview-card-touchups` |
 | PR-27 | Preview-only light-mode correction | In review | `feat/pr-27-preview-light-mode` |
-| PR-28 | Preview-only layout polish | In progress | `feat/pr-28-preview-layout-polish` |
+| PR-28 | Preview-only layout polish | In review | `feat/pr-28-preview-layout-polish` |
+| PR-29 | Preview-only game back-link cleanup | In progress | `feat/pr-29-preview-game-back-links` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -177,6 +178,20 @@ styling, and authentication.
 **Acceptance gate:** a desktop Arcade grid has six cards on one row; Requests is centered with
 larger copy; each of the seven embedded apps shows only the parent shell back action in preview;
 the embedded frame fills its shell to the bottom edge with rounded corners.
+
+**Rollback:** omit the explicit local preview URL; no persisted data changes.
+
+## PR-29: Preview-Only Game Back-Link Cleanup
+
+Hide the duplicate in-frame “Back to The Forge” links in the explicit local preview for Imposter,
+Quiz Shooter, and Build-a-Beast. Preserve their parent-shell Back to Arcade action and all game
+behavior.
+
+**Excluded:** game behavior, standalone game pages, routes, production styling, and
+authentication.
+
+**Acceptance gate:** each of the three embedded multiplayer games has one visible Back to Arcade
+control in the parent Forge shell and no visible in-frame Forge link.
 
 **Rollback:** omit the explicit local preview URL; no persisted data changes.
 

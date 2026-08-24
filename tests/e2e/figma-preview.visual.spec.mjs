@@ -46,6 +46,7 @@ test("preview keeps its visual boundary across all six Arcade game launches", as
     await expect(frame).toHaveAttribute("src", /dev-auth=1/);
     await expect(frame.contentFrame().locator("html")).toHaveAttribute("data-forge-preview", "figma");
     await expect(frame.contentFrame().locator(".backButton")).toBeHidden();
+    await expect(frame.contentFrame().locator(".partyBackBtn, .party-back-button")).toBeHidden();
     await page.getByRole("button", { name: "Back to Arcade" }).click();
   }
 
@@ -110,6 +111,17 @@ test("preview uses a six-card Arcade row, centered requests, and one shell back 
   await page.locator(".forgeSidebar").getByRole("button", { name: "Requests", exact: true }).click();
   await expect(page.locator(".requestOnlyPanel .workspaceHero")).toHaveCSS("text-align", "center");
   await expect(page.locator(".requestOnlyPanel .workspaceHero h2")).toHaveCSS("font-size", "16px");
+});
+
+test("preview hides the duplicate Forge link in all three embedded multiplayer games", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+  for (const title of ["IMPOSTER", "QUIZ SHOOTER", "BUILD A BEAST"]) {
+    await page.getByRole("button", { name: title }).click();
+    const frame = page.locator(".sameOriginMicroappFrame");
+    await expect(frame.contentFrame().locator(".partyBackBtn, .party-back-button")).toBeHidden();
+    await expect(page.getByRole("button", { name: "Back to Arcade" })).toHaveCount(1);
+    await page.getByRole("button", { name: "Back to Arcade" }).click();
+  }
 });
 
 test("preview light mode uses readable surfaces and text across Forge pages", async ({ page }) => {

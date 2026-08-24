@@ -334,7 +334,7 @@ function SameOriginMicroapp({ app, onBack }) {
     if (!frameDocument || frameDocument.getElementById("forge-preview-shell-overrides")) return;
     const style = frameDocument.createElement("style");
     style.id = "forge-preview-shell-overrides";
-    style.textContent = ".backButton { display: none !important; }";
+    style.textContent = ".backButton, .partyBackBtn, .party-back-button { display: none !important; }";
     frameDocument.head.append(style);
   };
 
