@@ -1702,6 +1702,328 @@ h2 {
   }
 }
 
+/* Local Figma Make preview. This selector is set only for ?dev-auth=1 builds with
+ * VITE_ENABLE_LOCAL_PREVIEW=true, so the authenticated product keeps its own skin. */
+:root[data-forge-preview='figma'] {
+  --figma-bg: #0d1117;
+  --figma-surface: #161b22;
+  --figma-surface-2: #21262d;
+  --figma-surface-3: #2d333b;
+  --figma-border: #30363d;
+  --figma-text: #e6edf3;
+  --figma-muted: #8b949e;
+  --figma-subtle: #484f58;
+  --figma-violet: #7c3aed;
+  --figma-violet-hover: #6d28d9;
+  --figma-violet-light: #a78bfa;
+  --figma-violet-dim: rgba(124, 58, 237, 0.13);
+  --figma-cyan: #06b6d4;
+  --shell-panel: var(--figma-surface);
+  --shell-panel-soft: var(--figma-surface-2);
+  --shell-border: var(--figma-border);
+  --shell-border-strong: var(--figma-violet-light);
+  --text: var(--figma-text);
+  --text-muted: var(--figma-muted);
+}
+
+:root[data-forge-preview='figma'][data-forge-theme='light'] {
+  --figma-bg: #f6f7fb;
+  --figma-surface: #ffffff;
+  --figma-surface-2: #f0f2f6;
+  --figma-surface-3: #e1e5eb;
+  --figma-border: #d0d7de;
+  --figma-text: #1f2328;
+  --figma-muted: #57606a;
+  --figma-subtle: #8c959f;
+  --figma-violet-light: #6d28d9;
+}
+
+:root[data-forge-preview='figma'] body {
+  background: var(--figma-bg);
+  color: var(--figma-text);
+  font-family: 'Inter', sans-serif;
+}
+
+:root[data-forge-preview='figma'] :is(button, input, textarea, select) {
+  font-family: 'Inter', sans-serif;
+}
+
+:root[data-forge-preview='figma'] :is(h1, h2, h3, h4) {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+:root[data-forge-preview='figma'] .forgeShell {
+  background: var(--figma-bg);
+  color: var(--figma-text);
+}
+
+:root[data-forge-preview='figma'] .forgeSidebar {
+  width: 64px;
+  min-width: 64px;
+  padding: 12px 10px;
+  gap: 10px;
+  background: var(--figma-surface);
+  border: 0;
+  border-right: 1px solid var(--figma-border);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+:root[data-forge-preview='figma'] .forgeBrandMark {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--figma-violet), var(--figma-cyan));
+  box-shadow: none;
+}
+
+:root[data-forge-preview='figma'] .forgeRailGroup {
+  gap: 6px;
+}
+
+:root[data-forge-preview='figma'] .forgeRailButton,
+:root[data-forge-preview='figma'] .forgeThemeToggle,
+:root[data-forge-preview='figma'] .forgeAvatarButton {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--figma-muted);
+  box-shadow: none;
+}
+
+:root[data-forge-preview='figma'] .forgeRailButton:hover,
+:root[data-forge-preview='figma'] .forgeThemeToggle:hover,
+:root[data-forge-preview='figma'] .forgeAvatarButton:hover {
+  background: var(--figma-surface-2);
+  color: var(--figma-text);
+}
+
+:root[data-forge-preview='figma'] .forgeRailButton.active {
+  background: var(--figma-violet-dim);
+  color: var(--figma-violet-light);
+}
+
+:root[data-forge-preview='figma'] .forgeSidebarDivider {
+  width: 42px;
+  background: var(--figma-border);
+}
+
+:root[data-forge-preview='figma'] .forgeMain {
+  padding: 0;
+  background: var(--figma-bg);
+}
+
+:root[data-forge-preview='figma'] .pagePanel {
+  padding: 26px 32px;
+}
+
+:root[data-forge-preview='figma'] .workspaceShell {
+  gap: 0;
+  background: var(--figma-bg);
+}
+
+:root[data-forge-preview='figma'] .workspaceSidebar {
+  width: 216px;
+  min-width: 216px;
+  padding: 22px 12px;
+  border: 0;
+  border-right: 1px solid var(--figma-border);
+  border-radius: 0;
+  background: var(--figma-surface);
+  box-shadow: none;
+}
+
+:root[data-forge-preview='figma'] .workspaceSidebarLabel {
+  margin: 0 8px 8px;
+  color: var(--figma-muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root[data-forge-preview='figma'] .inner-nav-item {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--figma-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+:root[data-forge-preview='figma'] .inner-nav-item:hover {
+  background: var(--figma-surface-2);
+  color: var(--figma-text);
+}
+
+:root[data-forge-preview='figma'] .inner-nav-item.active {
+  border: 0;
+  background: var(--figma-violet-dim);
+  color: var(--figma-violet-light);
+}
+
+:root[data-forge-preview='figma'] .workspaceStage {
+  padding: 30px 36px 56px;
+  overflow: auto;
+}
+
+:root[data-forge-preview='figma'] .workspaceHome,
+:root[data-forge-preview='figma'] .plannerWorkspace,
+:root[data-forge-preview='figma'] .forgeHomePage {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+}
+
+:root[data-forge-preview='figma'] .workspaceHero,
+:root[data-forge-preview='figma'] .plannerWorkspaceIntro {
+  align-items: flex-start;
+  text-align: left;
+}
+
+:root[data-forge-preview='figma'] .workspaceHero h1,
+:root[data-forge-preview='figma'] .plannerWorkspaceIntro h3 {
+  margin: 0;
+  color: var(--figma-text);
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+:root[data-forge-preview='figma'] .workspaceHero h2,
+:root[data-forge-preview='figma'] .plannerWorkspaceIntro p {
+  margin: 6px 0 0;
+  color: var(--figma-muted);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+:root[data-forge-preview='figma'] .workspaceEyebrow,
+:root[data-forge-preview='figma'] .plannerEyebrow {
+  display: none;
+}
+
+:root[data-forge-preview='figma'] .workspaceLauncherGrid,
+:root[data-forge-preview='figma'] .plannerLauncherGrid,
+:root[data-forge-preview='figma'] .forgeHomeCardGrid {
+  width: 100%;
+  margin-top: 24px;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+:root[data-forge-preview='figma'] .launchCardFrame,
+:root[data-forge-preview='figma'] .forgeHomeCard {
+  min-height: 178px;
+  padding: 16px;
+  border: 1px solid var(--figma-border);
+  border-radius: 12px;
+  box-shadow: none;
+  background-color: var(--figma-surface);
+}
+
+:root[data-forge-preview='figma'] .launchCardButton:hover .launchCardFrame,
+:root[data-forge-preview='figma'] .launchCardButton:focus-visible .launchCardFrame,
+:root[data-forge-preview='figma'] .forgeHomeCard:hover {
+  border-color: var(--figma-violet-light);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
+  transform: translateY(-2px);
+}
+
+:root[data-forge-preview='figma'] .launchCardTitle,
+:root[data-forge-preview='figma'] .forgeHomeCard strong {
+  color: var(--figma-text);
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+:root[data-forge-preview='figma'] .launchCardSubtitle,
+:root[data-forge-preview='figma'] .forgeHomeCard p {
+  color: var(--figma-muted);
+  font-size: 12px;
+}
+
+:root[data-forge-preview='figma'] .launchCardCta,
+:root[data-forge-preview='figma'] .panelButton {
+  border: 0;
+  border-radius: 8px;
+  background: var(--figma-violet);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+:root[data-forge-preview='figma'] .launchCardCta {
+  width: fit-content;
+  margin-top: 8px;
+  padding: 7px 12px;
+}
+
+:root[data-forge-preview='figma'] .launchCardCta::first-letter {
+  color: inherit;
+}
+
+@media (max-width: 900px) {
+  :root[data-forge-preview='figma'] body,
+  :root[data-forge-preview='figma'] #root {
+    overflow: auto;
+  }
+
+  :root[data-forge-preview='figma'] .forgeSidebar {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    flex-direction: row;
+    justify-content: flex-start;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--figma-border);
+  }
+
+  :root[data-forge-preview='figma'] .forgeSidebarSpacer,
+  :root[data-forge-preview='figma'] .forgeSidebarDivider,
+  :root[data-forge-preview='figma'] .forgeOwnerQuick {
+    display: none;
+  }
+
+  :root[data-forge-preview='figma'] .forgeRailGroup {
+    display: flex;
+  }
+
+  :root[data-forge-preview='figma'] .workspaceShell {
+    display: block;
+  }
+
+  :root[data-forge-preview='figma'] .workspaceSidebar {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--figma-border);
+  }
+
+  :root[data-forge-preview='figma'] .workspaceSidebarLabel {
+    display: none;
+  }
+
+  :root[data-forge-preview='figma'] .workspaceStage,
+  :root[data-forge-preview='figma'] .pagePanel {
+    padding: 22px 16px 40px;
+  }
+
+  :root[data-forge-preview='figma'] .workspaceLauncherGrid,
+  :root[data-forge-preview='figma'] .plannerLauncherGrid,
+  :root[data-forge-preview='figma'] .forgeHomeCardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .svgIcon {
   width: 105px;
   height: 105px;

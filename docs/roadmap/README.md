@@ -32,7 +32,24 @@ human-approved PR.
 | PR-14 | Supabase Google Workspace authentication | Complete | `feat/pr-14-supabase-auth` |
 | PR-15 | Server-enforced role-based access control | Complete | `feat/pr-15-rbac` |
 | PR-16 | Fly.io deployment preparation | Complete | `feat/pr-16-fly-deployment` |
-| PR-19 | Local authenticated Forge preview | In progress | `feat/pr-19-local-forge-preview` |
+| PR-19 | Local authenticated Forge preview | In review | `feat/pr-19-local-forge-preview` |
+| PR-20 | Preview-only Figma visual foundation | In progress | `feat/pr-20-preview-figma-shell` |
+
+## PR-20: Preview-Only Figma Visual Foundation
+
+Apply the supplied Figma Make shell to the explicit local Forge preview only. The skin covers
+the outer rail, workspace sidebar, typography, colour tokens, launcher cards, and responsive
+layouts. It never enables AI-assistant UI and must not apply to a normal authenticated URL.
+
+**Excluded:** game or planner behavior changes, production styling changes, authentication
+changes, and deployment.
+
+**Acceptance gate:** the preview URL has the Figma visual attribute and reference screenshots at
+desktop/narrow dark/light sizes; the normal URL does not; all existing launcher actions and six
+Arcade cards remain present.
+
+**Rollback:** remove `?dev-auth=1` or unset `VITE_ENABLE_LOCAL_PREVIEW`; no persisted user or
+application state changes.
 
 ## PR-19: Local Authenticated Forge Preview
 

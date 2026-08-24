@@ -3,6 +3,7 @@
 ## Canonical References
 
 - Prototype: [Figma-published Forge prototype](https://camera-brown-39176227.figma.site/)
+- Preview-only target: [Sidebar with AI Integration — Figma Make](https://www.figma.com/make/mCk3XsFwpZ89DcJDbAhaNK/Sidebar-with-AI-Integration?t=KbX4g64UcsQiug4h-1)
 - Source repository:
   [adi-chandrasekaran/SidebarWithAIIntegration](https://github.com/adi-chandrasekaran/SidebarWithAIIntegration)
 
@@ -33,9 +34,10 @@ The pinned reference controls:
 
 ## What Is Not Canonical
 
-Prototype mock data, placeholder authentication, sample counts, and nonfunctional game cards do
-not replace product requirements or working game logic. Product behavior remains defined under
-`docs/product/`.
+Prototype mock data, placeholder authentication, sample counts, AI-assistant UI, and nonfunctional
+game cards do not replace product requirements or working game logic. Product behavior remains
+defined under `docs/product/`. The Figma Make target applies only to the explicit local preview
+skin; the authenticated application does not opt into it.
 
 ## Implementation Evidence
 

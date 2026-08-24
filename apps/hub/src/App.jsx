@@ -2710,6 +2710,8 @@ export default function App() {
   });
   const [selectedDeckId, setSelectedDeckId] = useState(() => window.localStorage.getItem("forge.selectedDeckId") || "");
   const pathname = window.location.pathname;
+  const localPreviewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
+  const previewSkinEnabled = LOCAL_PREVIEW_ENABLED && localPreviewRequested;
 
   const refreshState = async () => {
     const payload = await apiRequest("/api/bootstrap");
@@ -2725,7 +2727,6 @@ export default function App() {
 
   useEffect(() => {
     const restoreSupabaseSession = async () => {
-      const localPreviewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
       if (LOCAL_PREVIEW_ENABLED && localPreviewRequested) {
         await apiRequest("/api/dev/preview-session", { method: "POST" });
         return refreshState();
@@ -2740,6 +2741,13 @@ export default function App() {
     };
     restoreSupabaseSession().catch(() => null).finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (previewSkinEnabled) root.dataset.forgePreview = "figma";
+    else delete root.dataset.forgePreview;
+    return () => delete root.dataset.forgePreview;
+  }, [previewSkinEnabled]);
 
   useEffect(() => {
     if (pathname === "/admin") {
@@ -2802,6 +2810,7 @@ export default function App() {
 
   const recordGame = async (game) => {
     const target = new URL(game.canonicalRoute, window.location.origin);
+    if (previewSkinEnabled) target.searchParams.set("dev-auth", "1");
     const selectedDeck = dashboard.decks?.find((deck) => deck.id === selectedDeckId);
     if (selectedDeck) {
       target.searchParams.set("deckId", selectedDeck.id);
