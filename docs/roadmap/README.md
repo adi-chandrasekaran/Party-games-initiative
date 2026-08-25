@@ -43,7 +43,8 @@ human-approved PR.
 | PR-27 | Preview-only light-mode correction | In review | `feat/pr-27-preview-light-mode` |
 | PR-28 | Preview-only layout polish | In review | `feat/pr-28-preview-layout-polish` |
 | PR-29 | Preview-only game back-link cleanup | In review | `feat/pr-29-preview-game-back-links` |
-| PR-30 | Preview-only deck library scoping | In progress | `feat/pr-30-preview-deck-scoping` |
+| PR-30 | Preview-only deck library scoping | In review | `feat/pr-30-preview-deck-scoping` |
+| PR-31 | Preview-only request feedback submission | In progress | `feat/pr-31-preview-feedback-submission` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -215,6 +216,25 @@ and focused Playwright coverage pass in the explicit local preview.
 
 **Rollback:** return the preview worktree to PR-29. The shared deck API is unchanged; only
 client-side game selection metadata is removed.
+
+## PR-31: Preview-Only Request Feedback Submission
+
+Add a simple, authenticated feedback form below the existing Requests copy. A user may submit a
+short message through the platform API; PostgreSQL stores its author, timestamp, message, and the
+configured Forge administrator recipient (`caditi28@aischennai.org`). This PR deliberately adds
+no feedback inbox, list, review, response, or email-delivery UI: that admin-panel work is the
+next separately reviewed milestone.
+
+**Excluded:** admin feedback review UI, email delivery, role-policy changes, authentication,
+production UI, and deployment.
+
+**Acceptance gate:** an authenticated user can submit a non-empty feedback message from Requests;
+the server rejects anonymous, empty, or oversized requests; the record is persisted with stable
+user attribution for the configured administrator; dark/light preview layouts remain readable;
+unit, integration, and focused Playwright coverage pass.
+
+**Rollback:** remove the Requests form and feedback endpoint. Existing submitted records remain
+in PostgreSQL and are not exposed by this PR.
 
 ## PR-19: Local Authenticated Forge Preview
 

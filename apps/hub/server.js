@@ -20,6 +20,7 @@ import { postgresStoreHealthcheck, readPostgresStore, writePostgresStore } from 
 import { createGoogleVerifier } from "./google-verifier.js";
 import { createSupabaseTokenVerifier, supabaseAuthConfigured } from "./supabase-auth.js";
 import { deckForGame, deckSummary, extractDeckItems, validatePdfDeck } from "./deck-pipeline.js";
+import { validateFeedbackMessage } from "./feedback.js";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const PORT = Number(process.env.PLATFORM_SERVER_PORT || process.env.PORT || 8787);
@@ -55,6 +56,7 @@ const defaultStore = {
     ratings: [],
   },
   decks: [],
+  feedback: [],
   chats: {
     threads: [],
   },
@@ -75,7 +77,9 @@ const defaultStore = {
 };
 
 async function readStore() {
-  return readPostgresStore(defaultStore);
+  const store = await readPostgresStore(defaultStore);
+  store.feedback = Array.isArray(store.feedback) ? store.feedback : [];
+  return store;
 }
 
 async function writeStore(store) {
@@ -697,6 +701,35 @@ async function handleRateGame(req, res) {
   json(res, 200, { ok: true });
 }
 
+async function handleFeedback(req, res) {
+  const store = await readStore();
+  const user = currentUserFromRequest(req, store);
+  if (!user) return sendJsonError(res, 401, "Not signed in.");
+
+  const body = await readBody(req);
+  let message;
+  try {
+    message = validateFeedbackMessage(body.message);
+  } catch (error) {
+    return sendJsonError(res, 400, error.message);
+  }
+
+  const feedback = {
+    id: crypto.randomUUID(),
+    message,
+    recipientEmail: getOwnerLoginEmail(),
+    submittedBy: {
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+    },
+    createdAt: new Date().toISOString(),
+  };
+  store.feedback.unshift(feedback);
+  await writeStore(store);
+  return json(res, 201, { feedback });
+}
+
 async function handleSearchUsers(req, res, url) {
   const store = await readStore();
   const user = currentUserFromRequest(req, store);
@@ -1108,6 +1141,7 @@ export function createHubApiServer({ staticRoot } = {}) {
     if (req.method === "PATCH" && routePath === "/profile") return await handleProfile(req, res);
     if (req.method === "POST" && routePath === "/game-play") return await handleGamePlay(req, res);
     if (req.method === "POST" && routePath === "/ratings") return await handleRateGame(req, res);
+    if (req.method === "POST" && routePath === "/feedback") return await handleFeedback(req, res);
     if (req.method === "GET" && routePath === "/users/search") return await handleSearchUsers(req, res, url);
     if (req.method === "POST" && routePath === "/chats/direct") return await handleDirectChat(req, res);
     if (req.method === "POST" && routePath === "/chats/group") return await handleGroupChat(req, res);

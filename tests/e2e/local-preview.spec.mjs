@@ -39,3 +39,16 @@ test("decks stay in the library until a compatible Arcade game chooses one, then
   await expect(page.getByText(deckTitle, { exact: true })).toHaveCount(0);
   await expect(page.locator(".selectedDeckBanner")).toHaveCount(0);
 });
+
+test("Requests submits feedback without changing the existing request guidance", async ({ page }) => {
+  await page.goto("/?dev-auth=1");
+  await page.locator(".forgeSidebar").getByRole("button", { name: "Requests", exact: true }).click();
+  await expect(page.getByText(/Submit an app idea you need or want to caditi28@aischennai.org/)).toBeVisible();
+
+  const submit = page.getByRole("button", { name: "Send feedback" });
+  await expect(submit).toBeDisabled();
+  await page.getByLabel("Send feedback").fill("A focused feedback message");
+  await submit.click();
+  await expect(page.getByRole("status")).toHaveText("Feedback sent to the Forge team.");
+  await expect(page.getByLabel("Send feedback")).toHaveValue("");
+});

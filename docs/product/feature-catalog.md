@@ -122,6 +122,9 @@ Planner workspace utilities include statistics, chats, and decks.
 ## Requests and Owner Tools
 
 - Requests direct app ideas to `caditi28@aischennai.org`.
+- Authenticated users can also submit a short feedback message from Requests. The platform
+  persists its stable author attribution and assigns it to `caditi28@aischennai.org`; the
+  administrator review interface is a separately scoped feature.
 - Owner controls distinguish creation of public and private app requests.
 - Creating the actual app remains a reviewed development change, not arbitrary runtime code
   generation.

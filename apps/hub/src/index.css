@@ -2444,6 +2444,48 @@ body {
   color: rgba(255, 255, 255, 0.72);
 }
 
+.feedbackForm {
+  width: min(680px, 100%);
+  display: grid;
+  gap: 10px;
+  margin: 20px auto 0;
+  text-align: left;
+}
+
+.feedbackForm label {
+  font-weight: 800;
+}
+
+.feedbackForm textarea {
+  min-height: 132px;
+  resize: vertical;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
+  color: inherit;
+  font: inherit;
+}
+
+:root[data-forge-theme='light'] .feedbackForm textarea {
+  border-color: rgba(20, 24, 39, 0.16);
+  background: #fff;
+  color: #111827;
+}
+
+.feedbackForm .panelButton {
+  justify-self: start;
+}
+
+.feedbackStatus,
+.feedbackError {
+  margin: 0;
+  font-weight: 700;
+}
+
+.feedbackStatus { color: #34d399; }
+.feedbackError { color: #fb7185; }
+
 :root[data-forge-theme='light'] .workspaceHero h2 {
   color: rgba(20, 24, 39, 0.68);
 }

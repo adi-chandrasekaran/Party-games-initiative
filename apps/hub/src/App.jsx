@@ -864,7 +864,28 @@ function CommunityGridView({ title, subtitle, accent, cards }) {
   );
 }
 
-function RequestsOnlyView() {
+function RequestsOnlyView({ onSubmitFeedback }) {
+  const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async (event) => {
+    event.preventDefault();
+    setStatus("");
+    setError("");
+    setSubmitting(true);
+    try {
+      await onSubmitFeedback(message);
+      setMessage("");
+      setStatus("Feedback sent to the Forge team.");
+    } catch (submissionError) {
+      setError(submissionError.message || "Unable to send feedback.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="requestOnlyPanel">
       <div className="workspaceHero compact">
@@ -872,6 +893,23 @@ function RequestsOnlyView() {
         <h1>REQUESTS</h1>
         <h2>Submit an app idea you need or want to caditi28@aischennai.org and it will be done in a matter of days for you to use with your friends, peers, or students!</h2>
       </div>
+      <form className="feedbackForm" onSubmit={submit}>
+        <label htmlFor="feedback-message">Send feedback</label>
+        <textarea
+          id="feedback-message"
+          name="message"
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+          placeholder="Tell the Forge team what you think."
+          maxLength={2000}
+          required
+        />
+        <button type="submit" className="panelButton" disabled={submitting || !message.trim()}>
+          {submitting ? "Sending feedback…" : "Send feedback"}
+        </button>
+        {status ? <p className="feedbackStatus" role="status">{status}</p> : null}
+        {error ? <p className="feedbackError" role="alert">{error}</p> : null}
+      </form>
     </div>
   );
 }
@@ -1334,6 +1372,7 @@ function ForgeShell({
   onSendMessage,
   onSearchUsers,
   onRateGame,
+  onSubmitFeedback,
   selectedDeckIds,
   onSelectDeckForApp,
   onUploadDeck,
@@ -1579,7 +1618,7 @@ function ForgeShell({
         ) : activeView === "classes" ? (
           <CommunityGridView title="Classes" subtitle="Classroom apps (private and request to join based)." accent="#7c3aed" cards={classes} />
         ) : (
-          <RequestsOnlyView />
+          <RequestsOnlyView onSubmitFeedback={onSubmitFeedback} />
         )}
       </section>
     </main>
@@ -2931,6 +2970,10 @@ export default function App() {
     await refreshState().catch(() => null);
   };
 
+  const submitFeedback = async (message) => {
+    return apiRequest("/api/feedback", { method: "POST", body: { message } });
+  };
+
   if (loading) {
     return (
       <div className="authShell">
@@ -2970,6 +3013,7 @@ export default function App() {
       onSendMessage={sendMessage}
       onSearchUsers={searchUsers}
       onRateGame={rateGame}
+      onSubmitFeedback={submitFeedback}
       selectedDeckIds={selectedDeckIds}
       onSelectDeckForApp={setDeckForApp}
       onUploadDeck={uploadDeck}

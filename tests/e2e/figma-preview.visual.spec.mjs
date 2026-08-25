@@ -155,6 +155,7 @@ test("preview light mode uses readable surfaces and text across Forge pages", as
   await expect(page.locator(".communityCardTop strong").first()).toHaveCSS("color", "rgb(17, 24, 39)");
   await rail.getByRole("button", { name: "Requests", exact: true }).click();
   await expect(page.locator(".requestOnlyPanel")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(page.getByLabel("Send feedback")).toHaveCSS("color", "rgb(17, 24, 39)");
 });
 
 test("preview keeps its visual boundary across all four Planner app launches", async ({ page }) => {
