@@ -47,6 +47,7 @@ test("preview keeps its visual boundary across all six Arcade game launches", as
     await expect(frame.contentFrame().locator("html")).toHaveAttribute("data-forge-preview", "figma");
     await expect(frame.contentFrame().locator(".backButton")).toBeHidden();
     await expect(frame.contentFrame().locator(".partyBackBtn, .party-back-button")).toBeHidden();
+    await expect(page.locator(".gameDeckLibrary")).toBeVisible();
     await page.getByRole("button", { name: "Back to Arcade" }).click();
   }
 
@@ -54,6 +55,7 @@ test("preview keeps its visual boundary across all six Arcade game launches", as
     await page.getByRole("button", { name: title }).click();
     await expect(page.locator("html")).toHaveAttribute("data-forge-preview", "figma");
     await expect(page.getByRole("button", { name: "Back to Arcade" })).toBeVisible();
+    await expect(page.locator(".gameDeckLibrary")).toBeVisible();
     await page.getByRole("button", { name: "Back to Arcade" }).click();
   }
 });
@@ -68,8 +70,8 @@ test("preview launcher cards have one contained action and uniform icons", async
     const frame = node.querySelector(".launchCardFrame").getBoundingClientRect();
     const icon = node.querySelector(".launchCardIcon").getBoundingClientRect();
     const title = node.querySelector(".launchCardTitle").getBoundingClientRect();
-    const pseudo = getComputedStyle(node, "::after");
-    const button = getComputedStyle(node);
+    const pseudo = node.ownerDocument.defaultView.getComputedStyle(node, "::after");
+    const button = node.ownerDocument.defaultView.getComputedStyle(node);
     return {
       buttonWidth: node.getBoundingClientRect().width,
       buttonHeight: node.getBoundingClientRect().height,

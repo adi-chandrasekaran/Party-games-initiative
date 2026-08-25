@@ -42,7 +42,8 @@ human-approved PR.
 | PR-26 | Preview-only launcher card touch-ups | In review | `feat/pr-26-preview-card-touchups` |
 | PR-27 | Preview-only light-mode correction | In review | `feat/pr-27-preview-light-mode` |
 | PR-28 | Preview-only layout polish | In review | `feat/pr-28-preview-layout-polish` |
-| PR-29 | Preview-only game back-link cleanup | In progress | `feat/pr-29-preview-game-back-links` |
+| PR-29 | Preview-only game back-link cleanup | In review | `feat/pr-29-preview-game-back-links` |
+| PR-30 | Preview-only deck library scoping | In progress | `feat/pr-30-preview-deck-scoping` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -194,6 +195,26 @@ authentication.
 control in the parent Forge shell and no visible in-frame Forge link.
 
 **Rollback:** omit the explicit local preview URL; no persisted data changes.
+
+## PR-30: Preview-Only Deck Library Scoping
+
+Keep uploaded PDFs in the user's shared Decks library, but scope selection to the compatible
+Arcade game that selected or uploaded it. Launcher pages never show a selected-deck banner.
+Each of the six Arcade games provides a game-level control to select an existing library deck
+or upload a new PDF. The four Planner tools retain their documented `none` deck capability.
+Removing a deck from the Decks library deletes it through the existing owner-only API and clears
+any game selection that referenced it.
+
+**Excluded:** deck parsing, permissions, planner behavior, game rules, realtime behavior,
+authentication, production UI, and deployment.
+
+**Acceptance gate:** Arcade and Planner launchers show no global deck state; every Arcade game
+can select or upload a library deck without changing another game's selection; the Decks X
+removes the deck and a deleted deck can be restored only by a new upload; unit, integration,
+and focused Playwright coverage pass in the explicit local preview.
+
+**Rollback:** return the preview worktree to PR-29. The shared deck API is unchanged; only
+client-side game selection metadata is removed.
 
 ## PR-19: Local Authenticated Forge Preview
 

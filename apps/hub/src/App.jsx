@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import AdminPage from "./AdminPage";
 import { ARCADE_APPS, PLANNER_APPS, getHubAppManifest } from "./appRegistry";
+import { readDeckSelections, removeDeckFromSelections, selectDeckForApp } from "./deck-selection";
 import "./index.css";
 
 const NAV_ITEMS = [
@@ -321,12 +322,13 @@ function buildCardBackground(accent, theme = "dark") {
   return `linear-gradient(135deg, ${hexToRgba(accent, shadow)} 0%, ${hexToRgba(accent, tint)} 42%, ${base} 100%)`;
 }
 
-function SameOriginMicroapp({ app, onBack }) {
+function SameOriginMicroapp({ app, onBack, decks, selectedDeckId, onSelectDeck, onUploadDeck }) {
   const source = new URL(app.sameOriginEntry, window.location.origin);
   const previewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
   if (previewRequested) {
     source.searchParams.set("dev-auth", "1");
   }
+  if (selectedDeckId) source.searchParams.set("deckId", selectedDeckId);
 
   const hideEmbeddedPreviewBackButton = (event) => {
     if (!previewRequested) return;
@@ -345,6 +347,15 @@ function SameOriginMicroapp({ app, onBack }) {
           Back to {app.area === "planner" ? "Planner" : "Arcade"}
         </button>
       </div>
+      {app.deckCapability !== "none" ? (
+        <GameDeckLibrary
+          appId={app.id}
+          decks={decks}
+          selectedDeckId={selectedDeckId}
+          onSelectDeck={onSelectDeck}
+          onUploadDeck={onUploadDeck}
+        />
+      ) : null}
       <iframe
         className="sameOriginMicroappFrame"
         title={app.title}
@@ -506,15 +517,15 @@ function EditPencil() {
   );
 }
 
-function DeckBubble({ deck, active, onSelect }) {
+function DeckBubble({ deck, onDelete }) {
   return (
-    <button type="button" className={`deckBubble ${active ? "active" : ""}`} onClick={onSelect}>
-      <span className="deckBubbleMark">X</span>
+    <div className="deckBubble">
+      <button type="button" className="deckBubbleMark" aria-label={`Remove ${deck.title}`} onClick={() => onDelete(deck.id)}>X</button>
       <span className="deckBubbleText">
         <strong>{deck.title}</strong>
         <small>{deck.fileName || "Uploaded PDF"}</small>
       </span>
-    </button>
+    </div>
   );
 }
 
@@ -733,11 +744,10 @@ function WorkspaceSidebar({ title, activeTab, onSelectTab }) {
   );
 }
 
-function WorkspaceDecksView({ decks, selectedDeckId, onSelectDeck, onUploadDeck }) {
+function WorkspaceDecksView({ decks, onUploadDeck, onDeleteDeck }) {
   const [deckTitle, setDeckTitle] = useState("");
   const [deckFile, setDeckFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const selectedDeck = decks.find((deck) => deck.id === selectedDeckId) || null;
 
   const submitDeck = async () => {
     if (!deckFile) return;
@@ -760,9 +770,8 @@ function WorkspaceDecksView({ decks, selectedDeckId, onSelectDeck, onUploadDeck 
         <div>
           <p className="workspaceEyebrow">Decks</p>
           <h3>Your uploaded decks</h3>
-          <p className="workspaceSubcopy">Upload a PDF once and use it in any arcade or planner app.</p>
+          <p className="workspaceSubcopy">Upload a PDF once, then choose it inside a compatible Arcade game.</p>
         </div>
-        {selectedDeck ? <div className="selectedDeckPill">Selected: {selectedDeck.title}</div> : null}
       </div>
 
       <div className="deckUploadCard workspaceUploadCard">
@@ -779,14 +788,14 @@ function WorkspaceDecksView({ decks, selectedDeckId, onSelectDeck, onUploadDeck 
       <div className="deckList workspaceDeckList">
         {decks.length === 0 ? <div className="emptyMini">No decks yet</div> : null}
         {decks.map((deck) => (
-          <DeckBubble key={deck.id} deck={deck} active={deck.id === selectedDeckId} onSelect={() => onSelectDeck(deck.id)} />
+          <DeckBubble key={deck.id} deck={deck} onDelete={onDeleteDeck} />
         ))}
       </div>
     </div>
   );
 }
 
-function WorkspaceHomeView({ title, subtitle, selectedDeck, items, onLaunchItem, isPlanner = false, theme = "dark" }) {
+function WorkspaceHomeView({ title, subtitle, items, onLaunchItem, isPlanner = false, theme = "dark" }) {
   return (
     <div className="workspaceHome">
       <div className="workspaceHero">
@@ -794,14 +803,6 @@ function WorkspaceHomeView({ title, subtitle, selectedDeck, items, onLaunchItem,
         <h1>{isPlanner ? "PLANNER" : "ARCADE"}</h1>
         <h2>{subtitle}</h2>
       </div>
-
-      {selectedDeck ? (
-        <div className="selectedDeckBanner workspaceSelectedDeckBanner">
-          <span>Selected deck</span>
-          <strong>{selectedDeck.title}</strong>
-          <small>{selectedDeck.fileName || "Uploaded PDF"}</small>
-        </div>
-      ) : null}
 
       <div className="workspaceLauncherGrid">
         {items.map((item) => (
@@ -936,31 +937,56 @@ function buildQuizQuestions(cards) {
   });
 }
 
-function ArcadeDeckPicker({ decks, selectedDeckId, onSelectDeck }) {
+function GameDeckLibrary({ appId, decks, selectedDeckId, onSelectDeck, onUploadDeck }) {
+  const [deckTitle, setDeckTitle] = useState("");
+  const [deckFile, setDeckFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
+  const upload = async () => {
+    if (!deckFile) return;
+    setUploading(true);
+    try {
+      await onUploadDeck({
+        appId,
+        title: deckTitle.trim() || deckFile.name.replace(/\.pdf$/i, ""),
+        file: deckFile,
+      });
+      setDeckTitle("");
+      setDeckFile(null);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
-    <div className="deckPickerStrip">
-      {decks.length === 0 ? (
-        <div className="emptyMini">No decks yet</div>
-      ) : (
-        decks.map((deck) => (
-          <button
-            key={deck.id}
-            type="button"
-            className={`deckPickerChip ${deck.id === selectedDeckId ? "isActive" : ""}`}
-            onClick={() => onSelectDeck(deck.id)}
-          >
-            <span className="deckColorDot" />
-            {deck.title}
-          </button>
-        ))
-      )}
-    </div>
+    <section className="gameDeckLibrary" aria-label="Game deck library">
+      <label>
+        Deck for this game
+        <select value={selectedDeckId} onChange={(event) => onSelectDeck(event.target.value)}>
+          <option value="">Choose a deck from your library</option>
+          {decks.map((deck) => <option key={deck.id} value={deck.id}>{deck.title}</option>)}
+        </select>
+      </label>
+      <div className="gameDeckUpload">
+        <input value={deckTitle} onChange={(event) => setDeckTitle(event.target.value)} placeholder="New deck name" />
+        <input type="file" accept="application/pdf,.pdf" onChange={(event) => setDeckFile(event.target.files?.[0] || null)} />
+        <button type="button" className="panelButton ghost" onClick={upload} disabled={!deckFile || uploading}>
+          {uploading ? "Uploading..." : "Upload for this game"}
+        </button>
+      </div>
+    </section>
   );
 }
 
-function ArcadeFlashcardsGame({ decks, selectedDeckId, onBack, onSelectDeck, onRecordGamePlay }) {
-  const [deckId, setDeckId] = useState(selectedDeckId || decks[0]?.id || "");
-  const [cards, setCards] = useState(() => buildStudyCards(decks.find((deck) => deck.id === (selectedDeckId || decks[0]?.id || "")) || decks[0] || null));
+function ArcadeDeckPicker({ appId, decks, selectedDeckId, onSelectDeck, onUploadDeck }) {
+  return (
+    <GameDeckLibrary appId={appId} decks={decks} selectedDeckId={selectedDeckId} onSelectDeck={onSelectDeck} onUploadDeck={onUploadDeck} />
+  );
+}
+
+function ArcadeFlashcardsGame({ decks, selectedDeckId, onBack, onSelectDeck, onUploadDeck, onRecordGamePlay }) {
+  const [deckId, setDeckId] = useState(selectedDeckId || "");
+  const [cards, setCards] = useState(() => buildStudyCards(decks.find((deck) => deck.id === selectedDeckId) || null));
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [known, setKnown] = useState(new Set());
@@ -969,12 +995,12 @@ function ArcadeFlashcardsGame({ decks, selectedDeckId, onBack, onSelectDeck, onR
   const [recorded, setRecorded] = useState(false);
 
   useEffect(() => {
-    const nextDeckId = selectedDeckId || decks[0]?.id || "";
+    const nextDeckId = selectedDeckId || "";
     setDeckId(nextDeckId);
   }, [selectedDeckId, decks]);
 
   useEffect(() => {
-    const deck = decks.find((entry) => entry.id === deckId) || decks[0] || null;
+    const deck = decks.find((entry) => entry.id === deckId) || null;
     const nextCards = buildStudyCards(deck);
     setCards(nextCards);
     setIndex(0);
@@ -991,7 +1017,7 @@ function ArcadeFlashcardsGame({ decks, selectedDeckId, onBack, onSelectDeck, onR
     onRecordGamePlay?.("Flashcards");
   }, [done, recorded, onRecordGamePlay]);
 
-  const activeDeck = decks.find((entry) => entry.id === deckId) || decks[0] || null;
+  const activeDeck = decks.find((entry) => entry.id === deckId) || null;
   const card = cards[index] || null;
   const total = cards.length;
   const progress = total > 0 ? ((known.size + unknown.size) / total) * 100 : 0;
@@ -1019,7 +1045,7 @@ function ArcadeFlashcardsGame({ decks, selectedDeckId, onBack, onSelectDeck, onR
         </div>
       </div>
 
-      <ArcadeDeckPicker decks={decks} selectedDeckId={deckId} onSelectDeck={(nextId) => { setDeckId(nextId); onSelectDeck(nextId); }} />
+      <ArcadeDeckPicker appId="flashcards" decks={decks} selectedDeckId={deckId} onSelectDeck={(nextId) => { setDeckId(nextId); onSelectDeck(nextId); }} onUploadDeck={onUploadDeck} />
 
       {!activeDeck ? (
         <div className="emptyState">No deck available.</div>
@@ -1058,9 +1084,9 @@ function ArcadeFlashcardsGame({ decks, selectedDeckId, onBack, onSelectDeck, onR
   );
 }
 
-function ArcadeQuizGame({ decks, selectedDeckId, onBack, onSelectDeck, onRecordGamePlay }) {
-  const [deckId, setDeckId] = useState(selectedDeckId || decks[0]?.id || "");
-  const [questions, setQuestions] = useState(() => buildQuizQuestions(buildStudyCards(decks.find((deck) => deck.id === (selectedDeckId || decks[0]?.id || "")) || decks[0] || null)));
+function ArcadeQuizGame({ decks, selectedDeckId, onBack, onSelectDeck, onUploadDeck, onRecordGamePlay }) {
+  const [deckId, setDeckId] = useState(selectedDeckId || "");
+  const [questions, setQuestions] = useState(() => buildQuizQuestions(buildStudyCards(decks.find((deck) => deck.id === selectedDeckId) || null)));
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState("");
   const [score, setScore] = useState(0);
@@ -1069,12 +1095,12 @@ function ArcadeQuizGame({ decks, selectedDeckId, onBack, onSelectDeck, onRecordG
   const [recorded, setRecorded] = useState(false);
 
   useEffect(() => {
-    const nextDeckId = selectedDeckId || decks[0]?.id || "";
+    const nextDeckId = selectedDeckId || "";
     setDeckId(nextDeckId);
   }, [selectedDeckId, decks]);
 
   useEffect(() => {
-    const deck = decks.find((entry) => entry.id === deckId) || decks[0] || null;
+    const deck = decks.find((entry) => entry.id === deckId) || null;
     const nextQuestions = buildQuizQuestions(buildStudyCards(deck));
     setQuestions(nextQuestions);
     setCurrent(0);
@@ -1091,7 +1117,7 @@ function ArcadeQuizGame({ decks, selectedDeckId, onBack, onSelectDeck, onRecordG
     onRecordGamePlay?.("Quiz Bowl");
   }, [done, recorded, onRecordGamePlay]);
 
-  const activeDeck = decks.find((entry) => entry.id === deckId) || decks[0] || null;
+  const activeDeck = decks.find((entry) => entry.id === deckId) || null;
   const question = questions[current] || null;
 
   const choose = (option) => {
@@ -1122,7 +1148,7 @@ function ArcadeQuizGame({ decks, selectedDeckId, onBack, onSelectDeck, onRecordG
         </div>
       </div>
 
-      <ArcadeDeckPicker decks={decks} selectedDeckId={deckId} onSelectDeck={(nextId) => { setDeckId(nextId); onSelectDeck(nextId); }} />
+      <ArcadeDeckPicker appId="quiz-bowl" decks={decks} selectedDeckId={deckId} onSelectDeck={(nextId) => { setDeckId(nextId); onSelectDeck(nextId); }} onUploadDeck={onUploadDeck} />
 
       {!activeDeck || questions.length === 0 ? (
         <div className="emptyState">Select a deck with at least two items.</div>
@@ -1162,9 +1188,9 @@ function ArcadeQuizGame({ decks, selectedDeckId, onBack, onSelectDeck, onRecordG
   );
 }
 
-function ArcadeWordMatchGame({ decks, selectedDeckId, onBack, onSelectDeck, onRecordGamePlay }) {
-  const [deckId, setDeckId] = useState(selectedDeckId || decks[0]?.id || "");
-  const [cards, setCards] = useState(() => shuffleList(buildStudyCards(decks.find((deck) => deck.id === (selectedDeckId || decks[0]?.id || "")) || decks[0] || null)).slice(0, 6));
+function ArcadeWordMatchGame({ decks, selectedDeckId, onBack, onSelectDeck, onUploadDeck, onRecordGamePlay }) {
+  const [deckId, setDeckId] = useState(selectedDeckId || "");
+  const [cards, setCards] = useState(() => shuffleList(buildStudyCards(decks.find((deck) => deck.id === selectedDeckId) || null)).slice(0, 6));
   const [selectedTerm, setSelectedTerm] = useState("");
   const [selectedDefinition, setSelectedDefinition] = useState("");
   const [matched, setMatched] = useState(new Set());
@@ -1174,12 +1200,12 @@ function ArcadeWordMatchGame({ decks, selectedDeckId, onBack, onSelectDeck, onRe
   const [recorded, setRecorded] = useState(false);
 
   useEffect(() => {
-    const nextDeckId = selectedDeckId || decks[0]?.id || "";
+    const nextDeckId = selectedDeckId || "";
     setDeckId(nextDeckId);
   }, [selectedDeckId, decks]);
 
   useEffect(() => {
-    const deck = decks.find((entry) => entry.id === deckId) || decks[0] || null;
+    const deck = decks.find((entry) => entry.id === deckId) || null;
     const nextCards = shuffleList(buildStudyCards(deck)).slice(0, 6);
     setCards(nextCards);
     setSelectedTerm("");
@@ -1197,7 +1223,7 @@ function ArcadeWordMatchGame({ decks, selectedDeckId, onBack, onSelectDeck, onRe
     onRecordGamePlay?.("Word Match");
   }, [done, recorded, onRecordGamePlay]);
 
-  const activeDeck = decks.find((entry) => entry.id === deckId) || decks[0] || null;
+  const activeDeck = decks.find((entry) => entry.id === deckId) || null;
   const terms = shuffleList(cards.map((card) => card.term));
   const definitions = shuffleList(cards.map((card) => card.definition));
 
@@ -1243,7 +1269,7 @@ function ArcadeWordMatchGame({ decks, selectedDeckId, onBack, onSelectDeck, onRe
         </div>
       </div>
 
-      <ArcadeDeckPicker decks={decks} selectedDeckId={deckId} onSelectDeck={(nextId) => { setDeckId(nextId); onSelectDeck(nextId); }} />
+      <ArcadeDeckPicker appId="word-match" decks={decks} selectedDeckId={deckId} onSelectDeck={(nextId) => { setDeckId(nextId); onSelectDeck(nextId); }} onUploadDeck={onUploadDeck} />
 
       {!activeDeck || cards.length === 0 ? (
         <div className="emptyState">Select a deck to start matching.</div>
@@ -1308,9 +1334,10 @@ function ForgeShell({
   onSendMessage,
   onSearchUsers,
   onRateGame,
-  selectedDeckId,
-  onSelectDeck,
+  selectedDeckIds,
+  onSelectDeckForApp,
   onUploadDeck,
+  onDeleteDeck,
   isOwner,
   onCreateGameDraft,
   onRecordGamePlay,
@@ -1355,7 +1382,6 @@ function ForgeShell({
     };
   }, [onSearchUsers, searchQuery]);
 
-  const selectedDeck = decks.find((deck) => deck.id === selectedDeckId) || null;
   const arcadeGames = games;
   const previewQuery = new URLSearchParams(window.location.search).get("dev-auth") === "1" ? "&dev-auth=1" : "";
   const previewRouteQuery = previewQuery ? "?dev-auth=1" : "";
@@ -1401,7 +1427,6 @@ function ForgeShell({
     <WorkspaceHomeView
       title="Arcade"
       subtitle="Pick a game and jump in."
-      selectedDeck={selectedDeck}
       items={arcadeGames}
       theme={theme}
       onLaunchItem={(item) => {
@@ -1417,7 +1442,6 @@ function ForgeShell({
     <WorkspaceHomeView
       title="Planner"
       subtitle="Pick a planner app and jump in."
-      selectedDeck={selectedDeck}
       items={PLANNER_APPS}
       theme={theme}
       onLaunchItem={(item) => item.launchMode === "same-origin" ? openSameOriginMicroapp(item) : onGameClick(item)}
@@ -1428,16 +1452,26 @@ function ForgeShell({
   const renderWorkspaceContent = () => {
     if (activeMicroappId) {
       const app = [...arcadeGames, ...PLANNER_APPS].find((candidate) => candidate.id === activeMicroappId);
-      if (app?.launchMode === "same-origin") return <SameOriginMicroapp app={app} onBack={closeSameOriginMicroapp} />;
+      if (app?.launchMode === "same-origin") return (
+        <SameOriginMicroapp
+          app={app}
+          onBack={closeSameOriginMicroapp}
+          decks={decks}
+          selectedDeckId={selectedDeckIds[app.id] || ""}
+          onSelectDeck={(deckId) => onSelectDeckForApp(app.id, deckId)}
+          onUploadDeck={onUploadDeck}
+        />
+      );
     }
 
     if (currentWorkspace === "arcade" && activeArcadeGame === "flashcards") {
       return (
         <ArcadeFlashcardsGame
           decks={decks}
-          selectedDeckId={selectedDeckId}
+          selectedDeckId={selectedDeckIds.flashcards || ""}
           onBack={() => setActiveArcadeGame("")}
-          onSelectDeck={onSelectDeck}
+          onSelectDeck={(deckId) => onSelectDeckForApp("flashcards", deckId)}
+          onUploadDeck={onUploadDeck}
           onRecordGamePlay={onRecordGamePlay}
         />
       );
@@ -1447,9 +1481,10 @@ function ForgeShell({
       return (
         <ArcadeQuizGame
           decks={decks}
-          selectedDeckId={selectedDeckId}
+          selectedDeckId={selectedDeckIds["quiz-bowl"] || ""}
           onBack={() => setActiveArcadeGame("")}
-          onSelectDeck={onSelectDeck}
+          onSelectDeck={(deckId) => onSelectDeckForApp("quiz-bowl", deckId)}
+          onUploadDeck={onUploadDeck}
           onRecordGamePlay={onRecordGamePlay}
         />
       );
@@ -1459,9 +1494,10 @@ function ForgeShell({
       return (
         <ArcadeWordMatchGame
           decks={decks}
-          selectedDeckId={selectedDeckId}
+          selectedDeckId={selectedDeckIds["word-match"] || ""}
           onBack={() => setActiveArcadeGame("")}
-          onSelectDeck={onSelectDeck}
+          onSelectDeck={(deckId) => onSelectDeckForApp("word-match", deckId)}
+          onUploadDeck={onUploadDeck}
           onRecordGamePlay={onRecordGamePlay}
         />
       );
@@ -1496,7 +1532,7 @@ function ForgeShell({
     }
 
     if (currentTab === "decks") {
-      return <WorkspaceDecksView decks={decks} selectedDeckId={selectedDeckId} onSelectDeck={onSelectDeck} onUploadDeck={onUploadDeck} />;
+      return <WorkspaceDecksView decks={decks} onUploadDeck={onUploadDeck} onDeleteDeck={onDeleteDeck} />;
     }
 
     return currentWorkspace === "planner" ? plannerHome() : arcadeHome();
@@ -2731,7 +2767,13 @@ export default function App() {
     if (workspaceFromUrl === "planner" || workspaceFromUrl === "arcade") return workspaceFromUrl;
     return window.localStorage.getItem("forge.activeView") || "arcade";
   });
-  const [selectedDeckId, setSelectedDeckId] = useState(() => window.localStorage.getItem("forge.selectedDeckId") || "");
+  const [selectedDeckIds, setSelectedDeckIds] = useState(() => {
+    try {
+      return readDeckSelections(JSON.parse(window.localStorage.getItem("forge.selectedDeckIdsByApp") || "{}"));
+    } catch {
+      return {};
+    }
+  });
   const pathname = window.location.pathname;
   const localPreviewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
   const previewSkinEnabled = LOCAL_PREVIEW_ENABLED && localPreviewRequested;
@@ -2790,8 +2832,9 @@ export default function App() {
   }, [activeView]);
 
   useEffect(() => {
-    window.localStorage.setItem("forge.selectedDeckId", selectedDeckId);
-  }, [selectedDeckId]);
+    window.localStorage.removeItem("forge.selectedDeckId");
+    window.localStorage.setItem("forge.selectedDeckIdsByApp", JSON.stringify(selectedDeckIds));
+  }, [selectedDeckIds]);
 
   const logout = async () => {
     await Promise.all([apiRequest("/api/logout", { method: "POST" }), supabase?.auth.signOut()]);
@@ -2817,9 +2860,9 @@ export default function App() {
     }));
   };
 
-  const uploadDeck = async ({ title, file }) => {
+  const uploadDeck = async ({ title, file, appId }) => {
     const dataUrl = await readFileAsDataUrl(file);
-    await apiRequest("/api/decks", {
+    const response = await apiRequest("/api/decks", {
       method: "POST",
       body: {
         title,
@@ -2827,18 +2870,25 @@ export default function App() {
         dataUrl,
       },
     });
-    setSelectedDeckId((current) => current || "");
+    if (appId && response?.deck?.id) {
+      setSelectedDeckIds((current) => selectDeckForApp(current, appId, response.deck.id));
+    }
+    await refreshState().catch(() => null);
+  };
+
+  const setDeckForApp = (appId, deckId) => {
+    setSelectedDeckIds((current) => selectDeckForApp(current, appId, deckId));
+  };
+
+  const deleteDeck = async (deckId) => {
+    await apiRequest(`/api/decks/${encodeURIComponent(deckId)}`, { method: "DELETE" });
+    setSelectedDeckIds((current) => removeDeckFromSelections(current, deckId));
     await refreshState().catch(() => null);
   };
 
   const recordGame = async (game) => {
     const target = new URL(game.canonicalRoute, window.location.origin);
     if (previewSkinEnabled) target.searchParams.set("dev-auth", "1");
-    const selectedDeck = dashboard.decks?.find((deck) => deck.id === selectedDeckId);
-    if (selectedDeck) {
-      target.searchParams.set("deckId", selectedDeck.id);
-      target.searchParams.set("deckTitle", selectedDeck.title);
-    }
     void apiRequest("/api/game-play", { method: "POST", body: { title: game.title } }).catch(() => null);
     window.location.assign(target.toString());
   };
@@ -2920,9 +2970,10 @@ export default function App() {
       onSendMessage={sendMessage}
       onSearchUsers={searchUsers}
       onRateGame={rateGame}
-      selectedDeckId={selectedDeckId}
-      onSelectDeck={setSelectedDeckId}
+      selectedDeckIds={selectedDeckIds}
+      onSelectDeckForApp={setDeckForApp}
       onUploadDeck={uploadDeck}
+      onDeleteDeck={deleteDeck}
       isOwner={user?.role === "admin"}
       onRecordGamePlay={recordInternalGame}
       initialMicroappId={directMicroapp?.id || ""}

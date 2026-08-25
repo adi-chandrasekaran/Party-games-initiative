@@ -102,7 +102,9 @@ Planner workspace utilities include statistics, chats, and decks.
 ## Decks
 
 - Authenticated users can name and upload PDF decks.
-- Uploaded decks are associated with the user and available from both workspaces.
+- Uploaded decks are associated with the user and remain in a shared library until the owner removes them.
+- A deck selection is scoped to a compatible Arcade game; launcher pages and Planner tools never display a global selected deck.
+- Compatible Arcade games can select an existing library deck or upload a new PDF from their own game surface.
 - Compatible games select existing decks through the shared deck library.
 - Games consume structured material appropriate to their format rather than displaying an
   entire PDF as one prompt.
