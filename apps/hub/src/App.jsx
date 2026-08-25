@@ -629,7 +629,7 @@ function HubSidebar({
   );
 }
 
-function ForgeSidebar({ activeView, setActiveView, user, isOwner, onCreateGameDraft, theme, onToggleTheme }) {
+function ForgeSidebar({ activeView, setActiveView, user, isOwner, canOpenAdmin, onOpenAdmin, onCreateGameDraft, theme, onToggleTheme }) {
   const items = [
     { id: "profile", label: "Profile", icon: "profile" },
     { id: "arcade", label: "Arcade", icon: "arcade" },
@@ -678,6 +678,7 @@ function ForgeSidebar({ activeView, setActiveView, user, isOwner, onCreateGameDr
             <span className="tooltip">{item.label}</span>
           </button>
         ))}
+        {canOpenAdmin ? <button type="button" className="nav-item forgeRailButton" onClick={onOpenAdmin} aria-label="Admin panel"><NavIcon icon="stats" /><span className="tooltip">Admin panel</span></button> : null}
       </div>
 
       <div className="forgeSidebarSpacer" />
@@ -1380,6 +1381,8 @@ function ForgeShell({
   isOwner,
   onCreateGameDraft,
   onRecordGamePlay,
+  canOpenAdmin,
+  onOpenAdmin,
   initialMicroappId,
 }) {
   const [theme, setTheme] = useState(() => window.localStorage.getItem("forge.theme") || "dark");
@@ -1591,7 +1594,7 @@ function ForgeShell({
 
   return (
     <main className="forgeShell">
-      <ForgeSidebar activeView={activeView} setActiveView={selectView} user={user} isOwner={isOwner} onCreateGameDraft={onCreateGameDraft} theme={theme} onToggleTheme={toggleTheme} />
+      <ForgeSidebar activeView={activeView} setActiveView={selectView} user={user} isOwner={isOwner} canOpenAdmin={canOpenAdmin} onOpenAdmin={onOpenAdmin} onCreateGameDraft={onCreateGameDraft} theme={theme} onToggleTheme={toggleTheme} />
       <section className="forgeMain">
         {activeView === "hub" ? (
           <div className="pagePanel forgeHomePanel">
@@ -2816,6 +2819,7 @@ export default function App() {
   const pathname = window.location.pathname;
   const localPreviewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
   const previewSkinEnabled = LOCAL_PREVIEW_ENABLED && localPreviewRequested;
+  const canOpenAdmin = user?.email === "caditi28@aischennai.org" || (previewSkinEnabled && user?.email === "local-preview@aischennai.org");
 
   const refreshState = async () => {
     const payload = await apiRequest("/api/bootstrap");
@@ -2991,7 +2995,10 @@ export default function App() {
   }
 
   if (pathname === "/admin") {
-    return <AdminPage />;
+    const exitQuery = new URLSearchParams();
+    if (localPreviewRequested) exitQuery.set("dev-auth", "1");
+    exitQuery.set("workspace", activeView);
+    return <AdminPage onExit={() => window.location.assign(`/?${exitQuery.toString()}`)} />;
   }
 
   return (
@@ -3020,6 +3027,13 @@ export default function App() {
       onDeleteDeck={deleteDeck}
       isOwner={user?.role === "admin"}
       onRecordGamePlay={recordInternalGame}
+      canOpenAdmin={canOpenAdmin}
+      onOpenAdmin={() => {
+        const adminQuery = new URLSearchParams();
+        if (localPreviewRequested) adminQuery.set("dev-auth", "1");
+        adminQuery.set("workspace", activeView);
+        window.location.assign(`/admin?${adminQuery.toString()}`);
+      }}
       initialMicroappId={directMicroapp?.id || ""}
       onCreateGameDraft={(kind) => {
         window.alert(`make a new ${kind} game\nGo to codex to do so.`);

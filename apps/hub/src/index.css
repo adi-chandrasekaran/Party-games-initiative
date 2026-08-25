@@ -2486,6 +2486,61 @@ body {
 .feedbackStatus { color: #34d399; }
 .feedbackError { color: #fb7185; }
 
+.adminPage {
+  box-sizing: border-box;
+  height: 100dvh;
+  min-height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 32px;
+  background: var(--bg);
+  color: var(--text);
+  scrollbar-gutter: stable;
+}
+.adminHeader, .adminDashboard { width: min(1180px, 100%); margin: 0 auto; }
+.adminHeader { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.adminHeader p, .adminHeader h1 { margin: 0; }
+.adminHeader p { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .16em; }
+.adminHeader h1 { font-size: clamp(32px, 5vw, 54px); }
+.adminDashboard { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 20px; }
+.adminSidebar, .adminSurfaceCard, .adminAccessCard { border: 1px solid rgba(255,255,255,.12); background: rgba(20,24,34,.9); border-radius: 18px; }
+.adminSidebar { position: sticky; top: 0; display: grid; align-content: start; gap: 8px; padding: 16px; }
+.adminSidebar strong { margin: 4px 8px 10px; letter-spacing: .13em; font-size: 12px; }
+.adminSidebar button { border: 0; border-radius: 10px; padding: 11px 12px; text-align: left; background: transparent; color: inherit; cursor: pointer; font: inherit; font-weight: 700; }
+.adminSidebar button.active { background: #7c3aed; color: white; }
+.adminContent > h2 { margin: 0 0 14px; font-size: 24px; }
+.adminTabPanel { display: grid; gap: 16px; }
+.adminSummaryGrid, .adminPlanningColumns { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.adminSummaryGrid article, .adminSurfaceCard { padding: 18px; }
+.adminSummaryGrid article { display: grid; gap: 6px; border-radius: 16px; background: linear-gradient(135deg, rgba(124,58,237,.32), rgba(6,182,212,.14)); }
+.adminSummaryGrid span, .adminRatingsList small, .adminFeedbackMessage span, .adminFeedbackMessage time, .adminMemberCard span, .adminNoteCard time, .adminPermissionsList span { color: var(--muted); }
+.adminSummaryGrid strong { font-size: 19px; }
+.adminSurfaceCard h2, .adminSurfaceCard p { margin-top: 0; }
+.adminRatingsList, .adminFeedbackList, .adminPermissionsList { display: grid; gap: 10px; }
+.adminRatingsList > div, .adminPermissionsList article { display: grid; grid-template-columns: 1fr auto auto; align-items: baseline; gap: 12px; padding: 12px 0; border-top: 1px solid rgba(255,255,255,.1); }
+.adminPermissionsList p { margin: 0; }
+.adminFeedbackMessage, .adminNoteCard, .adminMemberCard { padding: 14px; border-radius: 12px; background: rgba(255,255,255,.06); }
+.adminFeedbackMessage header { display: grid; gap: 3px; }
+.adminFeedbackMessage p, .adminNoteCard p, .adminMemberCard p { margin: 10px 0 0; white-space: pre-wrap; }
+.adminPlanningMode { display: flex; gap: 8px; margin: 16px 0; }
+.adminPlanningMode button { border: 1px solid rgba(255,255,255,.14); border-radius: 999px; background: transparent; color: inherit; padding: 8px 12px; cursor: pointer; font-weight: 700; }
+.adminPlanningMode button.active { background: #7c3aed; border-color: #7c3aed; color: white; }
+.adminPlanningForm { display: grid; gap: 10px; }
+.adminPlanningForm textarea { min-height: 110px; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.06); color: inherit; font: inherit; }
+.adminPlanningForm .panelButton { justify-self: start; }
+.adminTodo { display: flex; gap: 10px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,.1); }
+.adminMembersPanel { grid-template-columns: repeat(3, minmax(0,1fr)); align-items: start; }
+.adminMemberGroup { display: grid; gap: 10px; }
+.adminMemberGroup h2 { margin: 0; font-size: 18px; }
+.adminMemberCard { display: grid; gap: 3px; }
+.adminEmptyState { color: var(--muted); }
+.adminAccessCard { width: min(520px,100%); margin: 15vh auto; padding: 24px; }
+:root[data-forge-theme='light'] .adminPage { background: #f7f8fb; color: #111827; }
+:root[data-forge-theme='light'] .adminSidebar, :root[data-forge-theme='light'] .adminSurfaceCard, :root[data-forge-theme='light'] .adminAccessCard { background: #fff; border-color: #d7dce5; }
+:root[data-forge-theme='light'] .adminFeedbackMessage, :root[data-forge-theme='light'] .adminNoteCard, :root[data-forge-theme='light'] .adminMemberCard { background: #f8fafc; }
+:root[data-forge-theme='light'] .adminPlanningForm textarea { background: #fff; color: #111827; border-color: #d7dce5; }
+@media (max-width: 760px) { .adminPage { padding: 18px; }.adminDashboard { grid-template-columns: 1fr; }.adminSidebar { grid-template-columns: repeat(2, minmax(0,1fr)); }.adminSidebar strong { grid-column: 1 / -1; }.adminSummaryGrid, .adminPlanningColumns, .adminMembersPanel { grid-template-columns: 1fr; }.adminRatingsList > div, .adminPermissionsList article { grid-template-columns: 1fr; gap: 4px; } }
+
 :root[data-forge-theme='light'] .workspaceHero h2 {
   color: rgba(20, 24, 39, 0.68);
 }

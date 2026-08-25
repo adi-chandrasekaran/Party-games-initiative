@@ -126,6 +126,9 @@ Planner workspace utilities include statistics, chats, and decks.
   persists its stable author attribution and assigns it to `caditi28@aischennai.org`; the
   administrator review interface is a separately scoped feature.
 - Owner controls distinguish creation of public and private app requests.
+- Only `caditi28@aischennai.org` can access the Forge owner dashboard in normal operation. Its
+  internal navigation presents platform play/rating statistics, all submitted feedback, persistent
+  planning notes and to-dos, member role summaries, and a read-only club/class ownership view.
 - Creating the actual app remains a reviewed development change, not arbitrary runtime code
   generation.
 

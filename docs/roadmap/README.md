@@ -44,7 +44,8 @@ human-approved PR.
 | PR-28 | Preview-only layout polish | In review | `feat/pr-28-preview-layout-polish` |
 | PR-29 | Preview-only game back-link cleanup | In review | `feat/pr-29-preview-game-back-links` |
 | PR-30 | Preview-only deck library scoping | In review | `feat/pr-30-preview-deck-scoping` |
-| PR-31 | Preview-only request feedback submission | In progress | `feat/pr-31-preview-feedback-submission` |
+| PR-31 | Preview-only request feedback submission | In review | `feat/pr-31-preview-feedback-submission` |
+| PR-32 | Preview-only owner administration dashboard | In progress | `feat/pr-32-preview-admin-panel` |
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
@@ -235,6 +236,31 @@ unit, integration, and focused Playwright coverage pass.
 
 **Rollback:** remove the Requests form and feedback endpoint. Existing submitted records remain
 in PostgreSQL and are not exposed by this PR.
+
+## PR-32: Preview-Only Owner Administration Dashboard
+
+Provide a protected Forge administration dashboard for `caditi28@aischennai.org`. Normal
+authenticated users are denied dashboard data by its API and see no dashboard content. The explicit local
+preview identity may access it only while the local-preview server flag is enabled, so the owner
+workflow remains testable without weakening normal authorization.
+
+The dashboard has an internal sidebar for platform statistics, submitted feedback, owner planning
+notes and to-dos, account members grouped by role, and a read-only view of club/class ownership.
+Planning data and feedback remain PostgreSQL-backed. Current club and class ownership is shown
+truthfully as unassigned until a future membership-management feature records an assignee.
+
+**Excluded:** teacher/student admin access, editing community ownership, invite management,
+email delivery, changes to application/game permissions, production styling, authentication, and
+deployment.
+
+**Acceptance gate:** only the configured owner (plus the explicit local test identity) can load
+dashboard data; statistics reflect recorded plays and ratings; all submitted feedback
+is visible to the owner; notes and to-dos persist; known account users are grouped by role; every
+current club/class appears in permissions with its recorded owner state; unit, integration, and
+focused Playwright coverage pass.
+
+**Rollback:** remove the dashboard route and its API. Existing planning records and feedback stay
+in PostgreSQL and remain inaccessible until a replacement owner interface is enabled.
 
 ## PR-19: Local Authenticated Forge Preview
 

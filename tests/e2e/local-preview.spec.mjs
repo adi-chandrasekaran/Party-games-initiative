@@ -52,3 +52,30 @@ test("Requests submits feedback without changing the existing request guidance",
   await expect(page.getByRole("status")).toHaveText("Feedback sent to the Forge team.");
   await expect(page.getByLabel("Send feedback")).toHaveValue("");
 });
+
+test("local preview owner can use all five dashboard areas and persist planning", async ({ page }) => {
+  const noteText = `Preview planning note ${Date.now()}`;
+  // Establish the explicit preview session first, mirroring an owner who opens
+  // the dashboard from the Forge rail after sign-in.
+  await page.goto("/?dev-auth=1");
+  await expect(page.getByRole("heading", { name: "ARCADE" })).toBeVisible();
+  const previewDashboard = await page.request.get("/api/admin/dashboard");
+  expect(previewDashboard.status()).toBe(200);
+  await page.goto("/admin?dev-auth=1");
+  await expect(page.getByRole("heading", { name: "Owner dashboard" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Stats" })).toBeVisible();
+  await page.getByRole("button", { name: "Feedback" }).click();
+  await expect(page.getByRole("heading", { name: "Feedback inbox" })).toBeVisible();
+  await page.getByRole("button", { name: "Planning" }).click();
+  await page.getByLabel("New note").fill(noteText);
+  await page.getByRole("button", { name: "Save note" }).click();
+  await expect(page.locator(".adminNoteCard").getByText(noteText, { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Members" }).click();
+  await expect(page.getByRole("heading", { name: "Students" })).toBeVisible();
+  expect(await page.locator(".adminPage").evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+  await page.getByRole("button", { name: "Permissions" }).click();
+  await expect(page.getByText("Debate Society")).toBeVisible();
+  await page.getByRole("button", { name: "Exit admin" }).click();
+  await expect(page).toHaveURL(/\?dev-auth=1&workspace=arcade/);
+  await expect(page.getByRole("heading", { name: "ARCADE" })).toBeVisible();
+});
