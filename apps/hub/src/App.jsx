@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import AdminPage from "./AdminPage";
+import { shouldEnableFigmaShell } from "./authenticated-shell";
 import { ARCADE_APPS, PLANNER_APPS, getHubAppManifest } from "./appRegistry";
 import { readDeckSelections, removeDeckFromSelections, selectDeckForApp } from "./deck-selection";
 import "./index.css";
@@ -322,7 +323,7 @@ function buildCardBackground(accent, theme = "dark") {
   return `linear-gradient(135deg, ${hexToRgba(accent, shadow)} 0%, ${hexToRgba(accent, tint)} 42%, ${base} 100%)`;
 }
 
-function SameOriginMicroapp({ app, onBack, decks, selectedDeckId, onSelectDeck, onUploadDeck }) {
+function SameOriginMicroapp({ app, onBack, decks, selectedDeckId, onSelectDeck, onUploadDeck, figmaShellEnabled }) {
   const source = new URL(app.sameOriginEntry, window.location.origin);
   const previewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
   if (previewRequested) {
@@ -331,9 +332,13 @@ function SameOriginMicroapp({ app, onBack, decks, selectedDeckId, onSelectDeck, 
   if (selectedDeckId) source.searchParams.set("deckId", selectedDeckId);
 
   const hideEmbeddedPreviewBackButton = (event) => {
-    if (!previewRequested) return;
+    if (!figmaShellEnabled) return;
     const frameDocument = event.currentTarget.contentDocument;
-    if (!frameDocument || frameDocument.getElementById("forge-preview-shell-overrides")) return;
+    if (!frameDocument) return;
+    // The embedded micro-app is same-origin. Apply the approved shell token only after the
+    // parent has an authenticated Forge session (or the explicit local preview session).
+    frameDocument.documentElement.dataset.forgePreview = "figma";
+    if (frameDocument.getElementById("forge-preview-shell-overrides")) return;
     const style = frameDocument.createElement("style");
     style.id = "forge-preview-shell-overrides";
     style.textContent = ".backButton, .partyBackBtn, .party-back-button { display: none !important; }";
@@ -1405,6 +1410,7 @@ function ForgeShell({
   canOpenAdmin,
   onOpenAdmin,
   initialMicroappId,
+  figmaShellEnabled,
 }) {
   const [theme, setTheme] = useState(() => window.localStorage.getItem("forge.theme") || "dark");
   const [workspaceTabs, setWorkspaceTabs] = useState({ arcade: "home", planner: "home" });
@@ -1523,6 +1529,7 @@ function ForgeShell({
           selectedDeckId={selectedDeckIds[app.id] || ""}
           onSelectDeck={(deckId) => onSelectDeckForApp(app.id, deckId)}
           onUploadDeck={onUploadDeck}
+          figmaShellEnabled={figmaShellEnabled}
         />
       );
     }
@@ -2839,8 +2846,15 @@ export default function App() {
   });
   const pathname = window.location.pathname;
   const localPreviewRequested = new URLSearchParams(window.location.search).get("dev-auth") === "1";
-  const previewSkinEnabled = LOCAL_PREVIEW_ENABLED && localPreviewRequested;
-  const canOpenAdmin = user?.email === "caditi28@aischennai.org" || (previewSkinEnabled && user?.email === "local-preview@aischennai.org");
+  const localPreviewModeEnabled = LOCAL_PREVIEW_ENABLED && localPreviewRequested;
+  // The Figma shell is the authenticated Forge interface. `dev-auth=1` remains a separate,
+  // explicit local-only session path; it does not enable an unauthenticated hosted session.
+  const figmaShellEnabled = shouldEnableFigmaShell({
+    isAuthenticated: Boolean(user),
+    localPreviewEnabled: LOCAL_PREVIEW_ENABLED,
+    localPreviewRequested,
+  });
+  const canOpenAdmin = user?.email === "caditi28@aischennai.org" || (localPreviewModeEnabled && user?.email === "local-preview@aischennai.org");
 
   const refreshState = async () => {
     const payload = await apiRequest("/api/bootstrap");
@@ -2873,10 +2887,10 @@ export default function App() {
 
   useEffect(() => {
     const root = document.documentElement;
-    if (previewSkinEnabled) root.dataset.forgePreview = "figma";
+    if (figmaShellEnabled) root.dataset.forgePreview = "figma";
     else delete root.dataset.forgePreview;
     return () => delete root.dataset.forgePreview;
-  }, [previewSkinEnabled]);
+  }, [figmaShellEnabled]);
 
   useEffect(() => {
     if (pathname === "/admin") {
@@ -2952,7 +2966,7 @@ export default function App() {
 
   const recordGame = async (game) => {
     const target = new URL(game.canonicalRoute, window.location.origin);
-    if (previewSkinEnabled) target.searchParams.set("dev-auth", "1");
+    if (localPreviewModeEnabled) target.searchParams.set("dev-auth", "1");
     void apiRequest("/api/game-play", { method: "POST", body: { title: game.title } }).catch(() => null);
     window.location.assign(target.toString());
   };
@@ -3056,6 +3070,7 @@ export default function App() {
         window.location.assign(`/admin?${adminQuery.toString()}`);
       }}
       initialMicroappId={directMicroapp?.id || ""}
+      figmaShellEnabled={figmaShellEnabled}
       onCreateGameDraft={(kind) => {
         window.alert(`make a new ${kind} game\nGo to codex to do so.`);
       }}

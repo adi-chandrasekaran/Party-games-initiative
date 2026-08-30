@@ -23,7 +23,7 @@ for (const [name, viewport] of viewports) {
   });
 }
 
-test("normal application URL does not enable the preview visual attribute", async ({ page }) => {
+test("unauthenticated application URL does not enable the authenticated visual attribute", async ({ page }) => {
   await page.goto("/?workspace=arcade");
   await expect(page.locator("html")).not.toHaveAttribute("data-forge-preview", "figma");
 });
@@ -102,12 +102,15 @@ test("preview uses a six-card Arcade row, centered requests, and one shell back 
   const frame = page.locator(".sameOriginMicroappFrame");
   await expect(frame.contentFrame().locator(".backButton")).toBeHidden();
   await expect(page.getByRole("button", { name: "Back to Arcade" })).toHaveCount(1);
-  const frameFillsShell = await page.locator(".sameOriginMicroapp").evaluate((shell) => {
+  const gameCanvasContainsUsableFrame = await page.locator(".sameOriginMicroapp").evaluate((shell) => {
     const frameRect = shell.querySelector(".sameOriginMicroappFrame").getBoundingClientRect();
-    const shellRect = shell.getBoundingClientRect();
-    return Math.abs(shellRect.bottom - frameRect.bottom) <= 1 && frameRect.height > 0;
+    const canvasRect = shell.querySelector(".sameOriginMicroappCanvas").getBoundingClientRect();
+    return frameRect.height >= 720
+      && canvasRect.height >= 720
+      && frameRect.width <= canvasRect.width + 1
+      && frameRect.top >= canvasRect.top - 1;
   });
-  expect(frameFillsShell).toBe(true);
+  expect(gameCanvasContainsUsableFrame).toBe(true);
 
   await page.goto("/?dev-auth=1");
   await page.locator(".forgeSidebar").getByRole("button", { name: "Requests", exact: true }).click();

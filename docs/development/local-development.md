@@ -38,7 +38,15 @@ are served from that same origin.
   separated browser origins that may make authenticated mutations in production. Never configure
   `AUTH_TEST_GOOGLE_FIXTURES` outside automated tests; it is ignored unless `NODE_ENV=test`.
 
-## Local Preview Link
+## Authenticated Interface and Local Preview Link
+
+The Figma interface is the normal Forge interface once a user has completed the configured
+Supabase Google sign-in. Do not add `dev-auth=1` to an ordinary authenticated or hosted URL.
+Google Workspace approval is still required before AISC users can complete that sign-in.
+
+For design and game-function work that must remain available before that Workspace approval,
+use the separate local preview below. It preserves the same interface but creates a local-only
+test session; it never grants hosted access.
 
 For visual and game-function work that should not require a Supabase sign-in, start a separate
 local process with both explicit preview switches enabled:

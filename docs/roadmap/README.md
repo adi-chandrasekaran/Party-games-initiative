@@ -45,7 +45,27 @@ human-approved PR.
 | PR-29 | Preview-only game back-link cleanup | In review | `feat/pr-29-preview-game-back-links` |
 | PR-30 | Preview-only deck library scoping | In review | `feat/pr-30-preview-deck-scoping` |
 | PR-31 | Preview-only request feedback submission | In review | `feat/pr-31-preview-feedback-submission` |
-| PR-32 | Preview-only owner administration dashboard | In progress | `feat/pr-32-preview-admin-panel` |
+| PR-32 | Preview-only owner administration dashboard | In review | `feat/pr-32-preview-admin-panel` |
+| PR-33 | Authenticated Figma shell promotion | In review | `feat/pr-33-authenticated-figma-shell` |
+
+## PR-33: Authenticated Figma Shell Promotion
+
+Promote the approved Forge interface from the explicit local-preview branch to the normal
+authenticated Forge experience. A successfully authenticated `@aischennai.org` user receives
+the Figma shell, launcher cards, light/dark surfaces, embedded-game controls, decks, requests,
+and owner dashboard that were approved in the local preview. The separate local preview stays
+available only when both local-preview environment switches and `?dev-auth=1` are present.
+
+**Excluded:** changing Google Workspace approval, Supabase configuration, hosted deployment,
+roles, game rules, planner data, or enabling any unauthenticated hosted access.
+
+**Acceptance gate:** an authenticated Forge user receives `data-forge-preview="figma"` without
+`dev-auth=1`; an unauthenticated normal URL remains at the sign-in gate; `dev-auth=1` creates a
+session only with both explicit local flags; all ten launchers, embedded game back controls,
+deck drawer, and admin authorization regressions pass.
+
+**Rollback:** revert this self-contained PR. The approved local-preview worktree and its two
+explicit local flags remain available; no persisted application data is changed.
 
 ## PR-20: Preview-Only Figma Visual Foundation
 
