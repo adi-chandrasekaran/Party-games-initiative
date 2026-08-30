@@ -33,6 +33,8 @@ export default defineConfig({
         PLATFORM_SERVER_PORT: String(platformPort),
         VITE_HUB_API_URL: "",
         VITE_PLATFORM_API_URL: "",
+        VITE_ENABLE_LOCAL_PREVIEW: "true",
+        FORGE_LOCAL_PREVIEW: "true",
       },
     },
 });

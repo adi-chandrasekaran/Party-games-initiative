@@ -1,4 +1,4 @@
-import { cp, mkdir } from "node:fs/promises";
+import { cp, mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
@@ -19,4 +19,8 @@ for (const [sourceName, routeName] of sourceApps) {
     recursive: true,
     filter: (entry) => !entry.includes("/node_modules") && !entry.includes("/.turbo") && !entry.includes("/dist"),
   });
+  await writeFile(
+    resolve(destination, "forge-preview-config.js"),
+    `window.__FORGE_LOCAL_PREVIEW__ = ${process.env.VITE_ENABLE_LOCAL_PREVIEW === "true"};\n`,
+  );
 }

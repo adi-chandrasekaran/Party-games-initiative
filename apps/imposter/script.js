@@ -23,6 +23,18 @@ const sharedDeckStorageKey = "imposter:selectedSharedDeckId";
 let round = 1;
 let totalRounds = 1;
 
+if (
+  window.__FORGE_LOCAL_PREVIEW__ === true &&
+  new URLSearchParams(window.location.search).get("dev-auth") === "1"
+) {
+  document.documentElement.dataset.forgePreview = "figma";
+  document.querySelectorAll("a[href^='/?workspace=']").forEach((link) => {
+    const target = new URL(link.href, window.location.origin);
+    target.searchParams.set("dev-auth", "1");
+    link.href = `${target.pathname}${target.search}`;
+  });
+}
+
 
 // =========================
 // 🔥 WORD BANK (UNCHANGED)

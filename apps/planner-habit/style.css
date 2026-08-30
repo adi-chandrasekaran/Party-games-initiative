@@ -22,6 +22,14 @@ body {
   font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
+:root[data-forge-preview="figma"] { --bg1: #0d1117; --bg2: #0d1117; --panel: #161b22; --line: #30363d; --text: #e6edf3; --muted: #8b949e; --accent: #a78bfa; --accent-2: #7c3aed; }
+:root[data-forge-preview="figma"] body { background: #0d1117; }
+:root[data-forge-preview="figma"] .heroCard, :root[data-forge-preview="figma"] .card { border-radius: 16px; background: #161b22; box-shadow: 0 18px 44px rgba(0,0,0,.24); backdrop-filter: none; }
+:root[data-forge-preview="figma"] h1 { text-shadow: none; letter-spacing: -0.06em; }
+:root[data-forge-preview="figma"] .backButton, :root[data-forge-preview="figma"] .monthTab, :root[data-forge-preview="figma"] .summaryChip { border: 1px solid #30363d; border-radius: 10px; background: #21262d; color: #e6edf3; box-shadow: none; }
+:root[data-forge-preview="figma"] .monthTab.isActive, :root[data-forge-preview="figma"] .primaryButton { border-radius: 10px; background: #7c3aed; box-shadow: none; }
+:root[data-forge-preview="figma"] input { border-color: #30363d; border-radius: 10px; background: #21262d; }
+
 body {
   color: var(--text);
   background:

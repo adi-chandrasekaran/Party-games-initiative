@@ -1,4 +1,7 @@
 const STORAGE_KEY = "forge.planner.todo.v1";
+if (window.__FORGE_LOCAL_PREVIEW__ === true && new URLSearchParams(window.location.search).get("dev-auth") === "1") {
+  document.documentElement.dataset.forgePreview = "figma";
+}
 const rootTabs = document.querySelector("#boardTabs");
 const rootMeta = document.querySelector("#boardMeta");
 const rootGrid = document.querySelector("#boardGrid");

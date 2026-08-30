@@ -1,4 +1,7 @@
 const STORAGE_KEY = "forge.planner.habit.v1";
+if (window.__FORGE_LOCAL_PREVIEW__ === true && new URLSearchParams(window.location.search).get("dev-auth") === "1") {
+  document.documentElement.dataset.forgePreview = "figma";
+}
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const monthTabsEl = document.querySelector("#monthTabs");
 const monthSummaryEl = document.querySelector("#monthSummary");
