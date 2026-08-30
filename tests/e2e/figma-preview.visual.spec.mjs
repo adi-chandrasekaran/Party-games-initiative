@@ -148,7 +148,7 @@ test("preview keeps multiplayer deck controls inside a compact drawer and scroll
       const canvas = stage.querySelector(".sameOriginMicroappCanvas");
       if (!canvas) return false;
       canvas.style.minHeight = "1400px";
-      const overflowY = window.getComputedStyle(stage).overflowY;
+      const overflowY = globalThis.getComputedStyle(stage).overflowY;
       stage.scrollTop = 200;
       const result = ["auto", "scroll"].includes(overflowY) && stage.scrollTop > 0;
       canvas.style.minHeight = originalHeight;
