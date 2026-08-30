@@ -126,6 +126,37 @@ test("preview hides the duplicate Forge link in all three embedded multiplayer g
   }
 });
 
+test("preview keeps multiplayer deck controls inside a compact drawer and scrolls game pages", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+
+  for (const title of ["IMPOSTER", "QUIZ SHOOTER", "BUILD A BEAST"]) {
+    await page.getByRole("button", { name: title }).click();
+
+    const canvas = page.locator(".sameOriginMicroappCanvas");
+    const drawer = canvas.locator("details.gameDeckLibraryCompact");
+    await expect(drawer).toBeVisible();
+    await expect(drawer).not.toHaveAttribute("open", "");
+    await drawer.locator("summary").click();
+    await expect(drawer).toHaveAttribute("open", "");
+    await expect(drawer.locator("select")).toBeVisible();
+
+    const scrollsWhenContentOverflows = await page.locator(".workspaceStage").evaluate((stage) => {
+      const originalHeight = stage.style.minHeight;
+      const canvas = stage.querySelector(".sameOriginMicroappCanvas");
+      if (!canvas) return false;
+      canvas.style.minHeight = "1400px";
+      const overflowY = window.getComputedStyle(stage).overflowY;
+      stage.scrollTop = 200;
+      const result = ["auto", "scroll"].includes(overflowY) && stage.scrollTop > 0;
+      canvas.style.minHeight = originalHeight;
+      return result;
+    });
+    expect(scrollsWhenContentOverflows).toBe(true);
+
+    await page.getByRole("button", { name: "Back to Arcade" }).click();
+  }
+});
+
 test("preview light mode uses readable surfaces and text across Forge pages", async ({ page }) => {
   const turnOnLightTheme = async () => {
     await expect(page.locator(".forgeSidebar")).toBeVisible();

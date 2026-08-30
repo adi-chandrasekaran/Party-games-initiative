@@ -5891,6 +5891,99 @@ body {
   }
 }
 
+/* PR-32 preview follow-up: keep deck controls with the game they configure. */
+.workspaceStage,
+.pagePanel {
+  overflow: auto !important;
+  overflow-y: auto !important;
+}
+
+.sameOriginMicroapp {
+  grid-template-rows: auto minmax(720px, 1fr) !important;
+  min-height: min-content !important;
+}
+
+.sameOriginMicroappCanvas {
+  position: relative;
+  min-width: 0;
+  min-height: 720px;
+}
+
+.sameOriginMicroappCanvas .sameOriginMicroappFrame {
+  display: block;
+  height: 100%;
+  min-height: 720px;
+}
+
+.gameDeckLibraryCompact {
+  position: absolute;
+  z-index: 4;
+  top: 16px;
+  left: 16px;
+  width: min(420px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--shell-border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--shell-panel) 94%, transparent);
+  box-shadow: 0 12px 28px rgba(8, 12, 25, 0.24);
+  backdrop-filter: blur(12px);
+}
+
+.gameDeckLibraryCompact summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 12px 15px;
+  cursor: pointer;
+  color: var(--shell-text);
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.gameDeckLibraryCompact summary::marker {
+  content: '';
+}
+
+.gameDeckLibraryCompact summary small {
+  color: var(--shell-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.gameDeckLibraryCompact[open] summary {
+  border-bottom: 1px solid var(--shell-border);
+}
+
+.gameDeckLibraryFields {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+@media (max-width: 700px) {
+  .sameOriginMicroappCanvas {
+    min-height: 820px;
+  }
+
+  .sameOriginMicroappCanvas .sameOriginMicroappFrame {
+    min-height: 820px;
+  }
+
+  .gameDeckLibraryCompact {
+    top: 10px;
+    left: 10px;
+    width: calc(100% - 20px);
+  }
+}
+
 /* PR-24 final cascade anchor: no legacy stylesheet may override the preview shell below. */
 :root[data-forge-preview='figma'] .forgeShell { display:flex !important; flex-direction:row !important; min-height:100vh !important; height:100vh !important; overflow:hidden !important; background:#0d1117 !important; }
 :root[data-forge-preview='figma'] .forgeSidebar { width:64px !important; min-width:64px !important; max-width:64px !important; min-height:100vh !important; padding:12px 0 !important; align-items:center !important; gap:4px !important; background:#161b22 !important; border:0 !important; border-right:1px solid #30363d !important; }

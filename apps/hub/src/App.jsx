@@ -347,21 +347,24 @@ function SameOriginMicroapp({ app, onBack, decks, selectedDeckId, onSelectDeck, 
           Back to {app.area === "planner" ? "Planner" : "Arcade"}
         </button>
       </div>
-      {app.deckCapability !== "none" ? (
-        <GameDeckLibrary
-          appId={app.id}
-          decks={decks}
-          selectedDeckId={selectedDeckId}
-          onSelectDeck={onSelectDeck}
-          onUploadDeck={onUploadDeck}
+      <div className="sameOriginMicroappCanvas">
+        <iframe
+          className="sameOriginMicroappFrame"
+          title={app.title}
+          src={`${source.pathname}${source.search}${source.hash}`}
+          onLoad={hideEmbeddedPreviewBackButton}
         />
-      ) : null}
-      <iframe
-        className="sameOriginMicroappFrame"
-        title={app.title}
-        src={`${source.pathname}${source.search}${source.hash}`}
-        onLoad={hideEmbeddedPreviewBackButton}
-      />
+        {app.deckCapability !== "none" ? (
+          <GameDeckLibrary
+            compact
+            appId={app.id}
+            decks={decks}
+            selectedDeckId={selectedDeckId}
+            onSelectDeck={onSelectDeck}
+            onUploadDeck={onUploadDeck}
+          />
+        ) : null}
+      </div>
     </section>
   );
 }
@@ -976,7 +979,7 @@ function buildQuizQuestions(cards) {
   });
 }
 
-function GameDeckLibrary({ appId, decks, selectedDeckId, onSelectDeck, onUploadDeck }) {
+function GameDeckLibrary({ appId, decks, selectedDeckId, onSelectDeck, onUploadDeck, compact = false }) {
   const [deckTitle, setDeckTitle] = useState("");
   const [deckFile, setDeckFile] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -997,8 +1000,8 @@ function GameDeckLibrary({ appId, decks, selectedDeckId, onSelectDeck, onUploadD
     }
   };
 
-  return (
-    <section className="gameDeckLibrary" aria-label="Game deck library">
+  const fields = (
+    <>
       <label>
         Deck for this game
         <select value={selectedDeckId} onChange={(event) => onSelectDeck(event.target.value)}>
@@ -1013,6 +1016,24 @@ function GameDeckLibrary({ appId, decks, selectedDeckId, onSelectDeck, onUploadD
           {uploading ? "Uploading..." : "Upload for this game"}
         </button>
       </div>
+    </>
+  );
+
+  if (compact) {
+    return (
+      <details className="gameDeckLibrary gameDeckLibraryCompact" aria-label="Game deck library">
+        <summary>
+          <span>Decks</span>
+          <small>{selectedDeckId ? "Deck selected" : "Choose or upload"}</small>
+        </summary>
+        <div className="gameDeckLibraryFields">{fields}</div>
+      </details>
+    );
+  }
+
+  return (
+    <section className="gameDeckLibrary" aria-label="Game deck library">
+      {fields}
     </section>
   );
 }
