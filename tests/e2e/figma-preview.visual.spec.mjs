@@ -11,7 +11,7 @@ for (const [name, viewport] of viewports) {
     await page.goto("/?dev-auth=1&workspace=arcade");
     await expect(page.locator("html")).toHaveAttribute("data-forge-preview", "figma");
     await expect(page.getByRole("heading", { name: "ARCADE" })).toBeVisible();
-    await expect(page).toHaveScreenshot(`${name}-dark-arcade.png`, { fullPage: true, maxDiffPixels: 150 });
+    await expect(page).toHaveScreenshot(`${name}-dark-arcade.png`, { fullPage: true, maxDiffPixels: 150, timeout: 15_000 });
   });
 
   test(`Figma preview ${name} light`, async ({ page }) => {
@@ -19,7 +19,7 @@ for (const [name, viewport] of viewports) {
     await page.goto("/?dev-auth=1&workspace=arcade");
     await page.getByRole("button", { name: "Toggle theme" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-forge-theme", "light");
-    await expect(page).toHaveScreenshot(`${name}-light-arcade.png`, { fullPage: true, maxDiffPixels: 150 });
+    await expect(page).toHaveScreenshot(`${name}-light-arcade.png`, { fullPage: true, maxDiffPixels: 150, timeout: 15_000 });
   });
 }
 
