@@ -102,7 +102,9 @@ Planner workspace utilities include statistics, chats, and decks.
 ## Decks
 
 - Authenticated users can name and upload PDF decks.
-- Uploaded decks are associated with the user and available from both workspaces.
+- Uploaded decks are associated with the user and remain in a shared library until the owner removes them.
+- A deck selection is scoped to a compatible Arcade game; launcher pages and Planner tools never display a global selected deck.
+- Compatible Arcade games can select an existing library deck or upload a new PDF from their own game surface.
 - Compatible games select existing decks through the shared deck library.
 - Games consume structured material appropriate to their format rather than displaying an
   entire PDF as one prompt.
@@ -120,7 +122,13 @@ Planner workspace utilities include statistics, chats, and decks.
 ## Requests and Owner Tools
 
 - Requests direct app ideas to `caditi28@aischennai.org`.
+- Authenticated users can also submit a short feedback message from Requests. The platform
+  persists its stable author attribution and assigns it to `caditi28@aischennai.org`; the
+  administrator review interface is a separately scoped feature.
 - Owner controls distinguish creation of public and private app requests.
+- Only `caditi28@aischennai.org` can access the Forge owner dashboard in normal operation. Its
+  internal navigation presents platform play/rating statistics, all submitted feedback, persistent
+  planning notes and to-dos, member role summaries, and a read-only club/class ownership view.
 - Creating the actual app remains a reviewed development change, not arbitrary runtime code
   generation.
 

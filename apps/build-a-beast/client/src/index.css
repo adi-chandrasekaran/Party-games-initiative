@@ -3,6 +3,38 @@ html, body, #root { width: 100%; min-height: 100%; margin: 0; background: #06081
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; opacity: 0.55; }
+
+:root[data-forge-preview="figma"] { color-scheme: dark; }
+:root[data-forge-preview="figma"] html,
+:root[data-forge-preview="figma"] body,
+:root[data-forge-preview="figma"] #root,
+:root[data-forge-preview="figma"] .app-shell,
+:root[data-forge-preview="figma"] .build-screen,
+:root[data-forge-preview="figma"] .host-screen,
+:root[data-forge-preview="figma"] .waiting-screen,
+:root[data-forge-preview="figma"] .simulation-screen,
+:root[data-forge-preview="figma"] .podium-screen { background: #0d1117; color: #e6edf3; }
+:root[data-forge-preview="figma"] .hero-card,
+:root[data-forge-preview="figma"] .panel,
+:root[data-forge-preview="figma"] .single-card,
+:root[data-forge-preview="figma"] .waiting-card,
+:root[data-forge-preview="figma"] .podium-card,
+:root[data-forge-preview="figma"] .simulation-hero,
+:root[data-forge-preview="figma"] .event-card,
+:root[data-forge-preview="figma"] .build-hud,
+:root[data-forge-preview="figma"] .beast-submit-card,
+:root[data-forge-preview="figma"] .leaderboard,
+:root[data-forge-preview="figma"] .host-topbar,
+:root[data-forge-preview="figma"] .points-board { border-color: #30363d; border-radius: 16px; background: #161b22; box-shadow: 0 18px 44px rgba(0,0,0,.24); backdrop-filter: none; }
+:root[data-forge-preview="figma"] .input,
+:root[data-forge-preview="figma"] .select,
+:root[data-forge-preview="figma"] .part-card,
+:root[data-forge-preview="figma"] .player-tile,
+:root[data-forge-preview="figma"] .event-result,
+:root[data-forge-preview="figma"] .points-row { border-color: #30363d; border-radius: 10px; background: #21262d; color: #e6edf3; }
+:root[data-forge-preview="figma"] .primary-btn { border-radius: 10px; background: #7c3aed; }
+:root[data-forge-preview="figma"] .secondary-btn,
+:root[data-forge-preview="figma"] .badge { border-color: #30363d; border-radius: 10px; background: #21262d; color: #e6edf3; }
 .app-shell, .build-screen, .host-screen, .waiting-screen, .simulation-screen, .podium-screen { min-height: 100vh; background: radial-gradient(circle at 10% 10%, rgba(34, 197, 94, 0.18), transparent 28%), radial-gradient(circle at 90% 15%, rgba(56, 189, 248, 0.16), transparent 30%), radial-gradient(circle at 50% 100%, rgba(168, 85, 247, 0.22), transparent 34%), #060816; }
 .landing { min-height: 100vh; max-width: 1180px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 24px; align-items: center; }
 .hero-card, .panel, .single-card, .waiting-card, .podium-card, .simulation-hero, .event-card, .build-hud, .beast-submit-card, .leaderboard, .host-topbar { background: rgba(15, 23, 42, 0.82); border: 1px solid rgba(148, 163, 184, 0.24); border-radius: 28px; box-shadow: 0 28px 90px rgba(0, 0, 0, 0.38); backdrop-filter: blur(18px); }

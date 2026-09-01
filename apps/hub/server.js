@@ -20,11 +20,16 @@ import { postgresStoreHealthcheck, readPostgresStore, writePostgresStore } from 
 import { createGoogleVerifier } from "./google-verifier.js";
 import { createSupabaseTokenVerifier, supabaseAuthConfigured } from "./supabase-auth.js";
 import { deckForGame, deckSummary, extractDeckItems, validatePdfDeck } from "./deck-pipeline.js";
+import { validateFeedbackMessage } from "./feedback.js";
+import { buildOwnerStatistics as buildDashboardStatistics } from "./admin-dashboard.js";
+import { appManifests } from "@forge/app-registry";
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || "";
 const PORT = Number(process.env.PLATFORM_SERVER_PORT || process.env.PORT || 8787);
 const COOKIE_NAME = "party_games_session";
 const SCHOOL_DOMAIN = "@aischennai.org";
+const LOCAL_PREVIEW_EMAIL = "local-preview@aischennai.org";
+const LOCAL_PREVIEW_USER_ID = "local-forge-preview";
 const AUTH_RATE_LIMIT_WINDOW_MS = 60_000;
 const AUTH_RATE_LIMIT_MAX_ATTEMPTS = 10;
 const __filename = fileURLToPath(import.meta.url);
@@ -53,6 +58,19 @@ const defaultStore = {
     ratings: [],
   },
   decks: [],
+  feedback: [],
+  adminPlanning: {
+    notes: [],
+    todos: [],
+  },
+  communitySpaces: [
+    { id: "club-1", type: "Club", title: "Debate Society", ownerEmail: "", ownerName: "Unassigned" },
+    { id: "club-2", type: "Club", title: "Robotics Club", ownerEmail: "", ownerName: "Unassigned" },
+    { id: "club-3", type: "Club", title: "Photography Club", ownerEmail: "", ownerName: "Unassigned" },
+    { id: "class-1", type: "Class", title: "AP Biology", ownerEmail: "", ownerName: "Unassigned" },
+    { id: "class-2", type: "Class", title: "Pre-Calculus", ownerEmail: "", ownerName: "Unassigned" },
+    { id: "class-3", type: "Class", title: "World History", ownerEmail: "", ownerName: "Unassigned" },
+  ],
   chats: {
     threads: [],
   },
@@ -73,7 +91,13 @@ const defaultStore = {
 };
 
 async function readStore() {
-  return readPostgresStore(defaultStore);
+  const store = await readPostgresStore(defaultStore);
+  store.feedback = Array.isArray(store.feedback) ? store.feedback : [];
+  store.adminPlanning = store.adminPlanning && typeof store.adminPlanning === "object" ? store.adminPlanning : {};
+  store.adminPlanning.notes = Array.isArray(store.adminPlanning.notes) ? store.adminPlanning.notes : [];
+  store.adminPlanning.todos = Array.isArray(store.adminPlanning.todos) ? store.adminPlanning.todos : [];
+  store.communitySpaces = Array.isArray(store.communitySpaces) ? store.communitySpaces : defaultStore.communitySpaces;
+  return store;
 }
 
 async function writeStore(store) {
@@ -254,8 +278,19 @@ function getOwnerLoginEmail() {
   return "caditi28@aischennai.org";
 }
 
+function canAccessOwnerDashboard(user) {
+  return user?.email === getOwnerLoginEmail()
+    // The preview identity can predate the fixed preview id in a retained local database.
+    // It is accepted only while the explicit, non-production preview flag is enabled.
+    || (localPreviewEnabled() && normalizeEmail(user?.email) === LOCAL_PREVIEW_EMAIL);
+}
+
 function legacyPasswordAuthDisabled() {
   return process.env.NODE_ENV === "production" && process.env.ALLOW_LEGACY_PASSWORD_AUTH !== "true";
+}
+
+function localPreviewEnabled() {
+  return process.env.NODE_ENV !== "production" && process.env.FORGE_LOCAL_PREVIEW === "true";
 }
 
 function requireLegacyPasswordAuth(res) {
@@ -549,6 +584,39 @@ async function handleSupabaseAuth(req, res) {
   json(res, 200, await bootstrapPayload(store, user));
 }
 
+async function handleLocalPreviewSession(req, res) {
+  if (!localPreviewEnabled()) return sendJsonError(res, 404, "Not found");
+
+  const store = await readStore();
+  const existing = store.users.find((entry) => entry.id === LOCAL_PREVIEW_USER_ID || normalizeEmail(entry.email) === LOCAL_PREVIEW_EMAIL);
+  const user = existing || {
+    id: LOCAL_PREVIEW_USER_ID,
+    username: "local-preview",
+    createdAt: new Date().toISOString(),
+  };
+
+  user.name = "Local Forge Preview";
+  user.username = "local-preview";
+  user.email = LOCAL_PREVIEW_EMAIL;
+  user.avatar = "";
+  user.role = "admin";
+  user.authProvider = "local-preview";
+  if (!existing) store.users.push(user);
+
+  await addOrUpdateUser({
+    id: LOCAL_PREVIEW_USER_ID,
+    name: user.name,
+    emailOrUsername: LOCAL_PREVIEW_EMAIL,
+    role: "admin",
+    hostGameIds: [],
+  });
+
+  const sessionId = createSession(store, user.id);
+  await writeStore(store);
+  setCookie(res, COOKIE_NAME, sessionId);
+  json(res, 200, await bootstrapPayload(store, user));
+}
+
 async function handleResetPassword(req, res) {
   if (requireLegacyPasswordAuth(res)) return;
   const store = await readStore();
@@ -656,6 +724,126 @@ async function handleRateGame(req, res) {
   store.games.ratings.push({ id: crypto.randomUUID(), userId: user.id, game, stars, createdAt: new Date().toISOString() });
   await writeStore(store);
   json(res, 200, { ok: true });
+}
+
+async function handleFeedback(req, res) {
+  const store = await readStore();
+  const user = currentUserFromRequest(req, store);
+  if (!user) return sendJsonError(res, 401, "Not signed in.");
+
+  const body = await readBody(req);
+  let message;
+  try {
+    message = validateFeedbackMessage(body.message);
+  } catch (error) {
+    return sendJsonError(res, 400, error.message);
+  }
+
+  const feedback = {
+    id: crypto.randomUUID(),
+    message,
+    recipientEmail: getOwnerLoginEmail(),
+    submittedBy: {
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+    },
+    createdAt: new Date().toISOString(),
+  };
+  store.feedback.unshift(feedback);
+  await writeStore(store);
+  return json(res, 201, { feedback });
+}
+
+function ownerDashboardApps() {
+  return appManifests.map((app) => ({ id: app.id, title: app.title }));
+}
+
+function buildOwnerStatistics(store) {
+  return buildDashboardStatistics(ownerDashboardApps(), store.games.counts, store.games.ratings);
+}
+
+async function buildOwnerMembers(store) {
+  const platform = await readPlatformData();
+  const platformUsersByEmail = new Map(platform.users.map((user) => [normalizeEmail(user.emailOrUsername), user]));
+  const gamesById = new Map(platform.gameConfigs.map((game) => [game.id, game.title]));
+  return store.users.map((user) => {
+    const platformUser = platformUsersByEmail.get(normalizeEmail(user.email));
+    const hostedApps = (platformUser?.hostGameIds || []).map((id) => gamesById.get(id) || id);
+    const communitySpaces = store.communitySpaces
+      .filter((space) => normalizeEmail(space.ownerEmail) === normalizeEmail(user.email))
+      .map((space) => space.title);
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: platformUser?.role || user.role || "student",
+      hostedApps,
+      communitySpaces,
+    };
+  }).sort((a, b) => a.name.localeCompare(b.name));
+}
+
+async function ownerDashboardPayload(store) {
+  const members = await buildOwnerMembers(store);
+  return {
+    stats: buildOwnerStatistics(store),
+    feedback: store.feedback
+      .filter((entry) => entry.recipientEmail === getOwnerLoginEmail())
+      .map((entry) => ({ ...entry })),
+    planning: store.adminPlanning,
+    members,
+    permissions: store.communitySpaces.map((space) => ({ ...space })),
+  };
+}
+
+async function requireOwnerDashboard(req, res) {
+  const store = await readStore();
+  const user = currentUserFromRequest(req, store);
+  if (!canAccessOwnerDashboard(user)) {
+    sendJsonError(res, 403, "Only the configured Forge owner can access this dashboard.");
+    return null;
+  }
+  return { store, user };
+}
+
+async function handleOwnerDashboard(req, res) {
+  const authorization = await requireOwnerDashboard(req, res);
+  if (!authorization) return;
+  json(res, 200, await ownerDashboardPayload(authorization.store));
+}
+
+async function handleOwnerPlanning(req, res, kind, todoId = "") {
+  const authorization = await requireOwnerDashboard(req, res);
+  if (!authorization) return;
+  const { store, user } = authorization;
+  const body = await readBody(req);
+
+  if (kind === "note") {
+    let text;
+    try {
+      text = validateFeedbackMessage(body.text);
+    } catch (error) {
+      return sendJsonError(res, 400, error.message.replace("Feedback message", "Note"));
+    }
+    store.adminPlanning.notes.unshift({ id: crypto.randomUUID(), text, createdAt: new Date().toISOString(), createdBy: user.email });
+  } else if (kind === "todo" && req.method === "POST") {
+    let text;
+    try {
+      text = validateFeedbackMessage(body.text);
+    } catch (error) {
+      return sendJsonError(res, 400, error.message.replace("Feedback message", "To-do"));
+    }
+    store.adminPlanning.todos.unshift({ id: crypto.randomUUID(), text, completed: false, createdAt: new Date().toISOString(), createdBy: user.email });
+  } else if (kind === "todo" && req.method === "PATCH") {
+    const todo = store.adminPlanning.todos.find((entry) => entry.id === todoId);
+    if (!todo) return sendJsonError(res, 404, "To-do not found.");
+    if (typeof body.completed !== "boolean") return sendJsonError(res, 400, "To-do completion status is required.");
+    todo.completed = body.completed;
+  }
+
+  await writeStore(store);
+  json(res, 200, { planning: store.adminPlanning });
 }
 
 async function handleSearchUsers(req, res, url) {
@@ -1063,11 +1251,19 @@ export function createHubApiServer({ staticRoot } = {}) {
     if (req.method === "POST" && routePath === "/login") return await handleLogin(req, res);
     if (req.method === "POST" && routePath === "/auth/google") return await handleGoogleAuth(req, res);
     if (req.method === "POST" && routePath === "/auth/supabase") return await handleSupabaseAuth(req, res);
+    if (req.method === "POST" && routePath === "/dev/preview-session") return await handleLocalPreviewSession(req, res);
     if (req.method === "POST" && routePath === "/reset-password") return await handleResetPassword(req, res);
     if (req.method === "POST" && routePath === "/logout") return await handleLogout(req, res);
     if (req.method === "PATCH" && routePath === "/profile") return await handleProfile(req, res);
     if (req.method === "POST" && routePath === "/game-play") return await handleGamePlay(req, res);
     if (req.method === "POST" && routePath === "/ratings") return await handleRateGame(req, res);
+    if (req.method === "POST" && routePath === "/feedback") return await handleFeedback(req, res);
+    if (req.method === "GET" && routePath === "/admin/dashboard") return await handleOwnerDashboard(req, res);
+    if (req.method === "POST" && routePath === "/admin/planning/notes") return await handleOwnerPlanning(req, res, "note");
+    if (req.method === "POST" && routePath === "/admin/planning/todos") return await handleOwnerPlanning(req, res, "todo");
+    if (routePath.startsWith("/admin/planning/todos/") && req.method === "PATCH") {
+      return await handleOwnerPlanning(req, res, "todo", routePath.split("/")[4]);
+    }
     if (req.method === "GET" && routePath === "/users/search") return await handleSearchUsers(req, res, url);
     if (req.method === "POST" && routePath === "/chats/direct") return await handleDirectChat(req, res);
     if (req.method === "POST" && routePath === "/chats/group") return await handleGroupChat(req, res);

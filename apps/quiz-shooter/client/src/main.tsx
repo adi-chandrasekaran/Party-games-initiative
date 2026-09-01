@@ -3,6 +3,13 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
+if (
+  import.meta.env.VITE_ENABLE_LOCAL_PREVIEW === "true" &&
+  new URLSearchParams(window.location.search).get("dev-auth") === "1"
+) {
+  document.documentElement.dataset.forgePreview = "figma";
+}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />

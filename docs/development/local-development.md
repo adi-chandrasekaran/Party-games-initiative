@@ -38,6 +38,29 @@ are served from that same origin.
   separated browser origins that may make authenticated mutations in production. Never configure
   `AUTH_TEST_GOOGLE_FIXTURES` outside automated tests; it is ignored unless `NODE_ENV=test`.
 
+## Authenticated Interface and Local Preview Link
+
+The Figma interface is the normal Forge interface once a user has completed the configured
+Supabase Google sign-in. Do not add `dev-auth=1` to an ordinary authenticated or hosted URL.
+Google Workspace approval is still required before AISC users can complete that sign-in.
+
+For design and game-function work that must remain available before that Workspace approval,
+use the separate local preview below. It preserves the same interface but creates a local-only
+test session; it never grants hosted access.
+
+For visual and game-function work that should not require a Supabase sign-in, start a separate
+local process with both explicit preview switches enabled:
+
+```bash
+FORGE_LOCAL_PREVIEW=true VITE_ENABLE_LOCAL_PREVIEW=true PLATFORM_SERVER_PORT=8790 pnpm dev
+```
+
+Open `http://localhost:8790/?dev-auth=1&workspace=arcade`. The route asks the local server to
+create the `Local Forge Preview` admin session, so it exercises the normal Forge APIs, realtime
+authorization, and game routes. It is unavailable unless both flags are set, and the server
+returns `404` whenever `NODE_ENV=production`; never set either preview flag in Fly or another
+hosted environment. Opening the same URL without the flags keeps the normal authentication gate.
+
 ## Deployment Constraint
 
 Do not add production deployment steps during the local refactor phase. Deployment design begins

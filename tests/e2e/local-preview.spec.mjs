@@ -1,0 +1,81 @@
+import { expect, test } from "@playwright/test";
+import { Buffer } from "node:buffer";
+
+test("the explicitly enabled local preview link enters Forge with an admin session", async ({ page }) => {
+  await page.goto("/?dev-auth=1&workspace=arcade");
+
+  await expect(page.getByRole("heading", { name: "ARCADE" })).toBeVisible();
+
+  const bootstrap = await page.request.get("/api/bootstrap");
+  await expect(bootstrap).toBeOK();
+  expect(await bootstrap.json()).toMatchObject({ user: { email: "local-preview@aischennai.org", role: "admin" } });
+  const admin = await page.request.get("/api/platform/admin/users");
+  await expect(admin).toBeOK();
+});
+
+test("decks stay in the library until a compatible Arcade game chooses one, then delete clears it", async ({ page }) => {
+  const deckTitle = `Scoped deck ${Date.now()}`;
+  await page.goto("/?dev-auth=1&workspace=arcade");
+
+  await expect(page.locator(".selectedDeckBanner")).toHaveCount(0);
+  await page.locator(".workspaceSidebar").getByRole("button", { name: "Decks", exact: true }).click();
+  await page.locator(".workspaceDecks .deckNameInput").fill(deckTitle);
+  await page.locator(".workspaceDecks input[type=file]").setInputFiles({ name: "scoped.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.7\nscoped deck") });
+  await page.locator(".workspaceDecks").getByRole("button", { name: "Upload deck" }).click();
+  await expect(page.getByText(deckTitle, { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "Back to Arcade" }).click();
+  await expect(page.locator(".selectedDeckBanner")).toHaveCount(0);
+  await page.getByRole("button", { name: "FLASHCARDS" }).click();
+  const gameDeckLibrary = page.locator(".gameDeckLibrary");
+  await expect(gameDeckLibrary).toBeVisible();
+  const gameDeckSelect = gameDeckLibrary.locator("select");
+  await gameDeckSelect.selectOption({ label: deckTitle });
+  await expect(gameDeckSelect).toHaveValue(/.+/);
+
+  await page.getByRole("button", { name: "Back to Arcade" }).click();
+  await page.locator(".workspaceSidebar").getByRole("button", { name: "Decks", exact: true }).click();
+  await page.getByRole("button", { name: `Remove ${deckTitle}` }).click();
+  await expect(page.getByText(deckTitle, { exact: true })).toHaveCount(0);
+  await expect(page.locator(".selectedDeckBanner")).toHaveCount(0);
+});
+
+test("Requests submits feedback without changing the existing request guidance", async ({ page }) => {
+  await page.goto("/?dev-auth=1");
+  await page.locator(".forgeSidebar").getByRole("button", { name: "Requests", exact: true }).click();
+  await expect(page.getByText(/Submit an app idea you need or want to caditi28@aischennai.org/)).toBeVisible();
+
+  const submit = page.getByRole("button", { name: "Send feedback" });
+  await expect(submit).toBeDisabled();
+  await page.getByLabel("Send feedback").fill("A focused feedback message");
+  await submit.click();
+  await expect(page.getByRole("status")).toHaveText("Feedback sent to the Forge team.");
+  await expect(page.getByLabel("Send feedback")).toHaveValue("");
+});
+
+test("local preview owner can use all five dashboard areas and persist planning", async ({ page }) => {
+  const noteText = `Preview planning note ${Date.now()}`;
+  // Establish the explicit preview session first, mirroring an owner who opens
+  // the dashboard from the Forge rail after sign-in.
+  await page.goto("/?dev-auth=1");
+  await expect(page.getByRole("heading", { name: "ARCADE" })).toBeVisible();
+  const previewDashboard = await page.request.get("/api/admin/dashboard");
+  expect(previewDashboard.status()).toBe(200);
+  await page.goto("/admin?dev-auth=1");
+  await expect(page.getByRole("heading", { name: "Owner dashboard" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Stats" })).toBeVisible();
+  await page.getByRole("button", { name: "Feedback" }).click();
+  await expect(page.getByRole("heading", { name: "Feedback inbox" })).toBeVisible();
+  await page.getByRole("button", { name: "Planning" }).click();
+  await page.getByLabel("New note").fill(noteText);
+  await page.getByRole("button", { name: "Save note" }).click();
+  await expect(page.locator(".adminNoteCard").getByText(noteText, { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Members" }).click();
+  await expect(page.getByRole("heading", { name: "Students" })).toBeVisible();
+  expect(await page.locator(".adminPage").evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+  await page.getByRole("button", { name: "Permissions" }).click();
+  await expect(page.getByText("Debate Society")).toBeVisible();
+  await page.getByRole("button", { name: "Exit admin" }).click();
+  await expect(page).toHaveURL(/\?dev-auth=1&workspace=arcade/);
+  await expect(page.getByRole("heading", { name: "ARCADE" })).toBeVisible();
+});

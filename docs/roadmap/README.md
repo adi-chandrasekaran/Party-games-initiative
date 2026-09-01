@@ -31,7 +31,276 @@ human-approved PR.
 | PR-13 | Legacy process and compatibility removal | Complete | `feat/pr-13-legacy-removal` |
 | PR-14 | Supabase Google Workspace authentication | Complete | `feat/pr-14-supabase-auth` |
 | PR-15 | Server-enforced role-based access control | Complete | `feat/pr-15-rbac` |
-| PR-16 | Fly.io deployment preparation | In progress | `feat/pr-16-fly-deployment` |
+| PR-16 | Fly.io deployment preparation | Complete | `feat/pr-16-fly-deployment` |
+| PR-19 | Local authenticated Forge preview | In review | `feat/pr-19-local-forge-preview` |
+| PR-20 | Preview-only Figma visual foundation | In review | `feat/pr-20-preview-figma-shell` |
+| PR-21 | Preview-only Arcade Figma parity | In review | `feat/pr-21-preview-arcade-parity` |
+| PR-22 | Preview-only Planner Figma parity | In review | `feat/pr-22-preview-planner-parity` |
+| PR-23 | Preview-only remaining pages and regression gate | In review | `feat/pr-23-preview-forge-regression` |
+| PR-24 | Preview-only Figma shell rebuild | In review | `feat/pr-24-preview-shell-rebuild` |
+| PR-25 | Preview-only Arcade Figma card parity | In review | `feat/pr-25-preview-arcade-parity` |
+| PR-26 | Preview-only launcher card touch-ups | In review | `feat/pr-26-preview-card-touchups` |
+| PR-27 | Preview-only light-mode correction | In review | `feat/pr-27-preview-light-mode` |
+| PR-28 | Preview-only layout polish | In review | `feat/pr-28-preview-layout-polish` |
+| PR-29 | Preview-only game back-link cleanup | In review | `feat/pr-29-preview-game-back-links` |
+| PR-30 | Preview-only deck library scoping | In review | `feat/pr-30-preview-deck-scoping` |
+| PR-31 | Preview-only request feedback submission | In review | `feat/pr-31-preview-feedback-submission` |
+| PR-32 | Preview-only owner administration dashboard | In review | `feat/pr-32-preview-admin-panel` |
+| PR-33 | Authenticated Figma shell promotion | In review | `feat/pr-33-authenticated-figma-shell` |
+
+## PR-33: Authenticated Figma Shell Promotion
+
+Promote the approved Forge interface from the explicit local-preview branch to the normal
+authenticated Forge experience. A successfully authenticated `@aischennai.org` user receives
+the Figma shell, launcher cards, light/dark surfaces, embedded-game controls, decks, requests,
+and owner dashboard that were approved in the local preview. The separate local preview stays
+available only when both local-preview environment switches and `?dev-auth=1` are present.
+
+**Excluded:** changing Google Workspace approval, Supabase configuration, hosted deployment,
+roles, game rules, planner data, or enabling any unauthenticated hosted access.
+
+**Acceptance gate:** an authenticated Forge user receives `data-forge-preview="figma"` without
+`dev-auth=1`; an unauthenticated normal URL remains at the sign-in gate; `dev-auth=1` creates a
+session only with both explicit local flags; all ten launchers, embedded game back controls,
+deck drawer, and admin authorization regressions pass.
+
+**Rollback:** revert this self-contained PR. The approved local-preview worktree and its two
+explicit local flags remain available; no persisted application data is changed.
+
+## PR-20: Preview-Only Figma Visual Foundation
+
+Apply the supplied Figma Make shell to the explicit local Forge preview only. The skin covers
+the outer rail, workspace sidebar, typography, colour tokens, launcher cards, and responsive
+layouts. It never enables AI-assistant UI and must not apply to a normal authenticated URL.
+
+**Excluded:** game or planner behavior changes, production styling changes, authentication
+changes, and deployment.
+
+**Acceptance gate:** the preview URL has the Figma visual attribute and reference screenshots at
+desktop/narrow dark/light sizes; the normal URL does not; all existing launcher actions and six
+Arcade cards remain present.
+
+**Rollback:** remove `?dev-auth=1` or unset `VITE_ENABLE_LOCAL_PREVIEW`; no persisted user or
+application state changes.
+
+## PR-21: Preview-Only Arcade Figma Parity
+
+Apply the approved preview Figma treatment to the Arcade workspace and its six existing game
+surfaces: Imposter, Quiz Shooter, Build a Beast, Flashcards, Quiz Bowl, and Word Match. Routes,
+deck selection, realtime transport, game rules, and all persisted data remain unchanged.
+
+**Excluded:** new games, AI-assistant UI, production styling, authentication changes, and game
+logic changes.
+
+**Acceptance gate:** an explicit local preview URL presents all six Arcade cards and each game
+surface in the preview treatment at desktop and narrow sizes; launching each game retains the
+preview query; ordinary URLs do not receive the treatment; focused functional and visual
+Playwright coverage passes.
+
+**Rollback:** remove `?dev-auth=1` or unset `VITE_ENABLE_LOCAL_PREVIEW`; no game data or room
+state is changed by this visual layer.
+
+## PR-22: Preview-Only Planner Figma Parity
+
+Apply the preview Figma treatment to Planner and its four existing apps: Habit Tracker, To-do
+Board, Timer, and Assignments. Browser-local data, timers, sheets, boards, and all interactions
+are preserved.
+
+**Excluded:** new planner tools, data-model changes, AI-assistant UI, production styling, and
+authentication changes.
+
+**Acceptance gate:** all four Planner launch cards and surfaces retain the local preview marker
+only with the explicit build and URL flags; existing focused Playwright interactions pass at
+desktop and narrow viewports.
+
+**Rollback:** remove the preview query or build flag; no planner data is migrated or modified.
+
+## PR-23: Preview-Only Remaining Pages and Regression Gate
+
+Complete the preview visual layer for Profile, Statistics, Chats, Decks, Clubs, Classes,
+Requests, and admin-facing cards. Add regression coverage for the explicit preview boundary and
+the complete six-game/four-planner inventory.
+
+**Excluded:** all product behavior, roles, data, authentication, and production UI.
+
+**Acceptance gate:** desktop and narrow reference tests retain the preview-only style; all
+remaining navigable pages use preview card/tokens; an ordinary URL has no preview marker.
+
+**Rollback:** omit `?dev-auth=1` or `VITE_ENABLE_LOCAL_PREVIEW=true`; no stored data is affected.
+
+## PR-24: Preview-Only Figma Shell Rebuild
+
+Replace the previous preview CSS overlay with a final-order, scoped Figma shell layer. It owns
+the 64px outer rail, 240px workspace sidebar, Figma typography, card canvas, and responsive
+collapse behavior while preserving the existing component tree and every current route/action.
+
+**Excluded:** application logic, game or planner content, authentication, production styling,
+and AI-assistant UI.
+
+**Acceptance gate:** the preview URL visibly differs from the normal URL at desktop and narrow
+sizes, matches the pinned Figma shell proportions and tokens, and no style applies without both
+the local preview build flag and `?dev-auth=1`.
+
+**Rollback:** remove the explicit preview URL flag or build flag.
+
+## PR-25: Preview-Only Arcade Figma Card Parity
+
+Use the pinned Figma Arcade card hierarchy for the six real Forge games, and bring each existing
+entry surface into that preview-only visual system. Imposter, Quiz Shooter, Build a Beast,
+Flashcards, Quiz Bowl, and Word Match retain their existing routes, decks, realtime behavior,
+and game rules.
+
+**Excluded:** game logic, game inventory, authentication, production styling, and AI UI.
+
+**Acceptance gate:** exactly six Arcade launch cards appear in the Figma grid; every card opens
+and returns; iframe and embedded entries retain the preview marker only on the explicit local
+preview URL.
+
+**Rollback:** remove the local preview flag; no game or room data changes.
+
+## PR-26: Preview-Only Launcher Card Touch-Ups
+
+Remove the duplicate launcher action treatment introduced by legacy preview rules. Each Arcade and
+Planner launcher remains one compact coloured, clickable square with one in-card action. Normalize
+all launcher icons to a contained 40px box so titles and descriptions remain unobstructed.
+
+**Excluded:** card inventory, layout beyond the card hit area, game and planner behavior, routes,
+authentication, and production styling.
+
+**Acceptance gate:** Arcade shows exactly six and Planner exactly four coloured 190px launcher
+squares at desktop width, each has one action, and every icon is contained without overlapping its
+title. The appearance is active only on the explicit local preview URL.
+
+**Rollback:** remove the local preview flag; no persisted data changes.
+
+## PR-27: Preview-Only Light-Mode Correction
+
+Correct the explicit local preview's light theme. Forge pages use white cards with fine grey
+borders and readable dark text; Arcade and Planner use a light canvas with separately tinted
+launcher cards. Community and request pages use the same readable surface and typography rules.
+
+**Excluded:** dark-theme appearance, app/game logic, content, routes, authentication, and
+production styling.
+
+**Acceptance gate:** in the preview's light theme, core Forge cards, community cards, and the
+request panel are white with subtle grey borders; headings are near-black and supporting text is
+grey; Arcade and Planner canvas backgrounds are light while their card colours remain distinct.
+
+**Rollback:** select the dark theme or omit the local preview flag; no persisted data changes.
+
+## PR-28: Preview-Only Layout Polish
+
+Arrange the six Arcade launchers in one desktop row, center and enlarge the Requests copy, and
+remove duplicate navigation inside preview-embedded legacy apps. The parent Forge shell keeps the
+single Back to Arcade/Planner control. Make the embedded app frame fill the available preview
+workspace while retaining rounded lower corners.
+
+**Excluded:** micro-app behavior, routes, standalone app pages, game/planner content, production
+styling, and authentication.
+
+**Acceptance gate:** a desktop Arcade grid has six cards on one row; Requests is centered with
+larger copy; each of the seven embedded apps shows only the parent shell back action in preview;
+the embedded frame fills its shell to the bottom edge with rounded corners.
+
+**Rollback:** omit the explicit local preview URL; no persisted data changes.
+
+## PR-29: Preview-Only Game Back-Link Cleanup
+
+Hide the duplicate in-frame “Back to The Forge” links in the explicit local preview for Imposter,
+Quiz Shooter, and Build-a-Beast. Preserve their parent-shell Back to Arcade action and all game
+behavior.
+
+**Excluded:** game behavior, standalone game pages, routes, production styling, and
+authentication.
+
+**Acceptance gate:** each of the three embedded multiplayer games has one visible Back to Arcade
+control in the parent Forge shell and no visible in-frame Forge link.
+
+**Rollback:** omit the explicit local preview URL; no persisted data changes.
+
+## PR-30: Preview-Only Deck Library Scoping
+
+Keep uploaded PDFs in the user's shared Decks library, but scope selection to the compatible
+Arcade game that selected or uploaded it. Launcher pages never show a selected-deck banner.
+Each of the six Arcade games provides a game-level control to select an existing library deck
+or upload a new PDF. The four Planner tools retain their documented `none` deck capability.
+Removing a deck from the Decks library deletes it through the existing owner-only API and clears
+any game selection that referenced it.
+
+**Excluded:** deck parsing, permissions, planner behavior, game rules, realtime behavior,
+authentication, production UI, and deployment.
+
+**Acceptance gate:** Arcade and Planner launchers show no global deck state; every Arcade game
+can select or upload a library deck without changing another game's selection; the Decks X
+removes the deck and a deleted deck can be restored only by a new upload; unit, integration,
+and focused Playwright coverage pass in the explicit local preview.
+
+**Rollback:** return the preview worktree to PR-29. The shared deck API is unchanged; only
+client-side game selection metadata is removed.
+
+## PR-31: Preview-Only Request Feedback Submission
+
+Add a simple, authenticated feedback form below the existing Requests copy. A user may submit a
+short message through the platform API; PostgreSQL stores its author, timestamp, message, and the
+configured Forge administrator recipient (`caditi28@aischennai.org`). This PR deliberately adds
+no feedback inbox, list, review, response, or email-delivery UI: that admin-panel work is the
+next separately reviewed milestone.
+
+**Excluded:** admin feedback review UI, email delivery, role-policy changes, authentication,
+production UI, and deployment.
+
+**Acceptance gate:** an authenticated user can submit a non-empty feedback message from Requests;
+the server rejects anonymous, empty, or oversized requests; the record is persisted with stable
+user attribution for the configured administrator; dark/light preview layouts remain readable;
+unit, integration, and focused Playwright coverage pass.
+
+**Rollback:** remove the Requests form and feedback endpoint. Existing submitted records remain
+in PostgreSQL and are not exposed by this PR.
+
+## PR-32: Preview-Only Owner Administration Dashboard
+
+Provide a protected Forge administration dashboard for `caditi28@aischennai.org`. Normal
+authenticated users are denied dashboard data by its API and see no dashboard content. The explicit local
+preview identity may access it only while the local-preview server flag is enabled, so the owner
+workflow remains testable without weakening normal authorization.
+
+The dashboard has an internal sidebar for platform statistics, submitted feedback, owner planning
+notes and to-dos, account members grouped by role, and a read-only view of club/class ownership.
+Planning data and feedback remain PostgreSQL-backed. Current club and class ownership is shown
+truthfully as unassigned until a future membership-management feature records an assignee.
+
+**Excluded:** teacher/student admin access, editing community ownership, invite management,
+email delivery, changes to application/game permissions, production styling, authentication, and
+deployment.
+
+**Acceptance gate:** only the configured owner (plus the explicit local test identity) can load
+dashboard data; statistics reflect recorded plays and ratings; all submitted feedback
+is visible to the owner; notes and to-dos persist; known account users are grouped by role; every
+current club/class appears in permissions with its recorded owner state; unit, integration, and
+focused Playwright coverage pass.
+
+**Rollback:** remove the dashboard route and its API. Existing planning records and feedback stay
+in PostgreSQL and remain inaccessible until a replacement owner interface is enabled.
+
+## PR-19: Local Authenticated Forge Preview
+
+**Status reconciliation:** `origin/main` contains merge commit `cb922a1` for PR-16, so its
+previous `In progress` status is corrected to `Complete` here before PR-19 begins.
+
+Provide a separate local development branch and a direct preview URL for shell and game work.
+The URL must create a real, local server session so game and admin APIs retain their normal
+authorization behavior. It is enabled only by explicit browser and server environment switches,
+and the server must reject it in production.
+
+**Excluded:** changing Supabase authentication, weakening hosted access control, committing or
+deploying credentials, and Fly deployment.
+
+**Acceptance gate:** with both local preview switches set, the documented URL opens Forge as the
+local preview admin and can call an admin API; without the server switch the endpoint returns
+`404`; production mode always rejects it; integration and Playwright tests cover the behavior.
+
+**Rollback:** unset either preview switch or stop the separate local process. No customer
+identity, hosted configuration, or production session is changed.
 
 ## PR-16: Fly.io Deployment Preparation
 

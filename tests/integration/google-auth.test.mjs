@@ -111,6 +111,56 @@ test("Supabase Google identity creates a stable Forge session without a role sup
   }
 });
 
+test("local preview session is available only with the explicit local-only server flag", async () => {
+  const previous = process.env.FORGE_LOCAL_PREVIEW;
+  const previousNodeEnv = process.env.NODE_ENV;
+  delete process.env.FORGE_LOCAL_PREVIEW;
+  const disabledServer = createHubApiServer(); await new Promise((resolve) => disabledServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const disabled = await request(disabledServer, "/api/dev/preview-session", {});
+    assert.equal(disabled.status, 404);
+  } finally {
+    await new Promise((resolve) => disabledServer.close(resolve));
+  }
+
+  process.env.FORGE_LOCAL_PREVIEW = "true";
+  const enabledServer = createHubApiServer(); await new Promise((resolve) => enabledServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const enabled = await request(enabledServer, "/api/dev/preview-session", {});
+    assert.equal(enabled.status, 200);
+    assert.deepEqual(enabled.payload.user, {
+      id: "local-forge-preview",
+      username: "local-preview",
+      createdAt: enabled.payload.user.createdAt,
+      name: "Local Forge Preview",
+      email: "local-preview@aischennai.org",
+      avatar: "",
+      role: "admin",
+      authProvider: "local-preview",
+    });
+    const cookie = String(enabled.headers["set-cookie"]).split(";")[0];
+    assert.equal((await get(enabledServer, "/api/platform/admin/users", { Cookie: cookie })).status, 200);
+  } finally {
+    if (previous === undefined) delete process.env.FORGE_LOCAL_PREVIEW;
+    else process.env.FORGE_LOCAL_PREVIEW = previous;
+    await new Promise((resolve) => enabledServer.close(resolve));
+  }
+
+  process.env.FORGE_LOCAL_PREVIEW = "true";
+  process.env.NODE_ENV = "production";
+  const productionServer = createHubApiServer(); await new Promise((resolve) => productionServer.listen(0, "127.0.0.1", resolve));
+  try {
+    const production = await request(productionServer, "/api/dev/preview-session", {});
+    assert.equal(production.status, 404);
+  } finally {
+    if (previous === undefined) delete process.env.FORGE_LOCAL_PREVIEW;
+    else process.env.FORGE_LOCAL_PREVIEW = previous;
+    if (previousNodeEnv === undefined) delete process.env.NODE_ENV;
+    else process.env.NODE_ENV = previousNodeEnv;
+    await new Promise((resolve) => productionServer.close(resolve));
+  }
+});
+
 test("RBAC requires an authenticated admin session instead of a browser admin code", async () => {
   resetAuthRateLimitForTests();
   setGoogleVerifierForTests(async (credential) => credential === "admin"
